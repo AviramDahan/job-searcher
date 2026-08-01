@@ -123,6 +123,10 @@ function isPlaceholderEndpoint(endpoint) {
   return !endpoint || endpoint.includes("REPLACE_ME") || endpoint.includes("YOUR_SCRIPT_URL");
 }
 
+function syncTransport() {
+  return String(state.sync.config.transport || "jsonp").trim().toLowerCase();
+}
+
 async function loadSyncConfig() {
   try {
     const response = await fetch(SYNC_CONFIG_PATH, { cache: "no-store" });
@@ -194,6 +198,41 @@ function jsonpRequest(endpoint, params = {}) {
   });
 }
 
+async function corsRequest(endpoint, params = {}, method = "GET") {
+  const requestUrl = new URL(endpoint, window.location.href);
+  const requestInit = {
+    method,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+  };
+
+  if (method === "GET") {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        requestUrl.searchParams.set(key, String(value));
+      }
+    });
+  } else {
+    requestInit.body = JSON.stringify(params);
+  }
+
+  const response = await fetch(requestUrl.toString(), requestInit);
+  const payload = await response.json().catch(() => null);
+  if (!response.ok || !payload) {
+    throw new Error(payload?.error || `sync_http_${response.status}`);
+  }
+  return payload;
+}
+
+function syncRequest(params = {}, method = "GET") {
+  const endpoint = syncEndpoint();
+  if (syncTransport() === "cors") {
+    return corsRequest(endpoint, params, method);
+  }
+  return jsonpRequest(endpoint, params);
+}
+
 function mergeRemoteManualSubmissions(remoteSubmissions) {
   const remote = normalizeManualSubmissions(remoteSubmissions);
   const localOnly = {};
@@ -215,7 +254,7 @@ async function loadRemoteManualSubmissions() {
 
   try {
     state.sync.lastError = "";
-    const payload = await jsonpRequest(syncEndpoint(), { action: "listUpdates" });
+    const payload = await syncRequest({ action: "listUpdates" });
     if (!payload || payload.ok === false) {
       throw new Error(payload?.error || "sync_error");
     }
@@ -271,7 +310,8 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
   renderChrome();
 
   try {
-    const payload = await jsonpRequest(syncEndpoint(), {
+    const payload = await syncRequest(
+      {
       action,
       event_id: eventId,
       job_key: key,
@@ -285,7 +325,9 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
       requirements: truncateForSync(job.requirements),
       fit: truncateForSync(job.fit),
       user_agent: navigator.userAgent,
-    });
+      },
+      "POST"
+    );
 
     if (!payload || payload.ok === false) {
       throw new Error(payload?.error || "sync_error");

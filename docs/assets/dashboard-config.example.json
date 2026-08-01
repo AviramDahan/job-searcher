@@ -1,3 +1,4 @@
 {
-  "updatesEndpoint": "https://script.google.com/macros/s/REPLACE_ME/exec"
+  "updatesEndpoint": "https://job-searcher-live-api.REPLACE_ME.workers.dev/sync",
+  "transport": "cors"
 }

@@ -14,6 +14,7 @@ The current version is a cleaned Git-ready extraction from a Codex workspace. It
 - `src/dashboard_app.py` - runs a local browser dashboard for reviewing, filtering, updating, and re-alerting tracked jobs.
 - `src/dashboard_static/` - dashboard HTML, CSS, and JavaScript.
 - `docs/` - GitHub Pages dashboard for sharing a read-only/public snapshot plus manual-submission marking.
+- `cloudflare-worker/` - live API for shared manual-submission state, backed by a Durable Object.
 - `integrations/google-apps-script/Code.gs` - Google Sheets + Telegram backend for shared manual-submission updates.
 - `templates/job_applications.template.csv` - required CSV columns.
 - `templates/alerts.example.json` - example Telegram alert payload.
@@ -63,6 +64,10 @@ Job Searcher/
   integrations/
     google-apps-script/
       Code.gs
+  cloudflare-worker/
+    src/
+      index.js
+    wrangler.jsonc
   outputs/
     .gitkeep
   data/
@@ -241,9 +246,47 @@ Dashboard capabilities:
 - Resend a submitted/manual alert to Telegram for a selected job.
 - In GitHub Pages mode, open a job in a popup and mark it as manually submitted with date/time.
 
+## Live Shared Dashboard MVP
+
+The recommended live MVP uses GitHub Pages for the dashboard and a Cloudflare Worker for shared state. This avoids putting any write token in the public frontend while keeping the dashboard fast and easy to share.
+
+Deploy the Worker:
+
+```powershell
+wrangler login
+wrangler deploy --config .\cloudflare-worker\wrangler.jsonc
+```
+
+After deploy, copy the Worker URL into `docs/assets/dashboard-config.json`:
+
+```json
+{
+  "updatesEndpoint": "https://job-searcher-live-api.<your-subdomain>.workers.dev/sync",
+  "transport": "cors"
+}
+```
+
+Then commit and push the config update. Koren can use the GitHub Pages URL, and every manual-submission mark will be shared across browsers.
+
+Optional Telegram secrets for the Worker:
+
+```powershell
+wrangler secret put TELEGRAM_BOT_TOKEN --config .\cloudflare-worker\wrangler.jsonc
+wrangler secret put TELEGRAM_CHAT_ID --config .\cloudflare-worker\wrangler.jsonc
+```
+
+Use Wrangler's interactive secret prompt. Do not pass secret values as command arguments.
+
+Run local Worker checks:
+
+```powershell
+node .\cloudflare-worker\test-local.mjs
+wrangler deploy --dry-run --config .\cloudflare-worker\wrangler.jsonc
+```
+
 ## Google Sheets Sync MVP
 
-The quickest shared MVP uses Google Sheets as the database and Apps Script as the small public backend. The current MVP is intentionally configured without a PIN, per product decision. That means anyone who obtains the Apps Script URL can write manual-submission updates, so do not store secrets in the dashboard config.
+An alternate shared MVP uses Google Sheets as the database and Apps Script as the small public backend. The current MVP is intentionally configured without a PIN, per product decision. That means anyone who obtains the Apps Script URL can write manual-submission updates, so do not store secrets in the dashboard config.
 
 Setup:
 

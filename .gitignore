@@ -45,6 +45,9 @@ venv/
 node_modules/
 playwright-report/
 test-results/
+.wrangler/
+cloudflare-worker/.dev.vars
+cloudflare-worker/.dev.vars.*
 
 # OS/editor
 .DS_Store
