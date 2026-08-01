@@ -44,6 +44,8 @@ venv/
 # Node/browser tooling
 node_modules/
 .next/
+next-env.d.ts
+dist/
 playwright-report/
 test-results/
 .wrangler/

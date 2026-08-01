@@ -4,15 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "start": "next start",
+    "build": "vinext build",
+    "dev": "vinext dev",
+    "start": "vinext start",
     "test:api": "node tests/sites-sync-api.test.mjs"
   },
   "dependencies": {
+    "@vitejs/plugin-rsc": "^0.5.32",
     "next": "^16.2.12",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "vinext": "^1.0.0-beta.4",
+    "vite": "^8.2.0"
   },
   "overrides": {
     "postcss": "^8.5.25",
