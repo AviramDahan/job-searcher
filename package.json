@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vinext build",
+    "build": "vinext build && node scripts/prepare-sites-dist.mjs",
     "dev": "vinext dev",
     "start": "vinext start",
     "test:api": "node tests/sites-sync-api.test.mjs"
