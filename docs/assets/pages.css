@@ -118,6 +118,13 @@ h3 {
   color: var(--green);
 }
 
+.status-manual-submitted,
+.manual-fact {
+  border-color: #b5d5f1;
+  background: #eaf4ff;
+  color: #1b5d92;
+}
+
 .status-pending {
   border-color: #efd09d;
   background: #fff5df;
@@ -132,7 +139,7 @@ h3 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -426,6 +433,29 @@ select:focus {
   text-decoration: none;
 }
 
+.manual-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid #1b5d92;
+  border-radius: var(--radius);
+  background: #1b5d92;
+  color: #fff;
+  font-weight: 800;
+}
+
+.manual-button.secondary {
+  border-color: #b5d5f1;
+  background: #f5faff;
+  color: #1b5d92;
+}
+
+.manual-button:hover {
+  filter: brightness(0.96);
+}
+
 .detail-section {
   display: grid;
   gap: 8px;
@@ -451,6 +481,11 @@ select:focus {
   font-size: 14px;
   line-height: 1.55;
   text-align: left;
+}
+
+.timestamp {
+  direction: ltr;
+  display: inline-block;
 }
 
 .empty-state {

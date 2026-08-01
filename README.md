@@ -192,7 +192,7 @@ http://127.0.0.1:8765
 
 ## GitHub Pages Dashboard
 
-The repository includes a read-only GitHub Pages dashboard under `docs/`. It is a static snapshot for sharing progress and does not include backend actions, Telegram sending, browser automation, credentials, cookies, or CV files.
+The repository includes a GitHub Pages dashboard under `docs/`. It is a static snapshot for sharing progress and does not include backend actions, Telegram sending, browser automation, credentials, cookies, or CV files. Manual submitted markers in the Pages dashboard are stored only in that browser's `localStorage`; they do not update the CSV tracker or send Telegram.
 
 Refresh the Pages data from the private tracker:
 
