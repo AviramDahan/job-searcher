@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Job Searcher - Koren Dashboard</title>
+    <link rel="stylesheet" href="assets/pages.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Job Searcher</p>
+          <h1 id="candidateName">מעקב מועמדויות</h1>
+        </div>
+        <div class="topbar-meta">
+          <span id="generatedAt"></span>
+          <span class="state-pill">קריאה בלבד</span>
+        </div>
+      </header>
+
+      <section id="metrics" class="metrics" aria-label="מדדי פעילות"></section>
+
+      <section class="filters" aria-label="סינון משרות">
+        <label class="search-box" for="searchInput">
+          <span>חיפוש</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="חברה, משרה, מיקום או קישור" />
+        </label>
+
+        <div class="segmented" role="group" aria-label="סטטוס">
+          <button type="button" class="segment active" data-status="all">הכל</button>
+          <button type="button" class="segment" data-status="הוגש">הוגש</button>
+          <button type="button" class="segment" data-status="נדרש אישור">נדרש אישור</button>
+          <button type="button" class="segment" data-status="נפסל">נפסל</button>
+        </div>
+
+        <label class="select-field" for="scoreFilter">
+          <span>ציון</span>
+          <select id="scoreFilter">
+            <option value="0">כל הציונים</option>
+            <option value="70">70+</option>
+            <option value="80">80+</option>
+            <option value="90">90+</option>
+          </select>
+        </label>
+
+        <label class="select-field" for="sortBy">
+          <span>מיון</span>
+          <select id="sortBy">
+            <option value="score">התאמה</option>
+            <option value="date">תאריך</option>
+            <option value="company">חברה</option>
+          </select>
+        </label>
+      </section>
+
+      <main class="workspace">
+        <section class="jobs-panel" aria-label="רשימת משרות">
+          <div class="panel-title">
+            <h2>משרות</h2>
+            <span id="visibleCount"></span>
+          </div>
+          <div id="jobList" class="job-list" role="list"></div>
+        </section>
+
+        <aside id="jobDetails" class="details-panel" aria-label="פרטי משרה"></aside>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="assets/pages.js"></script>
+  </body>
+</html>

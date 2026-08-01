@@ -1,0 +1,1 @@
+"""Job Searcher automation helpers."""

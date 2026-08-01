@@ -1,0 +1,53 @@
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+*cookie*
+*cookies*
+*session*.txt
+*session*.json
+*.session
+*password*
+*token*
+*.key
+
+# Candidate/private files
+*.pdf
+*.docx
+*.doc
+data/private/
+data/browser-profiles/
+data/evidence/
+data/runtime/
+work/
+
+# Runtime outputs and raw scrape artifacts
+outputs/*.csv
+outputs/*.md
+outputs/*.json
+*_raw.json
+*_response.html
+*_result.json
+*_sent_log.json
+telegram_*payload*.json
+alerts_*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node/browser tooling
+node_modules/
+playwright-report/
+test-results/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,31 @@
+[
+  {
+    "kind": "submitted",
+    "company": "Example Company",
+    "title": "Procurement Specialist",
+    "link": "https://example.com/jobs/123",
+    "score": 88,
+    "submitted_at": "2026-08-01 12:00",
+    "matched_requirements": [
+      "Relevant academic degree",
+      "Supplier management",
+      "Negotiation and purchase order follow-up"
+    ],
+    "company_info": "Short company/job context for the Telegram message."
+  },
+  {
+    "kind": "manual",
+    "company": "Example Company",
+    "title": "Budget Controller",
+    "link": "https://example.com/jobs/456",
+    "score": 82,
+    "matched_requirements": [
+      "Budget control",
+      "Excel",
+      "Management reporting"
+    ],
+    "company_info": "Short company/job context for manual follow-up.",
+    "blocker": "The form requires a mandatory answer that is not available in the CV/profile.",
+    "recommendation": "Verify the missing answer before submitting manually."
+  }
+]
