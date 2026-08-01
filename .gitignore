@@ -43,6 +43,7 @@ venv/
 
 # Node/browser tooling
 node_modules/
+.next/
 playwright-report/
 test-results/
 .wrangler/

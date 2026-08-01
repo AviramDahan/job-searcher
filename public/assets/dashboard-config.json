@@ -1,0 +1,4 @@
+{
+  "updatesEndpoint": "/api/sync",
+  "transport": "cors"
+}

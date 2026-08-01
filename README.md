@@ -263,6 +263,28 @@ This no-PIN/no-login mode is intentionally public-write. Anyone with the dashboa
 
 Telegram alerts are not sent from JSONBlob mode, because sending Telegram from a public frontend would expose the bot token. Use the Cloudflare Worker or Google Apps Script path below when server-side Telegram alerts are required.
 
+## Sites Dashboard With Telegram
+
+The repository also contains a small Next.js app for OpenAI Sites. It serves the same dashboard and exposes `/api/sync`, which proxies the shared JSONBlob state and sends Telegram alerts from server-side environment variables.
+
+Local validation:
+
+```powershell
+npm install
+npm run test:api
+npm run build
+```
+
+Production runtime variables are stored in Sites, not Git:
+
+```text
+JSONBLOB_ENDPOINT=<jsonblob state endpoint>
+TELEGRAM_BOT_TOKEN=<secret>
+TELEGRAM_CHAT_ID=<secret>
+```
+
+In the Sites build, `public/assets/dashboard-config.json` points to `/api/sync`, so manual submissions trigger server-side Telegram alerts. In GitHub Pages, `docs/assets/dashboard-config.json` can point either directly to JSONBlob or to the deployed Sites `/api/sync` endpoint.
+
 The production-ready live MVP uses GitHub Pages for the dashboard and a Cloudflare Worker for shared state. This avoids putting any write token in the public frontend while keeping the dashboard fast and easy to share.
 
 Deploy the Worker:
