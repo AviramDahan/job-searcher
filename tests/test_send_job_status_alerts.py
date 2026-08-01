@@ -35,7 +35,7 @@ class TelegramSendTests(unittest.TestCase):
                     "ok": False,
                     "error_code": 400,
                     "description": "Bad Request: group chat was upgraded to a supergroup chat",
-                    "parameters": {"migrate_to_chat_id": -1004430352316},
+                    "parameters": {"migrate_to_chat_id": -1009999999999},
                 }
                 raise HTTPError(
                     request.full_url,
@@ -48,13 +48,13 @@ class TelegramSendTests(unittest.TestCase):
 
         try:
             send_job_status_alerts.urlopen = fake_urlopen
-            result = send_job_status_alerts.send("token", "-5175388609", "hello")
+            result = send_job_status_alerts.send("token", "-999999999", "hello")
         finally:
             send_job_status_alerts.urlopen = original_urlopen
 
         self.assertTrue(result["ok"])
-        self.assertEqual(calls, ["-5175388609", "-1004430352316"])
-        self.assertEqual(result["_migrated_to_chat_id"], "-1004430352316")
+        self.assertEqual(calls, ["-999999999", "-1009999999999"])
+        self.assertEqual(result["_migrated_to_chat_id"], "-1009999999999")
 
 
 if __name__ == "__main__":

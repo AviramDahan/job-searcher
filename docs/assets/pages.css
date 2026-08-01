@@ -112,6 +112,30 @@ h3 {
   color: var(--green);
 }
 
+.state-pill.local {
+  border-color: #d5dde1;
+  background: #f7f9fa;
+  color: var(--muted);
+}
+
+.state-pill.synced {
+  border-color: #b7ddc6;
+  background: #e8f6ee;
+  color: var(--green);
+}
+
+.state-pill.syncing {
+  border-color: #b5d5f1;
+  background: #eaf4ff;
+  color: #1b5d92;
+}
+
+.state-pill.sync-error {
+  border-color: #efd09d;
+  background: #fff5df;
+  color: var(--amber);
+}
+
 .status-submitted {
   border-color: #b7ddc6;
   background: #e8f6ee;

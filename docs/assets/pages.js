@@ -1,6 +1,7 @@
 const els = {
   candidateName: document.querySelector("#candidateName"),
   generatedAt: document.querySelector("#generatedAt"),
+  syncStatus: document.querySelector("#syncStatus"),
   metrics: document.querySelector("#metrics"),
   searchInput: document.querySelector("#searchInput"),
   scoreFilter: document.querySelector("#scoreFilter"),
@@ -24,12 +25,22 @@ const statusClass = new Map([
 
 const MANUAL_STATUS = "הוגש ידנית";
 const MANUAL_STORAGE_KEY = "job-searcher-manual-submissions-v1";
+const SYNC_CONFIG_PATH = "assets/dashboard-config.json";
+const SYNC_TIMEOUT_MS = 12000;
 
 const state = {
   data: null,
   selectedKey: null,
   status: "all",
   manualSubmissions: {},
+  sync: {
+    config: {},
+    enabled: false,
+    loaded: false,
+    saving: false,
+    lastError: "",
+    lastSyncedAt: "",
+  },
 };
 
 const escapeHtml = (value = "") =>
@@ -49,10 +60,43 @@ function showToast(message) {
   }, 3500);
 }
 
+function normalizeManualEntry(value = {}) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const submittedAt = String(value.submittedAt || value.submitted_at || value.manual_submitted_at || "").trim();
+  if (!submittedAt) {
+    return null;
+  }
+
+  return {
+    submittedAt,
+    updatedAt: String(value.updatedAt || value.updated_at || "").trim(),
+    note: String(value.note || "").trim(),
+    source: String(value.source || "local").trim(),
+  };
+}
+
+function normalizeManualSubmissions(value) {
+  const normalized = {};
+  if (!value || typeof value !== "object") {
+    return normalized;
+  }
+
+  Object.entries(value).forEach(([key, entry]) => {
+    const normalizedEntry = normalizeManualEntry(entry);
+    if (key && normalizedEntry) {
+      normalized[key] = normalizedEntry;
+    }
+  });
+  return normalized;
+}
+
 function loadManualSubmissions() {
   try {
     const parsed = JSON.parse(localStorage.getItem(MANUAL_STORAGE_KEY) || "{}");
-    state.manualSubmissions = parsed && typeof parsed === "object" ? parsed : {};
+    state.manualSubmissions = normalizeManualSubmissions(parsed);
   } catch {
     state.manualSubmissions = {};
   }
@@ -70,6 +114,124 @@ function timestampNow() {
   )}`;
 }
 
+function syncEndpoint() {
+  const endpoint = state.sync.config.updatesEndpoint || state.sync.config.endpoint || "";
+  return String(endpoint).trim();
+}
+
+function isPlaceholderEndpoint(endpoint) {
+  return !endpoint || endpoint.includes("REPLACE_ME") || endpoint.includes("YOUR_SCRIPT_URL");
+}
+
+async function loadSyncConfig() {
+  try {
+    const response = await fetch(SYNC_CONFIG_PATH, { cache: "no-store" });
+    if (!response.ok) {
+      state.sync.config = {};
+      state.sync.enabled = false;
+      return;
+    }
+
+    const config = await response.json();
+    state.sync.config = config && typeof config === "object" ? config : {};
+    state.sync.enabled = !isPlaceholderEndpoint(syncEndpoint());
+  } catch {
+    state.sync.config = {};
+    state.sync.enabled = false;
+  }
+}
+
+function jsonpRequest(endpoint, params = {}) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `jobSearcherSync_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const requestUrl = new URL(endpoint, window.location.href);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        requestUrl.searchParams.set(key, String(value));
+      }
+    });
+    requestUrl.searchParams.set("callback", callbackName);
+    requestUrl.searchParams.set("_ts", String(Date.now()));
+
+    const script = document.createElement("script");
+    let settled = false;
+
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      script.remove();
+      delete window[callbackName];
+    };
+
+    const timer = window.setTimeout(() => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      reject(new Error("sync_timeout"));
+    }, SYNC_TIMEOUT_MS);
+
+    window[callbackName] = (payload) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      resolve(payload);
+    };
+
+    script.onerror = () => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      reject(new Error("sync_network_error"));
+    };
+
+    script.src = requestUrl.toString();
+    document.head.append(script);
+  });
+}
+
+function mergeRemoteManualSubmissions(remoteSubmissions) {
+  const remote = normalizeManualSubmissions(remoteSubmissions);
+  const localOnly = {};
+
+  Object.entries(state.manualSubmissions).forEach(([key, entry]) => {
+    if (!remote[key] && entry.source !== "remote") {
+      localOnly[key] = entry;
+    }
+  });
+
+  state.manualSubmissions = { ...remote, ...localOnly };
+  saveManualSubmissions();
+}
+
+async function loadRemoteManualSubmissions() {
+  if (!state.sync.enabled) {
+    return;
+  }
+
+  try {
+    state.sync.lastError = "";
+    const payload = await jsonpRequest(syncEndpoint(), { action: "listUpdates" });
+    if (!payload || payload.ok === false) {
+      throw new Error(payload?.error || "sync_error");
+    }
+    mergeRemoteManualSubmissions(payload.manual_submissions || {});
+    state.sync.loaded = true;
+    state.sync.lastSyncedAt = timestampNow();
+  } catch (error) {
+    state.sync.lastError = error.message || "sync_error";
+    showToast("הסנכרון המרכזי לא זמין כרגע; ממשיך עם סימון מקומי");
+  }
+}
+
+function selectedRawJob(key) {
+  return state.data?.jobs.find((job) => job.key === key) || null;
+}
+
 function jobView(job) {
   const manual = state.manualSubmissions[job.key];
   if (!manual) {
@@ -80,6 +242,8 @@ function jobView(job) {
     original_status: job.status,
     status: MANUAL_STATUS,
     manual_submitted_at: manual.submittedAt,
+    manual_note: manual.note || "",
+    manual_source: manual.source || "",
   };
 }
 
@@ -87,21 +251,99 @@ function jobViews() {
   return state.data.jobs.map(jobView);
 }
 
-function markManualSubmitted(key) {
+function truncateForSync(value, maxLength = 900) {
+  const clean = String(value || "").trim();
+  if (clean.length <= maxLength) {
+    return clean;
+  }
+  return `${clean.slice(0, maxLength - 1)}…`;
+}
+
+async function pushManualAction(action, key, submittedAt = "", note = "") {
+  if (!state.sync.enabled) {
+    return;
+  }
+
+  const job = selectedRawJob(key) || {};
+  const eventId = `${action}:${key}:${submittedAt || timestampNow()}:${Math.random().toString(36).slice(2)}`;
+  state.sync.saving = true;
+  state.sync.lastError = "";
+  renderChrome();
+
+  try {
+    const payload = await jsonpRequest(syncEndpoint(), {
+      action,
+      event_id: eventId,
+      job_key: key,
+      manual_submitted_at: submittedAt,
+      note,
+      company: job.company || "",
+      title: job.title || "",
+      location: job.location || "",
+      link: job.link || "",
+      score: job.score || "",
+      requirements: truncateForSync(job.requirements),
+      fit: truncateForSync(job.fit),
+      user_agent: navigator.userAgent,
+    });
+
+    if (!payload || payload.ok === false) {
+      throw new Error(payload?.error || "sync_error");
+    }
+
+    mergeRemoteManualSubmissions(payload.manual_submissions || {});
+    state.sync.loaded = true;
+    state.sync.lastSyncedAt = timestampNow();
+    showToast(action === "markManualSubmitted" ? "ההגשה הידנית נשמרה במעקב המרכזי" : "הסימון הידני הוסר מהמעקב המרכזי");
+  } catch (error) {
+    state.sync.lastError = error.message || "sync_error";
+    const current = state.manualSubmissions[key];
+    if (current) {
+      current.source = "local";
+      saveManualSubmissions();
+    }
+    showToast("נשמר מקומית, אבל הסנכרון המרכזי נכשל כרגע");
+  } finally {
+    state.sync.saving = false;
+    render();
+    refreshOpenModal();
+  }
+}
+
+async function markManualSubmitted(key) {
   const submittedAt = timestampNow();
-  state.manualSubmissions[key] = { submittedAt };
+  const note = state.manualSubmissions[key]?.note || "";
+  state.manualSubmissions[key] = {
+    submittedAt,
+    note,
+    source: state.sync.enabled ? "syncing" : "local",
+  };
   saveManualSubmissions();
   refreshAfterManualChange(key);
   refreshOpenModal();
-  showToast(`סומן כהוגש ידנית: ${submittedAt}`);
+
+  if (!state.sync.enabled) {
+    showToast(`סומן כהוגש ידנית: ${submittedAt}`);
+    return;
+  }
+
+  showToast(`סומן כהוגש ידנית ונשלח לסנכרון: ${submittedAt}`);
+  await pushManualAction("markManualSubmitted", key, submittedAt, note);
 }
 
-function clearManualSubmitted(key) {
+async function clearManualSubmitted(key) {
   delete state.manualSubmissions[key];
   saveManualSubmissions();
   refreshAfterManualChange(key);
   refreshOpenModal();
-  showToast("סימון ההגשה הידנית בוטל");
+
+  if (!state.sync.enabled) {
+    showToast("סימון ההגשה הידנית בוטל");
+    return;
+  }
+
+  showToast("מסיר את הסימון מהמעקב המרכזי");
+  await pushManualAction("clearManualSubmitted", key);
 }
 
 function refreshAfterManualChange(key) {
@@ -113,6 +355,8 @@ function refreshAfterManualChange(key) {
 
 async function loadState() {
   loadManualSubmissions();
+  await loadSyncConfig();
+
   const response = await fetch("assets/job-data.json", { cache: "no-store" });
   if (!response.ok) {
     throw new Error("לא נמצא קובץ נתונים לפרסום");
@@ -121,6 +365,9 @@ async function loadState() {
   if (!state.selectedKey && state.data.jobs.length > 0) {
     state.selectedKey = state.data.jobs[0].key;
   }
+
+  render();
+  await loadRemoteManualSubmissions();
   render();
 }
 
@@ -162,6 +409,7 @@ function currentJobs() {
       job.fit,
       job.stop_reason,
       job.manual_submitted_at,
+      job.manual_note,
     ]
       .join(" ")
       .toLowerCase();
@@ -235,7 +483,17 @@ function linkBlock(label, value) {
   `;
 }
 
-function manualSubmittedBlock(timestamp) {
+function manualSourceText(source) {
+  if (source === "remote") {
+    return "נשמר במעקב המרכזי.";
+  }
+  if (state.sync.enabled) {
+    return "ממתין לאישור סנכרון.";
+  }
+  return "נשמר בדפדפן הזה בלבד.";
+}
+
+function manualSubmittedBlock(timestamp, source) {
   if (!timestamp) {
     return "";
   }
@@ -243,6 +501,7 @@ function manualSubmittedBlock(timestamp) {
     <section class="detail-section">
       <h3>הגשה ידנית</h3>
       <p class="detail-text">הוגש ידנית בתאריך ושעה: <span class="timestamp" dir="ltr">${escapeHtml(timestamp)}</span></p>
+      <p class="detail-text">${escapeHtml(manualSourceText(source))}</p>
     </section>
   `;
 }
@@ -251,6 +510,7 @@ function jobDetailsHtml(job, titleId = "") {
   const pillClass = statusClass.get(job.status) || "";
   const headingId = titleId ? ` id="${escapeHtml(titleId)}"` : "";
   const manualTimestamp = job.manual_submitted_at || "";
+  const manualSource = job.manual_source || "";
   const manualFact = manualTimestamp
     ? `<span class="fact manual-fact">הוגש ידנית: <span class="timestamp" dir="ltr">${escapeHtml(manualTimestamp)}</span></span>`
     : "";
@@ -280,7 +540,7 @@ function jobDetailsHtml(job, titleId = "") {
         </div>
       </header>
 
-      ${manualSubmittedBlock(manualTimestamp)}
+      ${manualSubmittedBlock(manualTimestamp, manualSource)}
       ${textBlock("דרישות מרכזיות", job.requirements)}
       ${textBlock("סיבות התאמה", job.fit)}
       ${textBlock("סיבת עצירה או פסילה", job.stop_reason)}
@@ -330,6 +590,23 @@ function refreshOpenModal() {
 function renderChrome() {
   els.candidateName.textContent = `${state.data.candidate.full_name} · מעקב מועמדויות`;
   els.generatedAt.textContent = `עודכן: ${state.data.generated_at}`;
+
+  if (!els.syncStatus) {
+    return;
+  }
+
+  let label = "סימון מקומי";
+  let variant = "local";
+  if (state.sync.enabled) {
+    label = state.sync.saving ? "מסנכרן" : "מסונכרן ל-Sheet";
+    variant = state.sync.saving ? "syncing" : "synced";
+    if (state.sync.lastError) {
+      label = "סנכרון לא זמין";
+      variant = "sync-error";
+    }
+  }
+  els.syncStatus.textContent = label;
+  els.syncStatus.className = `state-pill ${variant}`;
 }
 
 function render() {
@@ -396,9 +673,9 @@ function handleManualAction(event) {
     return;
   }
   if (button.dataset.manualAction === "mark") {
-    markManualSubmitted(key);
+    void markManualSubmitted(key);
   } else {
-    clearManualSubmitted(key);
+    void clearManualSubmitted(key);
   }
 }
 

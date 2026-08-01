@@ -13,6 +13,8 @@ The current version is a cleaned Git-ready extraction from a Codex workspace. It
 - `src/submission_engine.py` - central submission planner/runner that routes jobs through site adapters and returns one consistent decision model.
 - `src/dashboard_app.py` - runs a local browser dashboard for reviewing, filtering, updating, and re-alerting tracked jobs.
 - `src/dashboard_static/` - dashboard HTML, CSS, and JavaScript.
+- `docs/` - GitHub Pages dashboard for sharing a read-only/public snapshot plus manual-submission marking.
+- `integrations/google-apps-script/Code.gs` - Google Sheets + Telegram backend for shared manual-submission updates.
 - `templates/job_applications.template.csv` - required CSV columns.
 - `templates/alerts.example.json` - example Telegram alert payload.
 - `docs/security.md` - what must not be committed.
@@ -52,6 +54,15 @@ Job Searcher/
     job_search_summary.template.md
   docs/
     security.md
+    index.html
+    assets/
+      dashboard-config.json
+      job-data.json
+      pages.css
+      pages.js
+  integrations/
+    google-apps-script/
+      Code.gs
   outputs/
     .gitkeep
   data/
@@ -192,7 +203,12 @@ http://127.0.0.1:8765
 
 ## GitHub Pages Dashboard
 
-The repository includes a GitHub Pages dashboard under `docs/`. It is a static snapshot for sharing progress and does not include backend actions, Telegram sending, browser automation, credentials, cookies, or CV files. Manual submitted markers in the Pages dashboard are stored only in that browser's `localStorage`; they do not update the CSV tracker or send Telegram.
+The repository includes a GitHub Pages dashboard under `docs/`. It is a static snapshot for sharing progress and does not include browser automation, credentials, cookies, or CV files.
+
+Manual submitted markers work in two modes:
+
+- Local-only mode: when `docs/assets/dashboard-config.json` has an empty `updatesEndpoint`, markers are saved in that browser's `localStorage`.
+- Shared MVP mode: when `updatesEndpoint` points to the Google Apps Script web app, markers are saved in a Google Sheet and loaded for every dashboard user. The Apps Script can also send Telegram alerts for manual submissions.
 
 Refresh the Pages data from the private tracker:
 
@@ -223,6 +239,41 @@ Dashboard capabilities:
 - Save follow-up notes back into `outputs/job_applications.csv`.
 - Mark a job as manually submitted or rejected, then rebuild `outputs/job_search_summary.md`.
 - Resend a submitted/manual alert to Telegram for a selected job.
+- In GitHub Pages mode, open a job in a popup and mark it as manually submitted with date/time.
+
+## Google Sheets Sync MVP
+
+The quickest shared MVP uses Google Sheets as the database and Apps Script as the small public backend. The current MVP is intentionally configured without a PIN, per product decision. That means anyone who obtains the Apps Script URL can write manual-submission updates, so do not store secrets in the dashboard config.
+
+Setup:
+
+1. Create a Google Sheet for the dashboard state.
+2. Open `Extensions > Apps Script`.
+3. Paste the contents of `integrations/google-apps-script/Code.gs`.
+4. In Apps Script, open `Project Settings > Script properties` and set:
+
+```text
+JOB_SEARCHER_SHEET_ID=<optional sheet id if the script is not bound to the sheet>
+TELEGRAM_BOT_TOKEN=<telegram bot token, keep only inside Apps Script>
+TELEGRAM_CHAT_ID=<telegram group/chat id>
+TIMEZONE=Asia/Jerusalem
+```
+
+5. Deploy with `Deploy > New deployment > Web app`.
+6. Choose `Execute as: Me` and `Who has access: Anyone`.
+7. Copy the `/exec` web app URL into `docs/assets/dashboard-config.json`:
+
+```json
+{
+  "updatesEndpoint": "https://script.google.com/macros/s/REPLACE_ME/exec"
+}
+```
+
+8. Commit and push `docs/assets/dashboard-config.json`.
+
+After that, Koren can open the GitHub Pages URL, click a job, and press `סמן כהוגש ידנית`. The dashboard updates locally immediately, writes the shared state to Google Sheets, and sends a Telegram message if the Apps Script properties contain Telegram credentials.
+
+The Apps Script stores an append-only audit tab named `manual_submissions` with the job key, action, company, title, link, score, timestamp, and short matching details. Clearing a manual mark adds a new clear event instead of deleting prior history.
 
 Telegram resend buttons require these environment variables in the same shell that starts the dashboard:
 
