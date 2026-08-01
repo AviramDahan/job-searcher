@@ -1,4 +1,4 @@
 {
-  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fbf6f-e0ae-7448-b1d0-7cc92a1293c5",
-  "transport": "jsonblob"
+  "updatesEndpoint": "https://job-searcher-live-dashboard.aviramsdahan.chatgpt.site/api/sync",
+  "transport": "cors"
 }
