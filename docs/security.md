@@ -11,6 +11,7 @@ Do not commit:
 - Raw HTML responses from application forms.
 - Filled application logs that include personal contact details.
 - Telegram credentials inside `docs/assets/dashboard-config.json` or any public frontend file. Store them only in Apps Script properties or local environment variables.
+- Candidate contact details, Telegram tokens, or passwords inside the JSONBlob live state. JSONBlob mode is public-write when the dashboard URL is public.
 
 Recommended workflow:
 
@@ -20,3 +21,4 @@ Recommended workflow:
 4. Commit only reusable code, templates, and documentation.
 5. Rotate any token that was ever pasted into a chat, commit, screenshot, or public issue.
 6. Treat a no-PIN Apps Script web app URL as public-write. It is acceptable for the current MVP only if the Sheet is reviewed and can be repaired from the append-only history.
+7. Treat the JSONBlob live endpoint as public-write. It is acceptable only for non-secret manual-submission markers.

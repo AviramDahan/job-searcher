@@ -248,7 +248,22 @@ Dashboard capabilities:
 
 ## Live Shared Dashboard MVP
 
-The recommended live MVP uses GitHub Pages for the dashboard and a Cloudflare Worker for shared state. This avoids putting any write token in the public frontend while keeping the dashboard fast and easy to share.
+The fastest no-login live MVP uses GitHub Pages for the dashboard and JSONBlob for shared state. It works while the local computer is off because the manual-submission state is stored remotely.
+
+Current live config:
+
+```json
+{
+  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fbf6f-e0ae-7448-b1d0-7cc92a1293c5",
+  "transport": "jsonblob"
+}
+```
+
+This no-PIN/no-login mode is intentionally public-write. Anyone with the dashboard URL can mark or clear manual submissions. Do not store Telegram tokens, candidate contact details, or any secret in this JSONBlob state.
+
+Telegram alerts are not sent from JSONBlob mode, because sending Telegram from a public frontend would expose the bot token. Use the Cloudflare Worker or Google Apps Script path below when server-side Telegram alerts are required.
+
+The production-ready live MVP uses GitHub Pages for the dashboard and a Cloudflare Worker for shared state. This avoids putting any write token in the public frontend while keeping the dashboard fast and easy to share.
 
 Deploy the Worker:
 

@@ -227,10 +227,91 @@ async function corsRequest(endpoint, params = {}, method = "GET") {
 
 function syncRequest(params = {}, method = "GET") {
   const endpoint = syncEndpoint();
+  if (syncTransport() === "jsonblob") {
+    return jsonBlobRequest(endpoint, params);
+  }
   if (syncTransport() === "cors") {
     return corsRequest(endpoint, params, method);
   }
   return jsonpRequest(endpoint, params);
+}
+
+async function jsonBlobRequest(endpoint, params = {}) {
+  const response = await fetch(endpoint, {
+    headers: {
+      Accept: "application/json",
+    },
+    cache: "no-store",
+  });
+  const currentState = await response.json().catch(() => null);
+  if (!response.ok || !currentState) {
+    throw new Error(`sync_http_${response.status}`);
+  }
+
+  if ((params.action || "listUpdates") === "listUpdates") {
+    return {
+      ok: true,
+      generated_at: currentState.generated_at || "",
+      manual_submissions: currentState.manual_submissions || {},
+      events: currentState.events || [],
+    };
+  }
+
+  const nextState = {
+    ok: true,
+    generated_at: new Date().toISOString(),
+    manual_submissions: currentState.manual_submissions || {},
+    events: Array.isArray(currentState.events) ? currentState.events : [],
+  };
+  const eventId = String(params.event_id || `${params.action}:${params.job_key}:${timestampNow()}`);
+  const duplicate = nextState.events.some((event) => event && event.event_id === eventId);
+
+  if (!duplicate && params.action === "markManualSubmitted") {
+    nextState.manual_submissions[params.job_key] = {
+      submittedAt: String(params.manual_submitted_at || timestampNow()),
+      updatedAt: timestampNow(),
+      note: String(params.note || ""),
+      source: "remote",
+    };
+  }
+
+  if (!duplicate && params.action === "clearManualSubmitted") {
+    delete nextState.manual_submissions[params.job_key];
+  }
+
+  if (!duplicate) {
+    nextState.events.push({
+      created_at: timestampNow(),
+      event_id: eventId,
+      action: String(params.action || ""),
+      job_key: String(params.job_key || ""),
+      company: String(params.company || ""),
+      title: String(params.title || ""),
+      location: String(params.location || ""),
+      link: String(params.link || ""),
+      score: String(params.score || ""),
+    });
+  }
+
+  const putResponse = await fetch(endpoint, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(nextState),
+  });
+  if (!putResponse.ok) {
+    throw new Error(`sync_http_${putResponse.status}`);
+  }
+
+  return {
+    ok: true,
+    duplicate,
+    generated_at: nextState.generated_at,
+    manual_submissions: nextState.manual_submissions,
+    telegram: { sent: false, reason: "jsonblob_transport_no_server_secret" },
+  };
 }
 
 function mergeRemoteManualSubmissions(remoteSubmissions) {
@@ -640,7 +721,7 @@ function renderChrome() {
   let label = "סימון מקומי";
   let variant = "local";
   if (state.sync.enabled) {
-    label = state.sync.saving ? "מסנכרן" : "מסונכרן ל-Sheet";
+    label = state.sync.saving ? "מסנכרן" : "מסונכרן לענן";
     variant = state.sync.saving ? "syncing" : "synced";
     if (state.sync.lastError) {
       label = "סנכרון לא זמין";
