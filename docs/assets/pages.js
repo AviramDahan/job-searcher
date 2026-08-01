@@ -9,6 +9,9 @@ const els = {
   visibleCount: document.querySelector("#visibleCount"),
   jobList: document.querySelector("#jobList"),
   jobDetails: document.querySelector("#jobDetails"),
+  jobModal: document.querySelector("#jobModal"),
+  modalClose: document.querySelector("#modalClose"),
+  modalContent: document.querySelector("#modalContent"),
   toast: document.querySelector("#toast"),
 };
 
@@ -117,15 +120,18 @@ function renderJobs() {
       const selected = job.key === state.selectedKey ? " selected" : "";
       const pillClass = statusClass.get(job.status) || "";
       return `
-        <button type="button" class="job-row${selected}" data-key="${escapeHtml(job.key)}">
+        <article class="job-row${selected}" data-key="${escapeHtml(job.key)}" role="button" tabindex="0">
           <span class="score-badge">${escapeHtml(job.score)}</span>
           <span class="job-main">
             <span class="job-title">${escapeHtml(job.title)}</span>
             <span class="job-company">${escapeHtml(job.company)}</span>
             <span class="job-location">${escapeHtml(job.location || "ללא מיקום")}</span>
           </span>
-          <span class="status-pill ${pillClass}">${escapeHtml(job.status || "ללא סטטוס")}</span>
-        </button>
+          <span class="row-side">
+            <span class="status-pill ${pillClass}">${escapeHtml(job.status || "ללא סטטוס")}</span>
+            <a class="row-link" href="${escapeHtml(job.link)}" target="_blank" rel="noreferrer">פתח משרה</a>
+          </span>
+        </article>
       `;
     })
     .join("");
@@ -137,20 +143,28 @@ function textBlock(label, value) {
   return `<section class="detail-section"><h3>${escapeHtml(label)}</h3>${body}</section>`;
 }
 
-function renderDetails() {
-  const job = state.data.jobs.find((item) => item.key === state.selectedKey);
-  if (!job) {
-    els.jobDetails.innerHTML = `<div class="empty-state">אין משרה נבחרת</div>`;
-    return;
+function linkBlock(label, value) {
+  const clean = String(value || "").trim();
+  if (!clean) {
+    return textBlock(label, "");
   }
+  return `
+    <section class="detail-section">
+      <h3>${escapeHtml(label)}</h3>
+      <a class="source-url" href="${escapeHtml(clean)}" target="_blank" rel="noreferrer">${escapeHtml(clean)}</a>
+    </section>
+  `;
+}
 
+function jobDetailsHtml(job, titleId = "") {
   const pillClass = statusClass.get(job.status) || "";
-  els.jobDetails.innerHTML = `
+  const headingId = titleId ? ` id="${escapeHtml(titleId)}"` : "";
+  return `
     <div class="details-inner">
       <header class="details-head">
         <div class="details-title-line">
           <div>
-            <h2 class="details-title">${escapeHtml(job.title)}</h2>
+            <h2${headingId} class="details-title">${escapeHtml(job.title)}</h2>
             <p class="details-company">${escapeHtml(job.company)}</p>
           </div>
           <span class="score-badge">${escapeHtml(job.score)}</span>
@@ -162,15 +176,44 @@ function renderDetails() {
           <span class="fact">${escapeHtml(job.cv || "ללא CV")}</span>
         </div>
         <div class="actions">
-          <a class="link-button" href="${escapeHtml(job.link)}" target="_blank" rel="noreferrer">פתח משרה</a>
+          <a class="link-button" href="${escapeHtml(job.link)}" target="_blank" rel="noreferrer">פתח משרה מקורית</a>
         </div>
       </header>
 
       ${textBlock("דרישות מרכזיות", job.requirements)}
       ${textBlock("סיבות התאמה", job.fit)}
       ${textBlock("סיבת עצירה או פסילה", job.stop_reason)}
+      ${linkBlock("קישור ישיר", job.link)}
     </div>
   `;
+}
+
+function selectedJob() {
+  return state.data.jobs.find((item) => item.key === state.selectedKey);
+}
+
+function renderDetails() {
+  const job = selectedJob();
+  if (!job) {
+    els.jobDetails.innerHTML = `<div class="empty-state">אין משרה נבחרת</div>`;
+    return;
+  }
+
+  els.jobDetails.innerHTML = jobDetailsHtml(job);
+}
+
+function openJobModal(job) {
+  state.selectedKey = job.key;
+  render();
+  els.modalContent.innerHTML = jobDetailsHtml(job, "modalTitle");
+  els.jobModal.hidden = false;
+  document.body.classList.add("modal-open");
+  els.modalClose.focus();
+}
+
+function closeJobModal() {
+  els.jobModal.hidden = true;
+  document.body.classList.remove("modal-open");
 }
 
 function renderChrome() {
@@ -189,12 +232,47 @@ function render() {
 }
 
 els.jobList.addEventListener("click", (event) => {
+  if (event.target.closest("a")) {
+    return;
+  }
   const row = event.target.closest(".job-row");
   if (!row) {
     return;
   }
   state.selectedKey = row.dataset.key;
-  render();
+  const job = selectedJob();
+  if (job) {
+    openJobModal(job);
+  }
+});
+
+els.jobList.addEventListener("keydown", (event) => {
+  if (!["Enter", " "].includes(event.key)) {
+    return;
+  }
+  const row = event.target.closest(".job-row");
+  if (!row) {
+    return;
+  }
+  event.preventDefault();
+  state.selectedKey = row.dataset.key;
+  const job = selectedJob();
+  if (job) {
+    openJobModal(job);
+  }
+});
+
+els.modalClose.addEventListener("click", closeJobModal);
+els.jobModal.addEventListener("click", (event) => {
+  if (event.target === els.jobModal) {
+    closeJobModal();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !els.jobModal.hidden) {
+    closeJobModal();
+  }
 });
 
 els.searchInput.addEventListener("input", render);

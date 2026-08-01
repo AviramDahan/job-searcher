@@ -28,6 +28,10 @@ body {
   color: var(--text);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -258,6 +262,7 @@ select:focus {
 .job-row {
   display: grid;
   grid-template-columns: 62px 1fr auto;
+  align-items: center;
   gap: 12px;
   width: 100%;
   min-height: 86px;
@@ -266,12 +271,19 @@ select:focus {
   border-bottom: 1px solid var(--line);
   background: transparent;
   color: inherit;
+  cursor: pointer;
   text-align: right;
 }
 
 .job-row:hover,
+.job-row:focus-visible,
 .job-row.selected {
   background: #f1f6f6;
+}
+
+.job-row:focus-visible {
+  outline: 3px solid rgba(18, 117, 111, 0.22);
+  outline-offset: -3px;
 }
 
 .score-badge {
@@ -317,6 +329,33 @@ select:focus {
   color: var(--blue);
   font-size: 12px;
   font-weight: 700;
+}
+
+.row-side {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.row-link {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  border: 1px solid #b9d4d1;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.row-link:hover {
+  border-color: var(--accent);
+  background: #eaf6f4;
 }
 
 .details-panel {
@@ -405,6 +444,15 @@ select:focus {
   color: var(--muted);
 }
 
+.source-url {
+  direction: ltr;
+  overflow-wrap: anywhere;
+  color: var(--blue);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: left;
+}
+
 .empty-state {
   display: grid;
   min-height: 460px;
@@ -426,6 +474,59 @@ select:focus {
   background: #172027;
   color: #fff;
   box-shadow: var(--shadow);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(17, 26, 32, 0.48);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.job-modal {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(820px, calc(100vh - 44px));
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(17, 26, 32, 0.24);
+}
+
+.job-modal .details-inner {
+  padding-top: 54px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  outline: none;
 }
 
 @media (max-width: 1120px) {
@@ -486,9 +587,11 @@ select:focus {
     grid-template-columns: 52px 1fr;
   }
 
-  .job-row .status-pill {
+  .row-side {
     grid-column: 1 / -1;
-    justify-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .score-badge {
@@ -499,5 +602,13 @@ select:focus {
 
   .job-title {
     white-space: normal;
+  }
+
+  .modal-backdrop {
+    padding: 12px;
+  }
+
+  .job-modal {
+    max-height: calc(100vh - 24px);
   }
 }
