@@ -13,7 +13,7 @@ from typing import Protocol
 try:
     from .browser_session import build_session_config, save_evidence
     from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from .jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
@@ -22,7 +22,7 @@ try:
 except ImportError:
     from browser_session import build_session_config, save_evidence
     from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
@@ -246,6 +246,8 @@ def _default_decision(
 ) -> SubmissionDecision:
     if job.status == SUBMITTED:
         return SubmissionDecision.ALREADY_SUBMITTED
+    if job.status == REJECTED:
+        return SubmissionDecision.DO_NOT_APPLY
     if job.score < 70:
         return SubmissionDecision.DO_NOT_APPLY
     if has_disqualifying_blocker:
@@ -303,6 +305,9 @@ class BrowserPlanningAdapter:
         if job.status == SUBMITTED:
             reason = "The tracker already marks this job as submitted."
             next_step = "Do not submit again unless the operator explicitly resets the row."
+        elif job.status == REJECTED:
+            reason = "The tracker already marks this job as rejected."
+            next_step = "Do not attempt this application unless the row is manually restored after a fresh review."
         elif job.score < 70:
             reason = "The fit score is below the minimum submission threshold."
             next_step = "Keep the job rejected or rescore it after reading a live updated posting."
@@ -355,7 +360,7 @@ class BrowserPlanningAdapter:
 class JobifySubmissionAdapter(BrowserPlanningAdapter):
     def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
         plan = super().plan(job, profile)
-        if job.status == SUBMITTED or job.score < 70:
+        if plan.decision in {SubmissionDecision.ALREADY_SUBMITTED.value, SubmissionDecision.DO_NOT_APPLY.value}:
             return plan
         if "closed" in plan.reason.lower() or "סגור" in plan.reason:
             return _replace_plan(

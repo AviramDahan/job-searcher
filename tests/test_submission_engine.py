@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from src.candidate_profile import CandidateProfile, SystemSkillFact
-from src.job_records import COMPANY, COVER, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE
+from src.job_records import COMPANY, COVER, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE
 from src.submission_engine import (
     SubmissionDecision,
     SubmissionRunMode,
@@ -217,6 +217,30 @@ class SubmissionEngineTests(unittest.TestCase):
         plans = plan_jobs([row(**{STATUS: SUBMITTED})], profile=profile(), include_submitted=True)
 
         self.assertEqual(plans[0].decision, SubmissionDecision.ALREADY_SUBMITTED.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_rejected_high_score_row_is_never_attempted(self) -> None:
+        plans = plan_jobs([row(**{STATUS: REJECTED, SCORE: "92"})], profile=profile(), min_score=70)
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_rejected_jobify_high_score_row_is_never_attempted(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        STATUS: REJECTED,
+                        SCORE: "92",
+                        LINK: "https://jobify360.co.il/jobs/example-id",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
         self.assertFalse(plans[0].can_attempt)
 
     def test_required_denied_system_skill_blocks_submission(self) -> None:
