@@ -8,9 +8,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
-    from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows
+    from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 except ImportError:
-    from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows
+    from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 
 
 DEFAULT_TIMEZONE = "Asia/Jerusalem"
@@ -67,8 +67,9 @@ def build_payload(csv_path: Path, summary_path: Path, candidate_name: str, timez
             "documented": len(rows),
             "submitted": counts[SUBMITTED],
             "pending": counts[PENDING],
+            "manual_required": counts[MANUAL_REQUIRED],
             "rejected": counts[REJECTED],
-            "suitable": counts[SUBMITTED] + counts[PENDING],
+            "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
         "jobs": jobs,
     }

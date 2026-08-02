@@ -7,15 +7,15 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
-    from .job_records import COMPANY, LINK, LOCATION, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, TITLE, load_rows, score_int
+    from .job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
 except ImportError:
-    from job_records import COMPANY, LINK, LOCATION, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, TITLE, load_rows, score_int
+    from job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
 
 
 def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int, timezone: str) -> str:
     now = datetime.now(ZoneInfo(timezone)).strftime("%Y-%m-%d %H:%M")
     counts = Counter(row.get(STATUS, "") for row in rows)
-    suitable = counts[SUBMITTED] + counts[PENDING]
+    suitable = sum(counts[status] for status in SUITABLE_STATUSES)
     top = sorted(rows, key=score_int, reverse=True)[:5]
 
     lines = [
@@ -26,7 +26,8 @@ def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int,
         f"- מספר המשרות שתועדו: {len(rows)}",
         f"- מספר המשרות המתאימות: {suitable}",
         f"- מספר המועמדויות שהוגשו: {counts[SUBMITTED]}",
-        f"- מספר המשרות שממתינות לאישור/השלמה: {counts[PENDING]}",
+        f"- מספר המשרות שממתינות לאישור: {counts[PENDING]}",
+        f"- מספר המשרות שנדרשת עבורן הגשה ידנית: {counts[MANUAL_REQUIRED]}",
         f"- מספר המשרות שנפסלו: {counts[REJECTED]}",
         f"- התראות Telegram חדשות בסבב: {telegram_alerts}",
         "",
@@ -35,7 +36,7 @@ def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int,
     for row in top:
         lines.append(f"- {row[SCORE]}/100 - {row[COMPANY]} - [{row[TITLE]}]({row[LINK]}) - {row[LOCATION]} - {row[STATUS]}")
 
-    for status in [SUBMITTED, PENDING, REJECTED]:
+    for status in [SUBMITTED, MANUAL_REQUIRED, PENDING, REJECTED]:
         lines.extend(["", f"## משרות בסטטוס: {status}"])
         status_rows = [row for row in rows if row.get(STATUS) == status]
         status_rows.sort(key=score_int, reverse=True)

@@ -9,7 +9,7 @@ The current version is a cleaned Git-ready extraction from a Codex workspace. It
 - `src/job_records.py` - shared CSV schema, job-key generation, duplicate detection, and basic summary counts.
 - `src/rebuild_summary.py` - rebuilds `outputs/job_search_summary.md` from `outputs/job_applications.csv`.
 - `src/send_job_status_alerts.py` - sends structured submitted/manual job alerts to Telegram from a JSON file.
-- `src/send_manual_alerts_from_csv.py` - sends Telegram alerts for jobs in CSV status `נדרש אישור`, while keeping a local send log to avoid repeat alerts.
+- `src/send_manual_alerts_from_csv.py` - sends Telegram alerts for jobs in CSV status `נדרשת הגשה ידנית` or `נדרש אישור`, while keeping a local send log to avoid repeat alerts.
 - `src/submission_engine.py` - central submission planner/runner that routes jobs through site adapters and returns one consistent decision model.
 - `src/dashboard_app.py` - runs a local browser dashboard for reviewing, filtering, updating, and re-alerting tracked jobs.
 - `src/dashboard_static/` - dashboard HTML, CSS, and JavaScript.
@@ -159,7 +159,8 @@ The tracker expects this exact CSV schema:
 Allowed statuses:
 
 - `הוגש` - application was submitted.
-- `נדרש אישור` - application should stop until a human confirms missing information or completes a blocked step.
+- `נדרשת הגשה ידנית` - the job is suitable but site mechanics such as CAPTCHA, Radware, or an unavailable direct form prevent safe automatic submission.
+- `נדרש אישור` - application should stop until a human confirms missing candidate information, salary/work-model policy, or another substantive answer.
 - `נפסל` - job was rejected by filtering rules.
 
 ## Common Commands
@@ -188,7 +189,13 @@ Mark existing manual jobs as already alerted without sending Telegram messages:
 python .\src\send_manual_alerts_from_csv.py --csv .\outputs\job_applications.csv --log .\outputs\manual_alert_log.json --mark-existing
 ```
 
-Send Telegram alerts for new `נדרש אישור` rows:
+Move true site-blocked rows into `נדרשת הגשה ידנית`:
+
+```powershell
+python -m src.categorize_manual_required --csv .\outputs\job_applications.csv
+```
+
+Send Telegram alerts for new `נדרשת הגשה ידנית` or `נדרש אישור` rows:
 
 ```powershell
 python .\src\send_manual_alerts_from_csv.py --csv .\outputs\job_applications.csv --log .\outputs\manual_alert_log.json

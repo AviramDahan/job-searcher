@@ -25,6 +25,7 @@ try:
         HEADERS,
         LINK,
         LOCATION,
+        MANUAL_REQUIRED,
         PENDING,
         REJECTED,
         REQUIREMENTS,
@@ -32,7 +33,9 @@ try:
         STATUS,
         STOP_REASON,
         SUBMITTED,
+        SUITABLE_STATUSES,
         TITLE,
+        is_action_required_status,
         job_key,
         load_rows,
         score_int,
@@ -53,6 +56,7 @@ except ImportError:
         HEADERS,
         LINK,
         LOCATION,
+        MANUAL_REQUIRED,
         PENDING,
         REJECTED,
         REQUIREMENTS,
@@ -60,7 +64,9 @@ except ImportError:
         STATUS,
         STOP_REASON,
         SUBMITTED,
+        SUITABLE_STATUSES,
         TITLE,
+        is_action_required_status,
         job_key,
         load_rows,
         score_int,
@@ -141,7 +147,7 @@ def row_by_key(rows: list[dict[str, str]], key: str) -> dict[str, str] | None:
 
 
 def failure_details(row: dict[str, str]) -> dict[str, str]:
-    if row.get(STATUS) != PENDING:
+    if not is_action_required_status(row.get(STATUS, "")):
         return {"kind": "", "next_step": ""}
     route = route_submission_failure(
         reason=row.get(STOP_REASON, ""),
@@ -224,8 +230,9 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
             "documented": len(rows),
             "submitted": counts[SUBMITTED],
             "pending": counts[PENDING],
+            "manual_required": counts[MANUAL_REQUIRED],
             "rejected": counts[REJECTED],
-            "suitable": counts[SUBMITTED] + counts[PENDING],
+            "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
         "jobs": jobs,
     }

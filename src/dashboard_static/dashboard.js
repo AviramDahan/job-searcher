@@ -13,9 +13,13 @@ const els = {
   toast: document.querySelector("#toast"),
 };
 
+const MANUAL_REQUIRED_STATUS = "נדרשת הגשה ידנית";
+const PENDING_STATUS = "נדרש אישור";
+
 const statusClass = new Map([
   ["הוגש", "status-submitted"],
-  ["נדרש אישור", "status-pending"],
+  [MANUAL_REQUIRED_STATUS, "status-manual-required"],
+  [PENDING_STATUS, "status-pending"],
   ["נפסל", "status-rejected"],
 ]);
 
@@ -74,6 +78,7 @@ function renderMetrics() {
     ["תועדו", counts.documented],
     ["מתאימות", counts.suitable],
     ["הוגשו", counts.submitted],
+    ["הגשה ידנית", counts.manual_required || 0],
     ["ממתינות", counts.pending],
     ["נפסלו", counts.rejected],
     ["Telegram", manualAlerts.sent || 0],

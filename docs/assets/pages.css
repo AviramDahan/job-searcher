@@ -149,6 +149,12 @@ h3 {
   color: #1b5d92;
 }
 
+.status-manual-required {
+  border-color: #efc49d;
+  background: #fff1e8;
+  color: #a34d12;
+}
+
 .status-pending {
   border-color: #efd09d;
   background: #fff5df;
@@ -163,7 +169,7 @@ h3 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  grid-template-columns: repeat(8, minmax(120px, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }

@@ -19,11 +19,14 @@ const els = {
 const statusClass = new Map([
   ["הוגש", "status-submitted"],
   ["הוגש ידנית", "status-manual-submitted"],
+  ["נדרשת הגשה ידנית", "status-manual-required"],
   ["נדרש אישור", "status-pending"],
   ["נפסל", "status-rejected"],
 ]);
 
 const MANUAL_STATUS = "הוגש ידנית";
+const MANUAL_REQUIRED_STATUS = "נדרשת הגשה ידנית";
+const PENDING_STATUS = "נדרש אישור";
 const MANUAL_REJECTED_STATUS = "נפסל";
 const MANUAL_REJECTION_REASON = "נפסל בבחירה ידנית";
 const MANUAL_STORAGE_KEY = "job-searcher-manual-submissions-v1";
@@ -643,7 +646,8 @@ function renderMetrics() {
     ["מתאימות", counts.suitable],
     ["הוגשו", statusCount("הוגש")],
     ["הוגשו ידנית", manualCount],
-    ["ממתינות", statusCount("נדרש אישור")],
+    ["הגשה ידנית", statusCount(MANUAL_REQUIRED_STATUS)],
+    ["ממתינות", statusCount(PENDING_STATUS)],
     ["נפסלו", statusCount("נפסל")],
   ];
 
@@ -805,7 +809,7 @@ function jobDetailsHtml(job, titleId = "") {
     : `<button type="button" class="manual-button" data-manual-action="mark" data-key="${escapeHtml(job.key)}">סמן כהוגש ידנית</button>`;
   const manualRejectAction = manualRejectedAt
     ? `<button type="button" class="manual-button danger-secondary" data-manual-action="clear-reject" data-key="${escapeHtml(job.key)}">בטל פסילה ידנית</button>`
-    : originalStatus === "נדרש אישור" && !manualTimestamp
+    : [PENDING_STATUS, MANUAL_REQUIRED_STATUS].includes(originalStatus) && !manualTimestamp
     ? `<button type="button" class="manual-button danger" data-manual-action="reject" data-key="${escapeHtml(job.key)}">סמן כנפסל</button>`
     : "";
   return `

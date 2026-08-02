@@ -12,7 +12,7 @@ from pathlib import Path
 try:
     from .browser_session import build_session_config, save_evidence
     from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, FIT, LINK, LOCATION, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
+    from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from .manual_submission_report import SITE_AUTOMATION_FAILURES
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
@@ -20,7 +20,7 @@ try:
 except ImportError:
     from browser_session import build_session_config, save_evidence
     from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, FIT, LINK, LOCATION, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
+    from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from manual_submission_report import SITE_AUTOMATION_FAILURES
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
@@ -135,7 +135,7 @@ RESOLVED_FACT_RETRY_KINDS = {
 def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KOREN_DAHAN_PROFILE) -> list[RetryItem]:
     items: list[RetryItem] = []
     for row in rows:
-        if row.get(STATUS) != PENDING:
+        if not is_action_required_status(row.get(STATUS, "")):
             continue
         context_reason = " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, "")] if part)
         fact_assessment = assess_candidate_facts(_fact_context(row), profile=profile)

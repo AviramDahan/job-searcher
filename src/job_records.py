@@ -39,7 +39,15 @@ HEADERS = [
 
 SUBMITTED = "הוגש"
 PENDING = "נדרש אישור"
+MANUAL_REQUIRED = "נדרשת הגשה ידנית"
 REJECTED = "נפסל"
+
+ACTION_REQUIRED_STATUSES = {PENDING, MANUAL_REQUIRED}
+SUITABLE_STATUSES = {SUBMITTED, PENDING, MANUAL_REQUIRED}
+
+
+def is_action_required_status(status: str) -> bool:
+    return status in ACTION_REQUIRED_STATUSES
 
 
 def normalize_text(value: str) -> str:
@@ -120,8 +128,9 @@ def summarize_counts(rows: list[dict[str, str]]) -> dict[str, int]:
         "total": len(rows),
         "submitted": counts[SUBMITTED],
         "pending": counts[PENDING],
+        "manual_required": counts[MANUAL_REQUIRED],
         "rejected": counts[REJECTED],
-        "suitable": counts[SUBMITTED] + counts[PENDING],
+        "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         "duplicate_keys": len(duplicate_keys(rows)),
     }
 

@@ -8,13 +8,13 @@ from pathlib import Path
 
 try:
     from .candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, FIT, LINK, LOCATION, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
+    from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
     from .submission_failures import FailureKind
 except ImportError:
     from candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, FIT, LINK, LOCATION, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
+    from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
     from submission_failures import FailureKind
@@ -168,7 +168,7 @@ def main() -> int:
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    rows = [row for row in load_rows(args.csv) if row.get(STATUS) == PENDING]
+    rows = [row for row in load_rows(args.csv) if is_action_required_status(row.get(STATUS, ""))]
     log = load_log(args.log)
     now = datetime.now().isoformat(timespec="seconds")
     sent = skipped = marked = 0

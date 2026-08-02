@@ -117,6 +117,12 @@ h3 {
   color: var(--amber);
 }
 
+.status-manual-required {
+  border-color: #efc49d;
+  background: #fff1e8;
+  color: #a34d12;
+}
+
 .status-rejected {
   border-color: #efc2bd;
   background: #fff0ee;
@@ -125,7 +131,7 @@ h3 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  grid-template-columns: repeat(8, minmax(120px, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }

@@ -6,12 +6,12 @@ from pathlib import Path
 
 try:
     from .candidate_profile import FactIssueSeverity, assess_candidate_facts
-    from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, PENDING, load_rows, score_int
+    from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, load_rows, score_int
     from .site_adapters import route_submission_failure
     from .submission_failures import AutomationAction, FailureKind
 except ImportError:
     from candidate_profile import FactIssueSeverity, assess_candidate_facts
-    from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, PENDING, load_rows, score_int
+    from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, load_rows, score_int
     from site_adapters import route_submission_failure
     from submission_failures import AutomationAction, FailureKind
 
@@ -49,7 +49,7 @@ def fact_context(row: dict[str, str]) -> str:
 
 
 def classify_pending_rows(rows: list[dict[str, str]]) -> list[dict[str, object]]:
-    pending = [row for row in rows if row.get(STATUS) == PENDING]
+    pending = [row for row in rows if is_action_required_status(row.get(STATUS, ""))]
     items = []
     for row in pending:
         context_reason = " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, "")] if part)
