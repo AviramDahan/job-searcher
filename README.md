@@ -217,10 +217,11 @@ http://127.0.0.1:8765
 
 The repository includes a GitHub Pages dashboard under `docs/`. It is a static snapshot for sharing progress and does not include browser automation, credentials, cookies, or CV files.
 
-Manual submitted markers work in two modes:
+Manual submitted/rejected markers require live sync:
 
-- Local-only mode: when `docs/assets/dashboard-config.json` has an empty `updatesEndpoint`, markers are saved in that browser's `localStorage`.
-- Shared MVP mode: when `updatesEndpoint` points to the Google Apps Script web app, markers are saved in a Google Sheet and loaded for every dashboard user. The Apps Script can also send Telegram alerts for manual submissions.
+- If `updatesEndpoint` points to the live sync API, markers are saved in the central state and loaded for every dashboard user.
+- If sync is unavailable, missing, or still loading, manual action buttons are disabled and the dashboard shows: `הסנכרון לא זמין. אנא רענן או בדוק מצב סנכרון.`
+- The dashboard no longer falls back to browser-only local writes for manual actions.
 
 Refresh the Pages data from the private tracker:
 

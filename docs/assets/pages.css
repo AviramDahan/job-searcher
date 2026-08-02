@@ -498,6 +498,24 @@ select:focus {
   filter: brightness(0.96);
 }
 
+.manual-button:disabled,
+.manual-button[aria-disabled="true"] {
+  cursor: not-allowed;
+  filter: none;
+  opacity: 0.52;
+}
+
+.sync-warning {
+  padding: 12px 14px;
+  border: 1px solid #efd09d;
+  border-radius: var(--radius);
+  background: #fff5df;
+  color: var(--amber);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .detail-section {
   display: grid;
   gap: 8px;

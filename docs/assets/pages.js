@@ -33,6 +33,9 @@ const MANUAL_STORAGE_KEY = "job-searcher-manual-submissions-v1";
 const MANUAL_REJECTIONS_STORAGE_KEY = "job-searcher-manual-rejections-v1";
 const SYNC_CONFIG_PATH = "assets/dashboard-config.json";
 const SYNC_TIMEOUT_MS = 12000;
+const SYNC_UNAVAILABLE_MESSAGE = "הסנכרון לא זמין. אנא רענן או בדוק מצב סנכרון.";
+const SYNC_LOADING_MESSAGE = "הסנכרון עדיין נטען. אנא המתן רגע לפני ביצוע פעולה.";
+const SYNC_SAVING_MESSAGE = "הסנכרון בפעולה. אנא המתן לסיום העדכון.";
 
 const state = {
   data: null,
@@ -81,7 +84,7 @@ function normalizeManualEntry(value = {}) {
     submittedAt,
     updatedAt: String(value.updatedAt || value.updated_at || "").trim(),
     note: String(value.note || "").trim(),
-    source: String(value.source || "local").trim(),
+    source: String(value.source || "remote").trim(),
   };
 }
 
@@ -99,7 +102,7 @@ function normalizeManualRejectionEntry(value = {}) {
     rejectedAt,
     updatedAt: String(value.updatedAt || value.updated_at || "").trim(),
     note: String(value.note || "").trim(),
-    source: String(value.source || "local").trim(),
+    source: String(value.source || "remote").trim(),
   };
 }
 
@@ -131,22 +134,6 @@ function normalizeManualRejections(value) {
     }
   });
   return normalized;
-}
-
-function loadManualSubmissions() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(MANUAL_STORAGE_KEY) || "{}");
-    state.manualSubmissions = normalizeManualSubmissions(parsed);
-  } catch {
-    state.manualSubmissions = {};
-  }
-
-  try {
-    const parsed = JSON.parse(localStorage.getItem(MANUAL_REJECTIONS_STORAGE_KEY) || "{}");
-    state.manualRejections = normalizeManualRejections(parsed);
-  } catch {
-    state.manualRejections = {};
-  }
 }
 
 function saveManualSubmissions() {
@@ -181,16 +168,43 @@ async function loadSyncConfig() {
     if (!response.ok) {
       state.sync.config = {};
       state.sync.enabled = false;
+      state.sync.lastError = "sync_config_unavailable";
       return;
     }
 
     const config = await response.json();
     state.sync.config = config && typeof config === "object" ? config : {};
     state.sync.enabled = !isPlaceholderEndpoint(syncEndpoint());
+    state.sync.lastError = state.sync.enabled ? "" : "sync_not_configured";
   } catch {
     state.sync.config = {};
     state.sync.enabled = false;
+    state.sync.lastError = "sync_config_unavailable";
   }
+}
+
+function syncWriteBlockMessage() {
+  if (state.sync.saving) {
+    return SYNC_SAVING_MESSAGE;
+  }
+  if (!state.sync.enabled || state.sync.lastError) {
+    return SYNC_UNAVAILABLE_MESSAGE;
+  }
+  if (!state.sync.loaded) {
+    return SYNC_LOADING_MESSAGE;
+  }
+  return "";
+}
+
+function guardManualWrite() {
+  const message = syncWriteBlockMessage();
+  if (!message) {
+    return true;
+  }
+  showToast(message);
+  render();
+  refreshOpenModal();
+  return false;
 }
 
 function jsonpRequest(endpoint, params = {}) {
@@ -381,30 +395,16 @@ async function jsonBlobRequest(endpoint, params = {}) {
 
 function mergeRemoteManualState(remoteSubmissions, remoteRejections) {
   const remoteSubmitted = normalizeManualSubmissions(remoteSubmissions);
-  const localSubmittedOnly = {};
-
-  Object.entries(state.manualSubmissions).forEach(([key, entry]) => {
-    if (!remoteSubmitted[key] && entry.source !== "remote") {
-      localSubmittedOnly[key] = entry;
-    }
-  });
-
   const remoteRejected = normalizeManualRejections(remoteRejections);
-  const localRejectedOnly = {};
-
-  Object.entries(state.manualRejections).forEach(([key, entry]) => {
-    if (!remoteRejected[key] && entry.source !== "remote") {
-      localRejectedOnly[key] = entry;
-    }
-  });
-
-  state.manualSubmissions = { ...remoteSubmitted, ...localSubmittedOnly };
-  state.manualRejections = { ...remoteRejected, ...localRejectedOnly };
+  state.manualSubmissions = remoteSubmitted;
+  state.manualRejections = remoteRejected;
   saveManualSubmissions();
 }
 
 async function loadRemoteManualSubmissions() {
   if (!state.sync.enabled) {
+    state.sync.lastError = state.sync.lastError || "sync_not_configured";
+    showToast(SYNC_UNAVAILABLE_MESSAGE);
     return;
   }
 
@@ -419,7 +419,7 @@ async function loadRemoteManualSubmissions() {
     state.sync.lastSyncedAt = timestampNow();
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
-    showToast("הסנכרון המרכזי לא זמין כרגע; ממשיך עם סימון מקומי");
+    showToast(SYNC_UNAVAILABLE_MESSAGE);
   }
 }
 
@@ -470,7 +470,9 @@ function truncateForSync(value, maxLength = 900) {
 }
 
 async function pushManualAction(action, key, submittedAt = "", note = "") {
-  if (!state.sync.enabled) {
+  const blockedMessage = syncWriteBlockMessage();
+  if (blockedMessage) {
+    showToast(blockedMessage);
     return;
   }
 
@@ -517,18 +519,7 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
     showToast(successMessages[action] || "העדכון נשמר במעקב המרכזי");
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
-    const currentSubmission = state.manualSubmissions[key];
-    const currentRejection = state.manualRejections[key];
-    if (currentSubmission || currentRejection) {
-      if (currentSubmission) {
-        currentSubmission.source = "local";
-      }
-      if (currentRejection) {
-        currentRejection.source = "local";
-      }
-      saveManualSubmissions();
-    }
-    showToast("נשמר מקומית, אבל הסנכרון המרכזי נכשל כרגע");
+    showToast(SYNC_UNAVAILABLE_MESSAGE);
   } finally {
     state.sync.saving = false;
     render();
@@ -537,35 +528,17 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
 }
 
 async function markManualSubmitted(key) {
-  const submittedAt = timestampNow();
-  const note = state.manualSubmissions[key]?.note || "";
-  state.manualSubmissions[key] = {
-    submittedAt,
-    note,
-    source: state.sync.enabled ? "syncing" : "local",
-  };
-  delete state.manualRejections[key];
-  saveManualSubmissions();
-  refreshAfterManualChange(key);
-  refreshOpenModal();
-
-  if (!state.sync.enabled) {
-    showToast(`סומן כהוגש ידנית: ${submittedAt}`);
+  if (!guardManualWrite()) {
     return;
   }
-
-  showToast(`סומן כהוגש ידנית ונשלח לסנכרון: ${submittedAt}`);
+  const submittedAt = timestampNow();
+  const note = state.manualSubmissions[key]?.note || "";
+  showToast(`שולח סימון הגשה ידנית לסנכרון: ${submittedAt}`);
   await pushManualAction("markManualSubmitted", key, submittedAt, note);
 }
 
 async function clearManualSubmitted(key) {
-  delete state.manualSubmissions[key];
-  saveManualSubmissions();
-  refreshAfterManualChange(key);
-  refreshOpenModal();
-
-  if (!state.sync.enabled) {
-    showToast("סימון ההגשה הידנית בוטל");
+  if (!guardManualWrite()) {
     return;
   }
 
@@ -574,35 +547,17 @@ async function clearManualSubmitted(key) {
 }
 
 async function markManualRejected(key) {
-  const rejectedAt = timestampNow();
-  const note = MANUAL_REJECTION_REASON;
-  state.manualRejections[key] = {
-    rejectedAt,
-    note,
-    source: state.sync.enabled ? "syncing" : "local",
-  };
-  delete state.manualSubmissions[key];
-  saveManualSubmissions();
-  refreshAfterManualChange(key);
-  refreshOpenModal();
-
-  if (!state.sync.enabled) {
-    showToast(`נפסל בבחירה ידנית: ${rejectedAt}`);
+  if (!guardManualWrite()) {
     return;
   }
-
-  showToast(`נפסל בבחירה ידנית ונשלח לסנכרון: ${rejectedAt}`);
+  const rejectedAt = timestampNow();
+  const note = MANUAL_REJECTION_REASON;
+  showToast(`שולח פסילה ידנית לסנכרון: ${rejectedAt}`);
   await pushManualAction("markManualRejected", key, rejectedAt, note);
 }
 
 async function clearManualRejected(key) {
-  delete state.manualRejections[key];
-  saveManualSubmissions();
-  refreshAfterManualChange(key);
-  refreshOpenModal();
-
-  if (!state.sync.enabled) {
-    showToast("פסילה ידנית בוטלה");
+  if (!guardManualWrite()) {
     return;
   }
 
@@ -610,15 +565,7 @@ async function clearManualRejected(key) {
   await pushManualAction("clearManualRejected", key);
 }
 
-function refreshAfterManualChange(key) {
-  state.selectedKey = key;
-  render();
-  state.selectedKey = key;
-  renderDetails();
-}
-
 async function loadState() {
-  loadManualSubmissions();
   await loadSyncConfig();
 
   const response = await fetch("assets/job-data.json", { cache: "no-store" });
@@ -759,7 +706,7 @@ function manualSourceText(source) {
   if (state.sync.enabled) {
     return "ממתין לאישור סנכרון.";
   }
-  return "נשמר בדפדפן הזה בלבד.";
+  return SYNC_UNAVAILABLE_MESSAGE;
 }
 
 function manualSubmittedBlock(timestamp, source) {
@@ -796,6 +743,9 @@ function jobDetailsHtml(job, titleId = "") {
   const manualSource = job.manual_source || "";
   const manualRejectedAt = job.manual_rejected_at || "";
   const manualRejectionSource = job.manual_rejection_source || "";
+  const syncBlockedMessage = syncWriteBlockMessage();
+  const manualDisabled = syncBlockedMessage ? ` disabled aria-disabled="true" title="${escapeHtml(syncBlockedMessage)}"` : "";
+  const syncWarning = syncBlockedMessage ? `<section class="sync-warning" role="alert">${escapeHtml(syncBlockedMessage)}</section>` : "";
   const manualFact = manualTimestamp
     ? `<span class="fact manual-fact">הוגש ידנית: <span class="timestamp" dir="ltr">${escapeHtml(manualTimestamp)}</span></span>`
     : "";
@@ -805,12 +755,12 @@ function jobDetailsHtml(job, titleId = "") {
   const manualAction = manualRejectedAt
     ? ""
     : job.manual_submitted_at
-    ? `<button type="button" class="manual-button secondary" data-manual-action="clear" data-key="${escapeHtml(job.key)}">בטל סימון ידני</button>`
-    : `<button type="button" class="manual-button" data-manual-action="mark" data-key="${escapeHtml(job.key)}">סמן כהוגש ידנית</button>`;
+    ? `<button type="button" class="manual-button secondary" data-manual-action="clear" data-key="${escapeHtml(job.key)}"${manualDisabled}>בטל סימון ידני</button>`
+    : `<button type="button" class="manual-button" data-manual-action="mark" data-key="${escapeHtml(job.key)}"${manualDisabled}>סמן כהוגש ידנית</button>`;
   const manualRejectAction = manualRejectedAt
-    ? `<button type="button" class="manual-button danger-secondary" data-manual-action="clear-reject" data-key="${escapeHtml(job.key)}">בטל פסילה ידנית</button>`
+    ? `<button type="button" class="manual-button danger-secondary" data-manual-action="clear-reject" data-key="${escapeHtml(job.key)}"${manualDisabled}>בטל פסילה ידנית</button>`
     : [PENDING_STATUS, MANUAL_REQUIRED_STATUS].includes(originalStatus) && !manualTimestamp
-    ? `<button type="button" class="manual-button danger" data-manual-action="reject" data-key="${escapeHtml(job.key)}">סמן כנפסל</button>`
+    ? `<button type="button" class="manual-button danger" data-manual-action="reject" data-key="${escapeHtml(job.key)}"${manualDisabled}>סמן כנפסל</button>`
     : "";
   return `
     <div class="details-inner">
@@ -837,6 +787,7 @@ function jobDetailsHtml(job, titleId = "") {
         </div>
       </header>
 
+      ${syncWarning}
       ${manualSubmittedBlock(manualTimestamp, manualSource)}
       ${manualRejectedBlock(manualRejectedAt, manualRejectionSource)}
       ${textBlock("דרישות מרכזיות", job.requirements)}
@@ -893,18 +844,20 @@ function renderChrome() {
     return;
   }
 
-  let label = "סימון מקומי";
-  let variant = "local";
-  if (state.sync.enabled) {
-    label = state.sync.saving ? "מסנכרן" : "מסונכרן לענן";
-    variant = state.sync.saving ? "syncing" : "synced";
-    if (state.sync.lastError) {
-      label = "סנכרון לא זמין";
-      variant = "sync-error";
+  let label = "סנכרון לא זמין";
+  let variant = "sync-error";
+  if (state.sync.enabled && !state.sync.lastError) {
+    if (state.sync.saving || !state.sync.loaded) {
+      label = state.sync.saving ? "מסנכרן" : "בודק סנכרון";
+      variant = "syncing";
+    } else {
+      label = "מסונכרן לענן";
+      variant = "synced";
     }
   }
   els.syncStatus.textContent = label;
   els.syncStatus.className = `state-pill ${variant}`;
+  els.syncStatus.title = syncWriteBlockMessage() || "הסנכרון זמין.";
 }
 
 function render() {
