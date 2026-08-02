@@ -247,9 +247,7 @@ async function corsRequest(endpoint, params = {}, method = "GET") {
   const requestUrl = new URL(endpoint, window.location.href);
   const requestInit = {
     method,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
+    headers: {},
   };
 
   if (method === "GET") {
@@ -259,6 +257,7 @@ async function corsRequest(endpoint, params = {}, method = "GET") {
       }
     });
   } else {
+    requestInit.headers["Content-Type"] = "application/json; charset=utf-8";
     requestInit.body = JSON.stringify(params);
   }
 

@@ -90,6 +90,20 @@ function methodNotAllowed() {
   });
 }
 
+async function syncJsonResponse(callback) {
+  try {
+    return jsonResponse(await callback());
+  } catch (error) {
+    return jsonResponse(
+      {
+        ok: false,
+        error: error?.message || "sync_error",
+      },
+      503
+    );
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -108,12 +122,12 @@ export default {
       }
 
       if (request.method === "GET") {
-        return jsonResponse(await handleSyncAction({ action: "listUpdates" }, env));
+        return syncJsonResponse(() => handleSyncAction({ action: "listUpdates" }, env));
       }
 
       if (request.method === "POST") {
         const params = await request.json().catch(() => ({}));
-        return jsonResponse(await handleSyncAction(params, env));
+        return syncJsonResponse(() => handleSyncAction(params, env));
       }
 
       return methodNotAllowed();
@@ -129,4 +143,3 @@ export default {
 `;
 
 writeText(workerTarget, workerSource);
-
