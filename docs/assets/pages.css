@@ -476,6 +476,18 @@ select:focus {
   color: #1b5d92;
 }
 
+.manual-button.danger {
+  border-color: #b24538;
+  background: #b24538;
+  color: #fff;
+}
+
+.manual-button.danger-secondary {
+  border-color: #e4bbb5;
+  background: #fff7f5;
+  color: #8c2f25;
+}
+
 .manual-button:hover {
   filter: brightness(0.96);
 }

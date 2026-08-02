@@ -6,6 +6,7 @@ let remoteState = {
   ok: true,
   generated_at: "2026-08-02T00:00:00.000Z",
   manual_submissions: {},
+  manual_rejections: {},
   events: [],
 };
 
@@ -74,5 +75,40 @@ const clear = await handleSyncAction(
 
 assert.equal(clear.ok, true);
 assert.equal(clear.manual_submissions["job-1"], undefined);
+
+const reject = await handleSyncAction(
+  {
+    action: "markManualRejected",
+    event_id: "event-3",
+    job_key: "job-2",
+    company: "Acme",
+    title: "Procurement Coordinator",
+    location: "Ashdod",
+    link: "https://example.test/job-2",
+    score: "84",
+    manual_rejected_at: "2026-08-02 10:00",
+    note: "נפסל בבחירה ידנית",
+  },
+  env
+);
+
+assert.equal(reject.ok, true);
+assert.equal(reject.telegram.sent, false);
+assert.equal(reject.telegram.reason, "manual_reject_action");
+assert.equal(reject.manual_rejections["job-2"].rejectedAt, "2026-08-02 10:00");
+assert.equal(reject.manual_submissions["job-2"], undefined);
+assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 1);
+
+const clearReject = await handleSyncAction(
+  {
+    action: "clearManualRejected",
+    event_id: "event-4",
+    job_key: "job-2",
+  },
+  env
+);
+
+assert.equal(clearReject.ok, true);
+assert.equal(clearReject.manual_rejections["job-2"], undefined);
 
 console.log(JSON.stringify({ ok: true }));

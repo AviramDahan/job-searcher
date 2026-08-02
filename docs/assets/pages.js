@@ -24,7 +24,10 @@ const statusClass = new Map([
 ]);
 
 const MANUAL_STATUS = "הוגש ידנית";
+const MANUAL_REJECTED_STATUS = "נפסל";
+const MANUAL_REJECTION_REASON = "נפסל בבחירה ידנית";
 const MANUAL_STORAGE_KEY = "job-searcher-manual-submissions-v1";
+const MANUAL_REJECTIONS_STORAGE_KEY = "job-searcher-manual-rejections-v1";
 const SYNC_CONFIG_PATH = "assets/dashboard-config.json";
 const SYNC_TIMEOUT_MS = 12000;
 
@@ -33,6 +36,7 @@ const state = {
   selectedKey: null,
   status: "all",
   manualSubmissions: {},
+  manualRejections: {},
   sync: {
     config: {},
     enabled: false,
@@ -78,6 +82,24 @@ function normalizeManualEntry(value = {}) {
   };
 }
 
+function normalizeManualRejectionEntry(value = {}) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const rejectedAt = String(value.rejectedAt || value.rejected_at || value.manual_rejected_at || "").trim();
+  if (!rejectedAt) {
+    return null;
+  }
+
+  return {
+    rejectedAt,
+    updatedAt: String(value.updatedAt || value.updated_at || "").trim(),
+    note: String(value.note || "").trim(),
+    source: String(value.source || "local").trim(),
+  };
+}
+
 function normalizeManualSubmissions(value) {
   const normalized = {};
   if (!value || typeof value !== "object") {
@@ -93,6 +115,21 @@ function normalizeManualSubmissions(value) {
   return normalized;
 }
 
+function normalizeManualRejections(value) {
+  const normalized = {};
+  if (!value || typeof value !== "object") {
+    return normalized;
+  }
+
+  Object.entries(value).forEach(([key, entry]) => {
+    const normalizedEntry = normalizeManualRejectionEntry(entry);
+    if (key && normalizedEntry) {
+      normalized[key] = normalizedEntry;
+    }
+  });
+  return normalized;
+}
+
 function loadManualSubmissions() {
   try {
     const parsed = JSON.parse(localStorage.getItem(MANUAL_STORAGE_KEY) || "{}");
@@ -100,10 +137,18 @@ function loadManualSubmissions() {
   } catch {
     state.manualSubmissions = {};
   }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(MANUAL_REJECTIONS_STORAGE_KEY) || "{}");
+    state.manualRejections = normalizeManualRejections(parsed);
+  } catch {
+    state.manualRejections = {};
+  }
 }
 
 function saveManualSubmissions() {
   localStorage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(state.manualSubmissions));
+  localStorage.setItem(MANUAL_REJECTIONS_STORAGE_KEY, JSON.stringify(state.manualRejections));
 }
 
 function timestampNow() {
@@ -253,6 +298,7 @@ async function jsonBlobRequest(endpoint, params = {}) {
       ok: true,
       generated_at: currentState.generated_at || "",
       manual_submissions: currentState.manual_submissions || {},
+      manual_rejections: currentState.manual_rejections || {},
       events: currentState.events || [],
     };
   }
@@ -261,6 +307,7 @@ async function jsonBlobRequest(endpoint, params = {}) {
     ok: true,
     generated_at: new Date().toISOString(),
     manual_submissions: currentState.manual_submissions || {},
+    manual_rejections: currentState.manual_rejections || {},
     events: Array.isArray(currentState.events) ? currentState.events : [],
   };
   const eventId = String(params.event_id || `${params.action}:${params.job_key}:${timestampNow()}`);
@@ -273,10 +320,25 @@ async function jsonBlobRequest(endpoint, params = {}) {
       note: String(params.note || ""),
       source: "remote",
     };
+    delete nextState.manual_rejections[params.job_key];
   }
 
   if (!duplicate && params.action === "clearManualSubmitted") {
     delete nextState.manual_submissions[params.job_key];
+  }
+
+  if (!duplicate && params.action === "markManualRejected") {
+    nextState.manual_rejections[params.job_key] = {
+      rejectedAt: String(params.manual_rejected_at || timestampNow()),
+      updatedAt: timestampNow(),
+      note: String(params.note || MANUAL_REJECTION_REASON),
+      source: "remote",
+    };
+    delete nextState.manual_submissions[params.job_key];
+  }
+
+  if (!duplicate && params.action === "clearManualRejected") {
+    delete nextState.manual_rejections[params.job_key];
   }
 
   if (!duplicate) {
@@ -310,21 +372,32 @@ async function jsonBlobRequest(endpoint, params = {}) {
     duplicate,
     generated_at: nextState.generated_at,
     manual_submissions: nextState.manual_submissions,
+    manual_rejections: nextState.manual_rejections,
     telegram: { sent: false, reason: "jsonblob_transport_no_server_secret" },
   };
 }
 
-function mergeRemoteManualSubmissions(remoteSubmissions) {
-  const remote = normalizeManualSubmissions(remoteSubmissions);
-  const localOnly = {};
+function mergeRemoteManualState(remoteSubmissions, remoteRejections) {
+  const remoteSubmitted = normalizeManualSubmissions(remoteSubmissions);
+  const localSubmittedOnly = {};
 
   Object.entries(state.manualSubmissions).forEach(([key, entry]) => {
-    if (!remote[key] && entry.source !== "remote") {
-      localOnly[key] = entry;
+    if (!remoteSubmitted[key] && entry.source !== "remote") {
+      localSubmittedOnly[key] = entry;
     }
   });
 
-  state.manualSubmissions = { ...remote, ...localOnly };
+  const remoteRejected = normalizeManualRejections(remoteRejections);
+  const localRejectedOnly = {};
+
+  Object.entries(state.manualRejections).forEach(([key, entry]) => {
+    if (!remoteRejected[key] && entry.source !== "remote") {
+      localRejectedOnly[key] = entry;
+    }
+  });
+
+  state.manualSubmissions = { ...remoteSubmitted, ...localSubmittedOnly };
+  state.manualRejections = { ...remoteRejected, ...localRejectedOnly };
   saveManualSubmissions();
 }
 
@@ -339,7 +412,7 @@ async function loadRemoteManualSubmissions() {
     if (!payload || payload.ok === false) {
       throw new Error(payload?.error || "sync_error");
     }
-    mergeRemoteManualSubmissions(payload.manual_submissions || {});
+    mergeRemoteManualState(payload.manual_submissions || {}, payload.manual_rejections || {});
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
   } catch (error) {
@@ -353,6 +426,21 @@ function selectedRawJob(key) {
 }
 
 function jobView(job) {
+  const rejection = state.manualRejections[job.key];
+  if (rejection) {
+    const rejectedAt = rejection.rejectedAt;
+    const note = rejection.note || MANUAL_REJECTION_REASON;
+    return {
+      ...job,
+      original_status: job.status,
+      status: MANUAL_REJECTED_STATUS,
+      stop_reason: `${MANUAL_REJECTION_REASON} בתאריך ושעה: ${rejectedAt}${note && note !== MANUAL_REJECTION_REASON ? `\n${note}` : ""}`,
+      manual_rejected_at: rejectedAt,
+      manual_rejection_note: note,
+      manual_rejection_source: rejection.source || "",
+    };
+  }
+
   const manual = state.manualSubmissions[job.key];
   if (!manual) {
     return job;
@@ -397,6 +485,7 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
       event_id: eventId,
       job_key: key,
       manual_submitted_at: submittedAt,
+      manual_rejected_at: submittedAt,
       note,
       company: job.company || "",
       title: job.title || "",
@@ -414,15 +503,27 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
       throw new Error(payload?.error || "sync_error");
     }
 
-    mergeRemoteManualSubmissions(payload.manual_submissions || {});
+    mergeRemoteManualState(payload.manual_submissions || {}, payload.manual_rejections || {});
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
-    showToast(action === "markManualSubmitted" ? "ההגשה הידנית נשמרה במעקב המרכזי" : "הסימון הידני הוסר מהמעקב המרכזי");
+    const successMessages = {
+      markManualSubmitted: "ההגשה הידנית נשמרה במעקב המרכזי",
+      clearManualSubmitted: "הסימון הידני הוסר מהמעקב המרכזי",
+      markManualRejected: "הפסילה הידנית נשמרה במעקב המרכזי",
+      clearManualRejected: "הפסילה הידנית הוסרה מהמעקב המרכזי",
+    };
+    showToast(successMessages[action] || "העדכון נשמר במעקב המרכזי");
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
-    const current = state.manualSubmissions[key];
-    if (current) {
-      current.source = "local";
+    const currentSubmission = state.manualSubmissions[key];
+    const currentRejection = state.manualRejections[key];
+    if (currentSubmission || currentRejection) {
+      if (currentSubmission) {
+        currentSubmission.source = "local";
+      }
+      if (currentRejection) {
+        currentRejection.source = "local";
+      }
       saveManualSubmissions();
     }
     showToast("נשמר מקומית, אבל הסנכרון המרכזי נכשל כרגע");
@@ -441,6 +542,7 @@ async function markManualSubmitted(key) {
     note,
     source: state.sync.enabled ? "syncing" : "local",
   };
+  delete state.manualRejections[key];
   saveManualSubmissions();
   refreshAfterManualChange(key);
   refreshOpenModal();
@@ -467,6 +569,43 @@ async function clearManualSubmitted(key) {
 
   showToast("מסיר את הסימון מהמעקב המרכזי");
   await pushManualAction("clearManualSubmitted", key);
+}
+
+async function markManualRejected(key) {
+  const rejectedAt = timestampNow();
+  const note = MANUAL_REJECTION_REASON;
+  state.manualRejections[key] = {
+    rejectedAt,
+    note,
+    source: state.sync.enabled ? "syncing" : "local",
+  };
+  delete state.manualSubmissions[key];
+  saveManualSubmissions();
+  refreshAfterManualChange(key);
+  refreshOpenModal();
+
+  if (!state.sync.enabled) {
+    showToast(`נפסל בבחירה ידנית: ${rejectedAt}`);
+    return;
+  }
+
+  showToast(`נפסל בבחירה ידנית ונשלח לסנכרון: ${rejectedAt}`);
+  await pushManualAction("markManualRejected", key, rejectedAt, note);
+}
+
+async function clearManualRejected(key) {
+  delete state.manualRejections[key];
+  saveManualSubmissions();
+  refreshAfterManualChange(key);
+  refreshOpenModal();
+
+  if (!state.sync.enabled) {
+    showToast("פסילה ידנית בוטלה");
+    return;
+  }
+
+  showToast("מסיר את הפסילה הידנית מהמעקב המרכזי");
+  await pushManualAction("clearManualRejected", key);
 }
 
 function refreshAfterManualChange(key) {
@@ -496,15 +635,17 @@ async function loadState() {
 
 function renderMetrics() {
   const counts = state.data.counts;
+  const views = jobViews();
   const manualCount = state.data.jobs.filter((job) => state.manualSubmissions[job.key]).length;
+  const statusCount = (status) => views.filter((job) => job.status === status).length;
   const items = [
     ["נסרקו", counts.scanned],
     ["תועדו", counts.documented],
     ["מתאימות", counts.suitable],
-    ["הוגשו", counts.submitted],
+    ["הוגשו", statusCount("הוגש")],
     ["הוגשו ידנית", manualCount],
-    ["ממתינות", counts.pending],
-    ["נפסלו", counts.rejected],
+    ["ממתינות", statusCount("נדרש אישור")],
+    ["נפסלו", statusCount("נפסל")],
   ];
 
   els.metrics.innerHTML = items
@@ -533,6 +674,8 @@ function currentJobs() {
       job.stop_reason,
       job.manual_submitted_at,
       job.manual_note,
+      job.manual_rejected_at,
+      job.manual_rejection_note,
     ]
       .join(" ")
       .toLowerCase();
@@ -629,17 +772,43 @@ function manualSubmittedBlock(timestamp, source) {
   `;
 }
 
+function manualRejectedBlock(timestamp, source) {
+  if (!timestamp) {
+    return "";
+  }
+  return `
+    <section class="detail-section">
+      <h3>פסילה ידנית</h3>
+      <p class="detail-text">${MANUAL_REJECTION_REASON} בתאריך ושעה: <span class="timestamp" dir="ltr">${escapeHtml(timestamp)}</span></p>
+      <p class="detail-text">${escapeHtml(manualSourceText(source))}</p>
+    </section>
+  `;
+}
+
 function jobDetailsHtml(job, titleId = "") {
   const pillClass = statusClass.get(job.status) || "";
   const headingId = titleId ? ` id="${escapeHtml(titleId)}"` : "";
+  const originalStatus = job.original_status || job.status || "";
   const manualTimestamp = job.manual_submitted_at || "";
   const manualSource = job.manual_source || "";
+  const manualRejectedAt = job.manual_rejected_at || "";
+  const manualRejectionSource = job.manual_rejection_source || "";
   const manualFact = manualTimestamp
     ? `<span class="fact manual-fact">הוגש ידנית: <span class="timestamp" dir="ltr">${escapeHtml(manualTimestamp)}</span></span>`
     : "";
-  const manualAction = job.manual_submitted_at
+  const manualRejectFact = manualRejectedAt
+    ? `<span class="fact manual-fact">נפסל ידנית: <span class="timestamp" dir="ltr">${escapeHtml(manualRejectedAt)}</span></span>`
+    : "";
+  const manualAction = manualRejectedAt
+    ? ""
+    : job.manual_submitted_at
     ? `<button type="button" class="manual-button secondary" data-manual-action="clear" data-key="${escapeHtml(job.key)}">בטל סימון ידני</button>`
     : `<button type="button" class="manual-button" data-manual-action="mark" data-key="${escapeHtml(job.key)}">סמן כהוגש ידנית</button>`;
+  const manualRejectAction = manualRejectedAt
+    ? `<button type="button" class="manual-button danger-secondary" data-manual-action="clear-reject" data-key="${escapeHtml(job.key)}">בטל פסילה ידנית</button>`
+    : originalStatus === "נדרש אישור" && !manualTimestamp
+    ? `<button type="button" class="manual-button danger" data-manual-action="reject" data-key="${escapeHtml(job.key)}">סמן כנפסל</button>`
+    : "";
   return `
     <div class="details-inner">
       <header class="details-head">
@@ -655,15 +824,18 @@ function jobDetailsHtml(job, titleId = "") {
           <span class="fact">${escapeHtml(job.location || "ללא מיקום")}</span>
           <span class="fact">${escapeHtml(job.date || "ללא תאריך")}</span>
           ${manualFact}
+          ${manualRejectFact}
           <span class="fact">${escapeHtml(job.cv || "ללא CV")}</span>
         </div>
         <div class="actions">
           <a class="link-button" href="${escapeHtml(job.link)}" target="_blank" rel="noreferrer">פתח משרה מקורית</a>
           ${manualAction}
+          ${manualRejectAction}
         </div>
       </header>
 
       ${manualSubmittedBlock(manualTimestamp, manualSource)}
+      ${manualRejectedBlock(manualRejectedAt, manualRejectionSource)}
       ${textBlock("דרישות מרכזיות", job.requirements)}
       ${textBlock("סיבות התאמה", job.fit)}
       ${textBlock("סיבת עצירה או פסילה", job.stop_reason)}
@@ -797,8 +969,12 @@ function handleManualAction(event) {
   }
   if (button.dataset.manualAction === "mark") {
     void markManualSubmitted(key);
-  } else {
+  } else if (button.dataset.manualAction === "clear") {
     void clearManualSubmitted(key);
+  } else if (button.dataset.manualAction === "reject") {
+    void markManualRejected(key);
+  } else if (button.dataset.manualAction === "clear-reject") {
+    void clearManualRejected(key);
   }
 }
 
