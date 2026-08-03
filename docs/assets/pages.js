@@ -3,6 +3,7 @@ const els = {
   generatedAt: document.querySelector("#generatedAt"),
   syncStatus: document.querySelector("#syncStatus"),
   metrics: document.querySelector("#metrics"),
+  insights: document.querySelector("#insights"),
   searchInput: document.querySelector("#searchInput"),
   scoreFilter: document.querySelector("#scoreFilter"),
   sortBy: document.querySelector("#sortBy"),
@@ -606,6 +607,87 @@ function renderMetrics() {
     .join("");
 }
 
+function renderInsightJobs(jobs = []) {
+  if (!jobs.length) {
+    return "";
+  }
+  return `
+    <div class="insight-jobs">
+      ${jobs
+        .map(
+          (job) => `
+            <button type="button" class="insight-job" data-insight-key="${escapeHtml(job.key)}">
+              <span class="insight-score">${escapeHtml(job.score)}</span>
+              <span>
+                <strong>${escapeHtml(job.title)}</strong>
+                <small>${escapeHtml(job.company)} · ${escapeHtml(job.location || "ללא מיקום")}</small>
+              </span>
+            </button>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderInsights() {
+  if (!els.insights) {
+    return;
+  }
+
+  const insights = state.data.insights || {};
+  const actions = Array.isArray(insights.next_actions) ? insights.next_actions : [];
+  const blockers = Array.isArray(insights.blocker_counts) ? insights.blocker_counts : [];
+  const snapshot = insights.snapshot || {};
+  const safeAuto = Number(snapshot.safe_auto_submit_now || 0);
+
+  if (!actions.length && !blockers.length) {
+    els.insights.innerHTML = "";
+    return;
+  }
+
+  const statusLine =
+    safeAuto > 0
+      ? `${safeAuto} משרות זמינות להגשה אוטומטית`
+      : "אין כרגע משרה בטוחה להגשה אוטומטית";
+
+  els.insights.innerHTML = `
+    <div class="insights-head">
+      <div>
+        <p class="eyebrow">השלב הבא</p>
+        <h2>${escapeHtml(statusLine)}</h2>
+      </div>
+      <span class="state-pill local">${escapeHtml(snapshot.high_score_actionable || 0)} משרות דורשות פעולה</span>
+    </div>
+    <div class="insight-grid">
+      ${actions
+        .map(
+          (action) => `
+            <article class="insight-card">
+              <h3>${escapeHtml(action.title)}</h3>
+              <p>${escapeHtml(action.impact)}</p>
+              <p class="insight-recommendation">${escapeHtml(action.recommendation)}</p>
+              ${renderInsightJobs(action.jobs || [])}
+            </article>
+          `
+        )
+        .join("")}
+    </div>
+    <div class="blocker-strip" aria-label="חסמים מרכזיים">
+      ${blockers
+        .slice(0, 8)
+        .map(
+          (blocker) => `
+            <span class="blocker-pill" title="${escapeHtml(blocker.recommendation || "")}">
+              ${escapeHtml(blocker.label)} · ${escapeHtml(blocker.count)}
+            </span>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
 function currentJobs() {
   const query = els.searchInput.value.trim().toLowerCase();
   const minScore = Number(els.scoreFilter.value || 0);
@@ -866,9 +948,22 @@ function render() {
   }
   renderChrome();
   renderMetrics();
+  renderInsights();
   renderJobs();
   renderDetails();
 }
+
+els.insights?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-insight-key]");
+  if (!button) {
+    return;
+  }
+  state.selectedKey = button.dataset.insightKey;
+  const job = selectedJob();
+  if (job) {
+    openJobModal(job);
+  }
+});
 
 els.jobList.addEventListener("click", (event) => {
   if (event.target.closest("a")) {

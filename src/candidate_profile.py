@@ -288,6 +288,19 @@ MANDATORY_MARKERS = (
     "minimum",
 )
 
+REQUIRED_SKILL_CONTEXT_TERMS = (
+    "ניסיון",
+    "נסיון",
+    "ידע",
+    "שליטה",
+    "מיומנות",
+    "בקיאות",
+    "experience",
+    "knowledge",
+    "proficiency",
+    "skilled",
+)
+
 
 def normalize_text(value: str) -> str:
     return re.sub(r"\s+", " ", (value or "").strip().lower())
@@ -308,15 +321,28 @@ def fragments_containing(text: str, aliases: tuple[str, ...]) -> list[str]:
     return matches
 
 
-def is_optional_fragment(fragment: str) -> bool:
+def has_required_skill_context(fragment: str, aliases: tuple[str, ...]) -> bool:
+    normalized = normalize_text(fragment)
+    for alias in aliases:
+        escaped = re.escape(alias.lower())
+        for marker in REQUIRED_SKILL_CONTEXT_TERMS:
+            marker = re.escape(marker.lower())
+            if re.search(rf"{marker}.{{0,45}}{escaped}", normalized) or re.search(rf"{escaped}.{{0,45}}{marker}", normalized):
+                return True
+    return False
+
+
+def is_optional_fragment(fragment: str, aliases: tuple[str, ...]) -> bool:
     normalized = normalize_text(fragment)
     if any(marker in normalized for marker in MANDATORY_MARKERS):
+        return False
+    if has_required_skill_context(fragment, aliases):
         return False
     return any(marker in normalized for marker in OPTIONAL_MARKERS)
 
 
 def required_skill_issue(skill: SystemSkillFact, fragment: str) -> CandidateFactIssue | None:
-    if is_optional_fragment(fragment):
+    if is_optional_fragment(fragment, skill.aliases):
         return None
 
     if skill.has_experience is False:

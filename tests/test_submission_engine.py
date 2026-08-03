@@ -132,6 +132,61 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_AUTO.value)
         self.assertTrue(plans[0].can_attempt)
 
+    def test_far_location_blocks_jobmaster_auto_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LOCATION: "Haifa",
+                        REQUIREMENTS: "Procurement, suppliers, quotes, Excel",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertIn("המיקום", plans[0].reason)
+
+    def test_generated_stop_reason_does_not_make_far_location_hybrid_safe(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LOCATION: "כוכב יאיר צור יגאל",
+                        REQUIREMENTS: "תואר ראשון בכלכלה, Excel וניתוח דוחות.",
+                        STOP_REASON: "נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_at_least_two_office_days_is_not_auto_approved_hybrid(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LOCATION: "Tel Aviv - hybrid",
+                        REQUIREMENTS: "Hybrid role with at least two office days per week.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+
     def test_required_experience_not_explicit_in_cv_blocks_submission(self) -> None:
         plans = plan_jobs(
             [
@@ -184,6 +239,42 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value)
         self.assertTrue(plans[0].can_attempt)
 
+    def test_drushim_uses_company_fallback_not_direct_submit(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://www.drushim.co.il/job/37979255/1959bdf9/",
+                        STOP_REASON: "Registration requires third-party marketing consent",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].site, "Drushim")
+        self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value)
+        self.assertTrue(plans[0].can_attempt)
+
+    def test_jobnet_is_not_marked_auto_until_submit_adapter_exists(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://www.jobnet.co.il/jobs?positionid=13300382",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].site, "Jobnet")
+        self.assertEqual(plans[0].decision, SubmissionDecision.NOT_SUPPORTED.value)
+        self.assertFalse(plans[0].can_attempt)
+
     def test_linkedin_captcha_gate_is_not_forced_to_company_fallback(self) -> None:
         plans = plan_jobs(
             [
@@ -203,6 +294,24 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.HUMAN_GATE.value)
         self.assertFalse(plans[0].can_attempt)
         self.assertTrue(plans[0].requires_human)
+
+    def test_manual_required_row_is_never_marked_runnable(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        STATUS: MANUAL_REQUIRED,
+                        LINK: "https://www.drushim.co.il/job/37905896/3d25ce42/",
+                        STOP_REASON: "נדרשת הגשה ידנית דרך Drushim.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.HUMAN_GATE.value)
+        self.assertFalse(plans[0].can_attempt)
 
     def test_jobify_policy_blocker_is_not_forced_to_company_fallback(self) -> None:
         plans = plan_jobs(

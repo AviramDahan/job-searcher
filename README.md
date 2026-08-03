@@ -7,6 +7,8 @@ The current version is a cleaned Git-ready extraction from a Codex workspace. It
 ## What This Repository Contains
 
 - `src/job_records.py` - shared CSV schema, job-key generation, duplicate detection, and basic summary counts.
+- `src/discovery_scanner.py` - live public-source scanner for JobMaster, Drushim, and Jobnet, including detail-page refresh and rescoring.
+- `src/location_policy.py` - shared location and hybrid-work policy used by discovery and submission planning.
 - `src/rebuild_summary.py` - rebuilds `outputs/job_search_summary.md` from `outputs/job_applications.csv`.
 - `src/send_job_status_alerts.py` - sends structured submitted/manual job alerts to Telegram from a JSON file.
 - `src/send_manual_alerts_from_csv.py` - sends Telegram alerts for jobs in CSV status `נדרשת הגשה ידנית` or `נדרש אישור`, while keeping a local send log to avoid repeat alerts.
@@ -171,6 +173,18 @@ Validate and summarize the CSV:
 python .\src\job_records.py .\outputs\job_applications.csv
 ```
 
+Remove duplicate tracker rows using stable platform IDs:
+
+```powershell
+python .\src\job_records.py .\outputs\job_applications.csv --dedupe
+```
+
+Run a live discovery scan and refresh existing action candidates:
+
+```powershell
+python -m src.discovery_scanner --csv .\outputs\job_applications.csv --summary .\outputs\job_search_summary.md --json .\outputs\discovery_scan_report.json --md .\outputs\discovery_scan_report.md --detail-limit 100 --timeout 12 --rescore-existing --refresh-existing-limit 120
+```
+
 Rebuild the Markdown summary:
 
 ```powershell
@@ -262,7 +276,7 @@ Current live config:
 
 ```json
 {
-  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fbf6f-e0ae-7448-b1d0-7cc92a1293c5",
+  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fc867-6804-72eb-9e23-078e5bd539c0",
   "transport": "jsonblob"
 }
 ```
@@ -447,10 +461,11 @@ The JobMaster adapter logs in through a persistent browser profile, waits for th
 Current first-pass adapters:
 
 - JobMaster: persistent session, verify current CV, prepare/submit modes, tracker update, Telegram notification, and success evidence.
-- Jobnet: persistent/direct form path.
+- Jobnet: discovery only until the SendCv flow is validated for mandatory questions, terms, email confirmation, and success evidence.
 - LinkedIn: authenticated session, prefer official company fallback when external apply appears.
 - Jobify: source discovery and company fallback.
-- AllJobs/Drushim/IAI/Nestle/DSV: explicit route decisions for CAPTCHA, consent, system-skill, or policy blockers.
+- Drushim: discovery plus company-site fallback; direct Drushim submission remains manual until a safe UI adapter exists.
+- AllJobs/IAI/Nestle/DSV: explicit route decisions for CAPTCHA, consent, system-skill, or policy blockers.
 
 Engine outputs are ignored by Git because they are operational data:
 
@@ -465,17 +480,21 @@ The automation logic follows these rules:
 
 - Submit only jobs with fit score `70+` and no blocker.
 - Stop and document jobs that require CAPTCHA, email/SMS verification, account creation, missing mandatory answers, numeric salary expectations, unknown legal declarations, relocation, heavy travel, or uncertain mandatory requirements.
+- Reject jobs with mandatory SAP/ERP/MRP when the candidate profile says the candidate has no experience with those systems.
+- Reject jobs requiring more than 4 years of experience. Treat `3-4` years or interpretation-sensitive experience as `נדרש אישור`.
+- Do not submit jobs outside the target geography unless the posting explicitly confirms a hybrid model with up to two weekly office visits. Secondary locations such as רחובות, לוד, רמלה, ראשון לציון, and נס ציונה require approval.
 - Do not claim skills, tools, education, certifications, licenses, or work history that are not in the candidate profile/CV.
 - Prefer company career pages over intermediary job boards when a direct application path exists.
 - Avoid duplicate applications by generating stable job keys from platform IDs and URLs.
 - Send Telegram on every successful submission and every job that requires manual completion.
+- Telegram HTTP 429/rate-limit failures do not mark an alert as sent; the alert remains eligible for the next run.
 
 ## Current Automation Schedule
 
 The Codex heartbeat automation is configured outside this repository, under the local Codex settings directory. The current intended schedule is:
 
-- Sunday through Thursday.
-- `08:00`, `12:00`, `16:00`, `20:00`.
+- Sunday through Thursday only.
+- Every 360 minutes while active.
 - Timezone: `Asia/Jerusalem`.
 
 The local automation config path used in the original workspace was:

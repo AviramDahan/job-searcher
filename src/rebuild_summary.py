@@ -7,8 +7,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
+    from .action_insights import build_insights
     from .job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
 except ImportError:
+    from action_insights import build_insights
     from job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
 
 
@@ -35,6 +37,15 @@ def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int,
     ]
     for row in top:
         lines.append(f"- {row[SCORE]}/100 - {row[COMPANY]} - [{row[TITLE]}]({row[LINK]}) - {row[LOCATION]} - {row[STATUS]}")
+
+    insights = build_insights(rows)
+    lines.extend(["", "## השלב הבא"])
+    for action in insights.get("next_actions", [])[:5]:
+        lines.append(f"- {action['title']}: {action['impact']} {action['recommendation']}")
+
+    lines.extend(["", "## חסמים מרכזיים"])
+    for blocker in insights.get("blocker_counts", [])[:8]:
+        lines.append(f"- {blocker['label']}: {blocker['count']} משרות. {blocker['recommendation']}")
 
     for status in [SUBMITTED, MANUAL_REQUIRED, PENDING, REJECTED]:
         lines.extend(["", f"## משרות בסטטוס: {status}"])

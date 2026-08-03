@@ -118,6 +118,8 @@ class DashboardAppTests(unittest.TestCase):
         self.assertEqual(state["counts"]["submitted"], 1)
         self.assertEqual(state["counts"]["pending"], 1)
         self.assertEqual(state["counts"]["rejected"], 1)
+        self.assertIn("insights", state)
+        self.assertEqual(state["insights"]["snapshot"]["pending"], 1)
         self.assertEqual(state["telegram"]["manual_alerts"]["sent"], 1)
         self.assertEqual(state["retry_queue"]["total"], 2)
         self.assertEqual(state["jobs"][0]["company"], "Acme")

@@ -8,8 +8,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
+    from .action_insights import build_insights
     from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 except ImportError:
+    from action_insights import build_insights
     from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 
 
@@ -71,6 +73,7 @@ def build_payload(csv_path: Path, summary_path: Path, candidate_name: str, timez
             "rejected": counts[REJECTED],
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
+        "insights": build_insights(rows),
         "jobs": jobs,
     }
 

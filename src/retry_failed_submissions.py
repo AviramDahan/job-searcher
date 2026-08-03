@@ -176,7 +176,6 @@ def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KO
         if candidate_blocker or generic_policy_signal:
             mode = RetryMode.POLICY_REQUIRED
 
-        can_resend_now = mode in {RetryMode.AUTO_RETRYABLE, RetryMode.COMPANY_FALLBACK}
         adapter_name = route.adapter.name if route.adapter else "Unknown"
         reason = route.failure.reason
         next_step = route.failure.next_step
@@ -186,6 +185,18 @@ def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KO
         elif generic_policy_signal:
             reason = "The job has a system submission failure, but also includes a requirement or declaration that is not verified for the candidate."
             next_step = "Verify the flagged requirement or policy item before retrying the application."
+        elif mode == RetryMode.AUTO_RETRYABLE and adapter_name == "Jobnet":
+            mode = RetryMode.HUMAN_GATE
+            action = AutomationAction.FILL_UNTIL_HUMAN_GATE
+            reason = "Jobnet direct forms are not yet covered by a validated submit adapter."
+            next_step = "Send a manual handoff or inspect the SendCv form before adding a safe Jobnet adapter."
+        elif mode == RetryMode.AUTO_RETRYABLE and adapter_name == "Drushim":
+            mode = RetryMode.COMPANY_FALLBACK
+            action = AutomationAction.USE_COMPANY_SITE_FALLBACK
+            reason = "Drushim is usable for discovery, but direct submit is not yet automated safely."
+            next_step = "Search for the same role on the official company career page; if no direct form exists, send manual handoff."
+
+        can_resend_now = mode in {RetryMode.AUTO_RETRYABLE, RetryMode.COMPANY_FALLBACK}
 
         items.append(
             RetryItem(

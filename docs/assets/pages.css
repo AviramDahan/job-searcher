@@ -196,6 +196,129 @@ h3 {
   font-size: 13px;
 }
 
+.insights {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.insights:empty {
+  display: none;
+}
+
+.insights-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.insight-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 8px 22px rgba(28, 39, 49, 0.04);
+}
+
+.insight-card p {
+  color: #2d3b43;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.insight-card .insight-recommendation {
+  color: var(--muted);
+}
+
+.insight-jobs {
+  display: grid;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.insight-job {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 7px;
+  border: 1px solid #dce5e8;
+  border-radius: 6px;
+  background: #f8fbfb;
+  color: inherit;
+  text-align: right;
+}
+
+.insight-job:hover,
+.insight-job:focus-visible {
+  border-color: #b9d4d1;
+  background: #eef6f5;
+  outline: none;
+}
+
+.insight-score {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: #e7f4f2;
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.insight-job strong,
+.insight-job small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insight-job strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.insight-job small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.blocker-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.blocker-pill {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 4px 9px;
+  border: 1px solid #d5dde1;
+  border-radius: 999px;
+  background: #f7f9fa;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .filters {
   display: grid;
   grid-template-columns: minmax(250px, 1.4fr) auto minmax(130px, 0.35fr) minmax(130px, 0.35fr);
@@ -629,6 +752,10 @@ select:focus {
     grid-template-columns: repeat(3, minmax(120px, 1fr));
   }
 
+  .insight-grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
   .filters {
     grid-template-columns: 1fr 1fr;
   }
@@ -666,6 +793,15 @@ select:focus {
 
   .metrics,
   .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-head {
+    display: grid;
+    align-items: start;
+  }
+
+  .insight-grid {
     grid-template-columns: 1fr;
   }
 

@@ -13,8 +13,9 @@ from typing import Protocol
 try:
     from .browser_session import build_session_config, save_evidence
     from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from .jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
+    from .location_policy import LocationDecision, assess_location
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
     from .site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
@@ -22,8 +23,9 @@ try:
 except ImportError:
     from browser_session import build_session_config, save_evidence
     from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
+    from location_policy import LocationDecision, assess_location
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
     from site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
@@ -248,6 +250,8 @@ def _default_decision(
         return SubmissionDecision.ALREADY_SUBMITTED
     if job.status == REJECTED:
         return SubmissionDecision.DO_NOT_APPLY
+    if job.status == MANUAL_REQUIRED:
+        return SubmissionDecision.HUMAN_GATE
     if job.score < 70:
         return SubmissionDecision.DO_NOT_APPLY
     if has_disqualifying_blocker:
@@ -280,9 +284,11 @@ class BrowserPlanningAdapter:
 
     def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
         context = _context(job)
+        location_context = " ".join(part for part in [job.title, job.company, job.requirements, job.cover] if part)
+        location_assessment = assess_location(job.location, location_context)
         assessment = assess_candidate_facts(context, profile=profile)
         verified_facts = [issue.reason for issue in assessment.resolved]
-        blockers = [issue.reason for issue in assessment.blockers]
+        blockers = [issue.reason for issue in assessment.blockers if getattr(issue, "code", "") != "work_model_unverified"]
         has_disqualifying_blocker = assessment.has_disqualifying_blocker
         route = route_submission_failure(reason=context, link=job.link, title=job.title, company=job.company)
         route_action = route.recommended_action
@@ -296,6 +302,14 @@ class BrowserPlanningAdapter:
         decision = _default_decision(job, route_action, route_requires_human, has_disqualifying_blocker, blockers)
         if route.adapter is None and decision == SubmissionDecision.READY_FOR_AUTO:
             decision = SubmissionDecision.NOT_SUPPORTED
+        if job.status not in {SUBMITTED, REJECTED} and job.score >= 70:
+            if location_assessment.decision == LocationDecision.OUT_OF_SCOPE:
+                decision = SubmissionDecision.DO_NOT_APPLY
+            elif (
+                location_assessment.decision == LocationDecision.APPROVAL_REQUIRED
+                and decision in {SubmissionDecision.READY_FOR_AUTO, SubmissionDecision.READY_FOR_COMPANY_FALLBACK}
+            ):
+                decision = SubmissionDecision.POLICY_REQUIRED
 
         reason = route.failure.reason
         next_step = route.failure.next_step
@@ -311,6 +325,12 @@ class BrowserPlanningAdapter:
         elif job.score < 70:
             reason = "The fit score is below the minimum submission threshold."
             next_step = "Keep the job rejected or rescore it after reading a live updated posting."
+        elif location_assessment.decision == LocationDecision.OUT_OF_SCOPE:
+            reason = location_assessment.reason
+            next_step = "Do not apply unless the live posting shows an approved target location or a confirmed hybrid model of up to two weekly office visits."
+        elif location_assessment.decision == LocationDecision.APPROVAL_REQUIRED and decision == SubmissionDecision.POLICY_REQUIRED:
+            reason = location_assessment.reason
+            next_step = "Ask the operator to approve the distance or work model before attempting submission."
         elif blockers:
             reason = blockers[0]
             next_step = "Ask the operator for the missing or policy-sensitive answer before attempting submission."
@@ -394,6 +414,54 @@ class LinkedInSubmissionAdapter(BrowserPlanningAdapter):
             can_attempt=True,
             requires_human=False,
             next_step="Use the authenticated LinkedIn session to identify Easy Apply or the external company URL; prefer the official company form.",
+        )
+
+
+class JobnetSubmissionAdapter(BrowserPlanningAdapter):
+    def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
+        plan = super().plan(job, profile)
+        if plan.decision in {SubmissionDecision.ALREADY_SUBMITTED.value, SubmissionDecision.DO_NOT_APPLY.value}:
+            return plan
+        if plan.decision not in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}:
+            return plan
+        return _replace_plan(
+            plan,
+            decision=SubmissionDecision.NOT_SUPPORTED,
+            can_attempt=False,
+            requires_human=True,
+            reason="Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence.",
+            next_step="Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
+        )
+
+
+class DrushimSubmissionAdapter(BrowserPlanningAdapter):
+    def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
+        plan = super().plan(job, profile)
+        if plan.decision in {SubmissionDecision.ALREADY_SUBMITTED.value, SubmissionDecision.DO_NOT_APPLY.value}:
+            return plan
+        if plan.decision == SubmissionDecision.HUMAN_GATE.value:
+            return plan
+        if plan.blockers:
+            return plan
+        fallback_reason = (
+            plan.decision in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}
+            or "marketing" in plan.reason.lower()
+            or "third-party" in plan.reason.lower()
+            or "blocker does not match a known failure pattern" in plan.reason.lower()
+            or "login" in plan.reason.lower()
+            or "account state" in plan.reason.lower()
+        )
+        if plan.decision == SubmissionDecision.POLICY_REQUIRED.value and not fallback_reason:
+            return plan
+        if not fallback_reason:
+            return plan
+        return _replace_plan(
+            plan,
+            decision=SubmissionDecision.READY_FOR_COMPANY_FALLBACK,
+            can_attempt=True,
+            requires_human=False,
+            reason="Drushim is approved as a discovery source, but no safe submit adapter exists yet for its application form.",
+            next_step="Use Drushim to identify the employer and prefer an official company career form; if no direct form exists, send a manual handoff.",
         )
 
 
@@ -525,6 +593,10 @@ def adapter_for_job(job: SubmissionJob) -> SubmissionAdapter:
         return JobifySubmissionAdapter(profile)
     if profile and profile.name == "LinkedIn":
         return LinkedInSubmissionAdapter(profile)
+    if profile and profile.name == "Jobnet":
+        return JobnetSubmissionAdapter(profile)
+    if profile and profile.name == "Drushim":
+        return DrushimSubmissionAdapter(profile)
     if profile and profile.name == "JobMaster":
         return JobMasterSubmissionAdapter(profile)
     return BrowserPlanningAdapter(profile=profile)

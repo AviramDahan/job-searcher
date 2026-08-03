@@ -113,7 +113,7 @@ class RetryQueueTests(unittest.TestCase):
         self.assertEqual(items[0].mode, RetryMode.POLICY_REQUIRED.value)
         self.assertFalse(items[0].can_resend_now)
 
-    def test_approved_marketing_consent_is_retryable(self) -> None:
+    def test_approved_marketing_consent_uses_drushim_company_fallback(self) -> None:
         items = build_retry_items(
             [
                 row(
@@ -126,9 +126,27 @@ class RetryQueueTests(unittest.TestCase):
             ],
             profile=TEST_PROFILE,
         )
-        self.assertEqual(items[0].mode, RetryMode.AUTO_RETRYABLE.value)
+        self.assertEqual(items[0].mode, RetryMode.COMPANY_FALLBACK.value)
         self.assertTrue(items[0].can_resend_now)
-        self.assertEqual(items[0].action, "retry_with_persistent_session")
+        self.assertEqual(items[0].action, "use_company_site_fallback")
+
+    def test_jobnet_login_like_blocker_is_manual_until_adapter_exists(self) -> None:
+        items = build_retry_items(
+            [
+                row(
+                    "Jobnet",
+                    "Buyer",
+                    "https://www.jobnet.co.il/jobs?positionid=13300382",
+                    "The application path depends on login, account state, or a site session.",
+                    "86",
+                )
+            ],
+            profile=TEST_PROFILE,
+        )
+
+        self.assertEqual(items[0].mode, RetryMode.HUMAN_GATE.value)
+        self.assertFalse(items[0].can_resend_now)
+        self.assertEqual(items[0].action, "fill_until_human_gate")
 
     def test_required_erp_excludes_item_from_retry_queue(self) -> None:
         source_row = row(

@@ -15,6 +15,7 @@ from urllib.parse import unquote, urlparse
 from zoneinfo import ZoneInfo
 
 try:
+    from .action_insights import build_insights
     from .candidate_profile import load_candidate_profile
     from .job_records import (
         COMPANY,
@@ -46,6 +47,7 @@ try:
     from .site_adapters import route_submission_failure
     from .submission_engine import plan_jobs
 except ImportError:
+    from action_insights import build_insights
     from candidate_profile import load_candidate_profile
     from job_records import (
         COMPANY,
@@ -234,6 +236,7 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
             "rejected": counts[REJECTED],
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
+        "insights": build_insights(rows),
         "jobs": jobs,
     }
 

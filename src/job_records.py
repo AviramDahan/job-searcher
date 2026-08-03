@@ -66,6 +66,10 @@ def job_key(row: dict[str, str]) -> str:
     if "positionid" in query and query["positionid"]:
         return f"jobnet:{query['positionid'][0]}"
 
+    drushim_id = re.search(r"/job/(\d+)(?:/|$)", parsed.path)
+    if drushim_id and "drushim.co.il" in parsed.netloc.lower():
+        return f"drushim:{drushim_id.group(1)}"
+
     linkedin_id = re.search(r"-(\d{8,})(?:\?|$)", link)
     if linkedin_id and "linkedin." in parsed.netloc:
         return f"linkedin:{linkedin_id.group(1)}"
@@ -122,6 +126,31 @@ def duplicate_keys(rows: list[dict[str, str]]) -> list[str]:
     return [key for key, count in counts.items() if count > 1]
 
 
+def _duplicate_rank(row: dict[str, str]) -> tuple[int, int, int]:
+    status_rank = {
+        SUBMITTED: 4,
+        MANUAL_REQUIRED: 3,
+        PENDING: 2,
+        REJECTED: 1,
+    }
+    filled_fields = sum(1 for value in row.values() if value)
+    return (status_rank.get(row.get(STATUS, ""), 0), score_int(row), filled_fields)
+
+
+def deduplicate_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    best_by_key: dict[str, dict[str, str]] = {}
+    ordered_keys: list[str] = []
+    for row in rows:
+        key = job_key(row)
+        if key not in best_by_key:
+            best_by_key[key] = row
+            ordered_keys.append(key)
+            continue
+        if _duplicate_rank(row) > _duplicate_rank(best_by_key[key]):
+            best_by_key[key] = row
+    return [best_by_key[key] for key in ordered_keys]
+
+
 def summarize_counts(rows: list[dict[str, str]]) -> dict[str, int]:
     counts = Counter(row.get(STATUS, "") for row in rows)
     return {
@@ -138,10 +167,18 @@ def summarize_counts(rows: list[dict[str, str]]) -> dict[str, int]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate and summarize job application CSV files.")
     parser.add_argument("csv_path", type=Path)
+    parser.add_argument("--dedupe", action="store_true", help="Remove duplicate rows using stable job keys.")
     args = parser.parse_args()
 
     rows = load_rows(args.csv_path)
-    print(json.dumps(summarize_counts(rows), ensure_ascii=False, indent=2))
+    before = len(rows)
+    if args.dedupe:
+        rows = deduplicate_rows(rows)
+        write_rows(args.csv_path, rows)
+    payload = summarize_counts(rows)
+    if args.dedupe:
+        payload["deduplicated_rows_removed"] = before - len(rows)
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0
 
 

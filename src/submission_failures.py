@@ -69,6 +69,9 @@ LOGIN_TERMS = (
     "email code",
     "email already exists",
     "existing email",
+    "account state",
+    "site session",
+    "application path",
 )
 
 LOGIN_HUMAN_TERMS = (

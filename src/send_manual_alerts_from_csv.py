@@ -5,16 +5,17 @@ import json
 from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 
 try:
     from .candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
+    from .job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
     from .submission_failures import FailureKind
 except ImportError:
     from candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
+    from job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
     from submission_failures import FailureKind
@@ -82,6 +83,14 @@ def manual_alert_decision(row: dict[str, str], profile: CandidateProfile = KOREN
         )
 
     context_reason = " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, "")] if part)
+    if row.get(STATUS, "") == MANUAL_REQUIRED:
+        return ManualAlertDecision(
+            should_alert=True,
+            log_mode="sent",
+            blocker=row.get(STOP_REASON, ""),
+            recommendation="להגיש ידנית דרך הקישור לאחר בדיקת הטופס והעלאת קורות החיים העדכניים.",
+        )
+
     route = route_submission_failure(
         reason=context_reason,
         link=row.get(LINK, ""),
@@ -171,7 +180,7 @@ def main() -> int:
     rows = [row for row in load_rows(args.csv) if is_action_required_status(row.get(STATUS, ""))]
     log = load_log(args.log)
     now = datetime.now().isoformat(timespec="seconds")
-    sent = skipped = marked = 0
+    sent = skipped = marked = failed = 0
 
     for row in rows:
         key = job_key(row)
@@ -191,7 +200,14 @@ def main() -> int:
             raise SystemExit("Missing TELEGRAM_BOT_TOKEN")
         if not chat_id:
             raise SystemExit("Missing TELEGRAM_CHAT_ID")
-        result = send(token, chat_id, build_message(build_manual_alert(row, decision)))
+        try:
+            result = send(token, chat_id, build_message(build_manual_alert(row, decision)))
+        except HTTPError:
+            failed += 1
+            continue
+        except URLError:
+            failed += 1
+            continue
         log[key] = {
             "key": key,
             "alerted_at": now,
@@ -204,7 +220,7 @@ def main() -> int:
 
     args.log.parent.mkdir(parents=True, exist_ok=True)
     args.log.write_text(json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8-sig")
-    print(json.dumps({"manual_jobs": len(rows), "sent": sent, "skipped": skipped, "marked": marked}, ensure_ascii=False))
+    print(json.dumps({"manual_jobs": len(rows), "sent": sent, "skipped": skipped, "marked": marked, "failed": failed}, ensure_ascii=False))
     return 0
 
 

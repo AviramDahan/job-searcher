@@ -59,6 +59,15 @@ class CandidateProfileTests(unittest.TestCase):
 
         self.assertEqual([issue.label for issue in assessment.blockers], ["ERP"])
 
+    def test_required_erp_mrp_are_not_hidden_by_priority_advantage(self) -> None:
+        assessment = assess_candidate_facts(
+            "ניסיון במערכת ERP עם מיומנות בעבודה עם MRP, יתרון למערכת Priority.",
+            profile=TEST_PROFILE,
+        )
+
+        self.assertTrue(assessment.has_disqualifying_blocker)
+        self.assertEqual({issue.label for issue in assessment.blockers}, {"ERP", "MRP"})
+
     def test_car_or_independent_arrival_is_resolved_when_verified(self) -> None:
         assessment = assess_candidate_facts("נדרשת ניידות והגעה עצמאית.", profile=TEST_PROFILE)
 

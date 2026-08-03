@@ -4,7 +4,7 @@ import unittest
 from dataclasses import replace
 
 from src.candidate_profile import CandidateProfile, SystemSkillFact
-from src.job_records import COMPANY, LINK, LOCATION, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE
+from src.job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE
 from src.send_manual_alerts_from_csv import manual_alert_decision
 
 
@@ -31,14 +31,19 @@ TEST_PROFILE = CandidateProfile(
 UNAPPROVED_MARKETING_PROFILE = replace(TEST_PROFILE, marketing_consent_approved=False)
 
 
-def row(reason: str, requirements: str = "", link: str = "https://www.jobmaster.co.il/jobs/checknum.asp?key=1") -> dict[str, str]:
+def row(
+    reason: str,
+    requirements: str = "",
+    link: str = "https://www.jobmaster.co.il/jobs/checknum.asp?key=1",
+    status: str = PENDING,
+) -> dict[str, str]:
     return {
         COMPANY: "Test Company",
         TITLE: "Buyer",
         LOCATION: "Test",
         LINK: link,
         SCORE: "85",
-        STATUS: PENDING,
+        STATUS: status,
         STOP_REASON: reason,
         REQUIREMENTS: requirements,
     }
@@ -83,6 +88,20 @@ class ManualAlertDecisionTests(unittest.TestCase):
 
         self.assertFalse(decision.should_alert)
         self.assertEqual(decision.log_mode, "skipped_retryable")
+
+    def test_manual_required_no_direct_form_sends_alert(self) -> None:
+        decision = manual_alert_decision(
+            row(
+                "אין אתר חברה רשמי פעיל; נדרשת הגשה ידנית.",
+                "Procurement, suppliers, Excel.",
+                link="https://www.drushim.co.il/job/37905896/3d25ce42/",
+                status=MANUAL_REQUIRED,
+            ),
+            profile=TEST_PROFILE,
+        )
+
+        self.assertTrue(decision.should_alert)
+        self.assertEqual(decision.log_mode, "sent")
 
     def test_approved_marketing_consent_does_not_override_experience_gate(self) -> None:
         decision = manual_alert_decision(
