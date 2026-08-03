@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from src.candidate_profile import CandidateProfile, SystemSkillFact
-from src.job_records import COMPANY, COVER, FIT, LINK, LOCATION, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE
+from src.job_records import COMPANY, COVER, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE
 from src.submission_engine import (
     SubmissionDecision,
     SubmissionRunMode,
@@ -183,6 +183,44 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].site, "LinkedIn")
         self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value)
         self.assertTrue(plans[0].can_attempt)
+
+    def test_linkedin_captcha_gate_is_not_forced_to_company_fallback(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        STATUS: MANUAL_REQUIRED,
+                        LINK: "https://www.linkedin.com/jobs/view/procurement-buyer-at-example-4444111111",
+                        STOP_REASON: "Manual gate: LinkedIn application requires CAPTCHA/reCAPTCHA.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].site, "LinkedIn")
+        self.assertEqual(plans[0].decision, SubmissionDecision.HUMAN_GATE.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertTrue(plans[0].requires_human)
+
+    def test_jobify_policy_blocker_is_not_forced_to_company_fallback(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://jobify360.co.il/jobs/example-id",
+                        REQUIREMENTS: "Canva required, procurement and suppliers.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].site, "Jobify")
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
 
     def test_submit_mode_selects_real_submit_adapter_not_company_fallback(self) -> None:
         plans = plan_jobs(

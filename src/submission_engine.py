@@ -370,6 +370,8 @@ class JobifySubmissionAdapter(BrowserPlanningAdapter):
                 requires_human=False,
                 next_step="Do not retry this Jobify posting unless the live page becomes open again.",
             )
+        if plan.decision not in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}:
+            return plan
         return _replace_plan(
             plan,
             decision=SubmissionDecision.READY_FOR_COMPANY_FALLBACK,
@@ -383,6 +385,8 @@ class LinkedInSubmissionAdapter(BrowserPlanningAdapter):
     def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
         plan = super().plan(job, profile)
         if plan.decision in {SubmissionDecision.ALREADY_SUBMITTED.value, SubmissionDecision.DO_NOT_APPLY.value}:
+            return plan
+        if plan.decision not in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}:
             return plan
         return _replace_plan(
             plan,
