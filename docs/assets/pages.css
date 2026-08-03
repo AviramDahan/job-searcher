@@ -21,9 +21,14 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   min-width: 320px;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
 }
@@ -44,16 +49,25 @@ button {
 
 .app-shell {
   width: min(1440px, 100%);
+  min-width: 0;
   margin: 0 auto;
   padding: 24px;
+  overflow-x: clip;
 }
 
 .topbar {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  min-width: 0;
   gap: 24px;
   margin-bottom: 18px;
+}
+
+.topbar > div,
+.insights-head > div,
+.details-title-line > div {
+  min-width: 0;
 }
 
 .eyebrow {
@@ -88,6 +102,7 @@ h3 {
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
+  min-width: 0;
   gap: 8px;
   color: var(--muted);
   font-size: 13px;
@@ -97,13 +112,15 @@ h3 {
 .status-pill {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
   min-height: 26px;
   padding: 4px 9px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface);
   color: var(--muted);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .state-pill {
@@ -169,12 +186,13 @@ h3 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(8, minmax(120px, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }
 
 .metric {
+  min-width: 0;
   min-height: 78px;
   padding: 12px;
   border: 1px solid var(--line);
@@ -210,12 +228,13 @@ h3 {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  min-width: 0;
   gap: 14px;
 }
 
 .insight-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -235,6 +254,7 @@ h3 {
   color: #2d3b43;
   font-size: 13px;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .insight-card .insight-recommendation {
@@ -249,7 +269,7 @@ h3 {
 
 .insight-job {
   display: grid;
-  grid-template-columns: 34px 1fr;
+  grid-template-columns: 34px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -260,6 +280,10 @@ h3 {
   background: #f8fbfb;
   color: inherit;
   text-align: right;
+}
+
+.insight-job > span:last-child {
+  min-width: 0;
 }
 
 .insight-job:hover,
@@ -309,6 +333,7 @@ h3 {
 .blocker-pill {
   display: inline-flex;
   min-height: 28px;
+  max-width: 100%;
   align-items: center;
   padding: 4px 9px;
   border: 1px solid #d5dde1;
@@ -317,12 +342,14 @@ h3 {
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .filters {
   display: grid;
-  grid-template-columns: minmax(250px, 1.4fr) auto minmax(130px, 0.35fr) minmax(130px, 0.35fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, auto) minmax(0, 130px) minmax(0, 130px);
   align-items: end;
+  min-width: 0;
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -330,6 +357,7 @@ h3 {
 .search-box,
 .select-field {
   display: grid;
+  min-width: 0;
   gap: 6px;
 }
 
@@ -361,6 +389,9 @@ select:focus {
 .segmented {
   display: inline-grid;
   grid-auto-flow: column;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
   gap: 2px;
   height: 42px;
   padding: 3px;
@@ -370,12 +401,16 @@ select:focus {
 }
 
 .segment {
-  min-width: 92px;
+  min-width: 0;
+  padding: 0 10px;
   border: 0;
   border-radius: 6px;
   background: transparent;
   color: var(--muted);
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .segment.active {
@@ -386,7 +421,8 @@ select:focus {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(360px, 520px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  min-width: 0;
   gap: 14px;
   min-height: 620px;
 }
@@ -404,6 +440,7 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0;
   min-height: 56px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
@@ -421,7 +458,7 @@ select:focus {
 
 .job-row {
   display: grid;
-  grid-template-columns: 62px 1fr auto;
+  grid-template-columns: 62px minmax(0, 1fr) minmax(104px, 128px);
   align-items: center;
   gap: 12px;
   width: 100%;
@@ -448,6 +485,7 @@ select:focus {
 
 .score-badge {
   display: grid;
+  flex: 0 0 auto;
   place-items: center;
   width: 54px;
   height: 54px;
@@ -485,15 +523,20 @@ select:focus {
 
 .job-location {
   display: block;
+  overflow: hidden;
   margin-top: 7px;
   color: var(--blue);
   font-size: 12px;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .row-side {
   display: grid;
   justify-items: start;
+  min-width: 0;
+  max-width: 100%;
   gap: 8px;
 }
 
@@ -528,12 +571,14 @@ select:focus {
 
 .details-inner {
   display: grid;
+  min-width: 0;
   gap: 18px;
   padding: 18px;
 }
 
 .details-head {
   display: grid;
+  min-width: 0;
   gap: 10px;
 }
 
@@ -541,28 +586,34 @@ select:focus {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  min-width: 0;
   gap: 10px;
 }
 
 .details-title {
   font-size: 21px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .details-company {
   color: var(--muted);
   font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .quick-facts,
 .actions {
   display: flex;
   flex-wrap: wrap;
+  min-width: 0;
   gap: 8px;
 }
 
 .fact {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 30px;
   align-items: center;
   padding: 4px 9px;
@@ -570,10 +621,13 @@ select:focus {
   border-radius: 999px;
   color: var(--muted);
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .link-button {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 38px;
   align-items: center;
   justify-content: center;
@@ -584,10 +638,14 @@ select:focus {
   color: #fff;
   font-weight: 800;
   text-decoration: none;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .manual-button {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 38px;
   align-items: center;
   justify-content: center;
@@ -597,6 +655,8 @@ select:focus {
   background: #1b5d92;
   color: #fff;
   font-weight: 800;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .manual-button.secondary {
@@ -629,6 +689,7 @@ select:focus {
 }
 
 .sync-warning {
+  min-width: 0;
   padding: 12px 14px;
   border: 1px solid #efd09d;
   border-radius: var(--radius);
@@ -637,10 +698,12 @@ select:focus {
   font-size: 14px;
   font-weight: 800;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .detail-section {
   display: grid;
+  min-width: 0;
   gap: 8px;
   padding-top: 14px;
   border-top: 1px solid var(--line);
@@ -650,7 +713,9 @@ select:focus {
   color: #2d3b43;
   font-size: 14px;
   line-height: 1.65;
+  overflow-wrap: anywhere;
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .detail-text.empty {
@@ -660,6 +725,7 @@ select:focus {
 .source-url {
   direction: ltr;
   overflow-wrap: anywhere;
+  word-break: break-word;
   color: var(--blue);
   font-size: 14px;
   line-height: 1.55;
@@ -673,6 +739,7 @@ select:focus {
 
 .empty-state {
   display: grid;
+  min-width: 0;
   min-height: 460px;
   place-items: center;
   padding: 24px;
@@ -692,6 +759,7 @@ select:focus {
   background: #172027;
   color: #fff;
   box-shadow: var(--shadow);
+  overflow-wrap: anywhere;
 }
 
 .modal-backdrop {
@@ -711,6 +779,8 @@ select:focus {
 .job-modal {
   position: relative;
   width: min(760px, 100%);
+  min-width: 0;
+  max-width: calc(100vw - 44px);
   max-height: min(820px, calc(100vh - 44px));
   overflow: auto;
   border: 1px solid var(--line);
@@ -749,11 +819,11 @@ select:focus {
 
 @media (max-width: 1120px) {
   .metrics {
-    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .insight-grid {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .filters {
@@ -815,7 +885,7 @@ select:focus {
   }
 
   .job-row {
-    grid-template-columns: 52px 1fr;
+    grid-template-columns: 52px minmax(0, 1fr);
   }
 
   .row-side {
