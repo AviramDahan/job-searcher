@@ -5,7 +5,7 @@ from dataclasses import replace
 
 from src.candidate_profile import CandidateProfile, SystemSkillFact
 from src.job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE
-from src.send_manual_alerts_from_csv import manual_alert_decision
+from src.send_manual_alerts_from_csv import manual_alert_decision, target_rows
 
 
 TEST_PROFILE = CandidateProfile(
@@ -145,6 +145,16 @@ class ManualAlertDecisionTests(unittest.TestCase):
 
         self.assertFalse(decision.should_alert)
         self.assertEqual(decision.log_mode, "skipped_resolved_candidate_fact")
+
+    def test_default_target_rows_include_only_manual_required(self) -> None:
+        pending = row("נדרש אישור לפני הגשה: חסר אישור מרחק.")
+        manual = row(
+            "CAPTCHA באתר ההגשה.",
+            status=MANUAL_REQUIRED,
+        )
+
+        self.assertEqual(target_rows([pending, manual]), [manual])
+        self.assertEqual(target_rows([pending, manual], include_pending_approvals=True), [pending, manual])
 
 
 if __name__ == "__main__":

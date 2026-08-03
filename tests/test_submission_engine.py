@@ -64,6 +64,24 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_AUTO.value)
         self.assertTrue(plans[0].can_attempt)
 
+    def test_explicit_pending_approval_blocks_drushim_company_fallback(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://www.drushim.co.il/job/37978704/213d6a45/",
+                        STOP_REASON: "נדרש אישור לפני הגשה: המיקום עובר למודיעין ולא מופיע מודל היברידי מאושר.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertTrue(plans[0].requires_human)
+
     def test_salary_requirement_adds_approved_salary_to_cover_letter(self) -> None:
         job = row_to_job(
             row(

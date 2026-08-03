@@ -9,13 +9,13 @@ from urllib.error import HTTPError, URLError
 
 try:
     from .candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
+    from .job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
     from .submission_failures import FailureKind
 except ImportError:
     from candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
+    from job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
     from submission_failures import FailureKind
@@ -165,19 +165,31 @@ def build_manual_alert(row: dict[str, str], decision: ManualAlertDecision | None
     }
 
 
+def target_rows(rows: list[dict[str, str]], include_pending_approvals: bool = False) -> list[dict[str, str]]:
+    statuses = {MANUAL_REQUIRED}
+    if include_pending_approvals:
+        statuses.add(PENDING)
+    return [row for row in rows if row.get(STATUS, "") in statuses]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Send Telegram alerts for pending manual jobs in the CSV.")
     parser.add_argument("--csv", type=Path, default=Path("outputs/job_applications.csv"))
     parser.add_argument("--log", type=Path, default=Path("outputs/manual_alert_log.json"))
     parser.add_argument("--mark-existing", action="store_true")
     parser.add_argument("--resend", action="store_true")
+    parser.add_argument(
+        "--include-pending-approvals",
+        action="store_true",
+        help="Also alert jobs in 'נדרש אישור'. By default only 'נדרשת הגשה ידנית' rows are included.",
+    )
     args = parser.parse_args()
 
     import os
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    rows = [row for row in load_rows(args.csv) if is_action_required_status(row.get(STATUS, ""))]
+    rows = target_rows(load_rows(args.csv), include_pending_approvals=args.include_pending_approvals)
     log = load_log(args.log)
     now = datetime.now().isoformat(timespec="seconds")
     sent = skipped = marked = failed = 0

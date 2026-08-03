@@ -13,7 +13,7 @@ from typing import Protocol
 try:
     from .browser_session import build_session_config, save_evidence
     from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from .jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from .location_policy import LocationDecision, assess_location
     from .rebuild_summary import render as render_summary
@@ -23,7 +23,7 @@ try:
 except ImportError:
     from browser_session import build_session_config, save_evidence
     from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
+    from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from location_policy import LocationDecision, assess_location
     from rebuild_summary import render as render_summary
@@ -239,6 +239,11 @@ def _candidate_fact_lists(context: str, profile: CandidateProfile) -> tuple[list
     return verified, blockers, assessment.has_disqualifying_blocker
 
 
+def _has_explicit_pending_approval(job: SubmissionJob) -> bool:
+    reason = (job.stop_reason or "").strip()
+    return job.status == PENDING and reason.startswith("נדרש אישור לפני הגשה")
+
+
 def _default_decision(
     job: SubmissionJob,
     route_action: AutomationAction,
@@ -252,6 +257,8 @@ def _default_decision(
         return SubmissionDecision.DO_NOT_APPLY
     if job.status == MANUAL_REQUIRED:
         return SubmissionDecision.HUMAN_GATE
+    if _has_explicit_pending_approval(job):
+        return SubmissionDecision.POLICY_REQUIRED
     if job.score < 70:
         return SubmissionDecision.DO_NOT_APPLY
     if has_disqualifying_blocker:
@@ -322,6 +329,9 @@ class BrowserPlanningAdapter:
         elif job.status == REJECTED:
             reason = "The tracker already marks this job as rejected."
             next_step = "Do not attempt this application unless the row is manually restored after a fresh review."
+        elif _has_explicit_pending_approval(job):
+            reason = job.stop_reason
+            next_step = "Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         elif job.score < 70:
             reason = "The fit score is below the minimum submission threshold."
             next_step = "Keep the job rejected or rescore it after reading a live updated posting."
@@ -443,6 +453,15 @@ class DrushimSubmissionAdapter(BrowserPlanningAdapter):
             return plan
         if plan.blockers:
             return plan
+        if _has_explicit_pending_approval(plan.job):
+            return _replace_plan(
+                plan,
+                decision=SubmissionDecision.POLICY_REQUIRED,
+                can_attempt=False,
+                requires_human=True,
+                reason=plan.job.stop_reason,
+                next_step="Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
+            )
         fallback_reason = (
             plan.decision in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}
             or "marketing" in plan.reason.lower()
