@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from src.discovery_scanner import DiscoveredJob, Source, discover, extract_drushim_body_detail, extract_drushim_filters, merge_detail, parse_drushim, parse_jobmaster, parse_jobnet, score_job
-from src.job_records import LINK, PENDING, REJECTED, SCORE, STATUS, STOP_REASON, load_rows
+from src.job_records import COMPANY, DATE, FIT, LINK, LOCATION, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, load_rows, write_rows
 
 
 JOBMASTER_HTML = """
@@ -327,6 +327,94 @@ class DiscoveryScannerTests(unittest.TestCase):
             self.assertEqual(rows[0][STATUS], REJECTED)
             self.assertLess(int(rows[0][SCORE]), 70)
             self.assertIn("הנהלת חשבונות", rows[0][STOP_REASON])
+
+    def test_discover_preserves_reviewed_official_site_decision(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            csv_path = root / "jobs.csv"
+            summary_path = root / "summary.md"
+            reviewed_reason = (
+                "נדרש אישור לפני הגשה: באתר הרשמי מופיעה דרישת חובה לניסיון של 3-4 שנים; "
+                "טופס ההגשה דורש הסכמה למדיניות פרטיות."
+            )
+            write_rows(
+                csv_path,
+                [
+                    {
+                        DATE: "2026-08-03",
+                        COMPANY: "חברה",
+                        TITLE: "כלכלן/ית",
+                        LOCATION: "באר שבע",
+                        LINK: "https://www.drushim.co.il/job/37979217/ce5efdcc/",
+                        SCORE: "74",
+                        REQUIREMENTS: "תואר בכלכלה",
+                        FIT: "תקציב",
+                        STATUS: PENDING,
+                        STOP_REASON: reviewed_reason,
+                    }
+                ],
+            )
+            summary_path.write_text("- מספר המשרות שנסרקו: 0\n", encoding="utf-8")
+            job = DiscoveredJob(
+                source="Drushim",
+                title="כלכלן/ית",
+                company="חברה",
+                location="באר שבע",
+                link="https://www.drushim.co.il/job/37979217/ce5efdcc/",
+                description="תקציב, Excel ודוחות.",
+                requirements="תואר בכלכלה.",
+            )
+
+            with patch("src.discovery_scanner.default_sources", return_value=[Source("Drushim", "https://example.test", "drushim")]):
+                with patch("src.discovery_scanner.scan_sources", return_value=([job], 1, {})):
+                    result = discover(csv_path, summary_path, root / "report.json", root / "report.md", rescore_existing=True)
+
+            rows = load_rows(csv_path)
+            self.assertEqual(result.skipped_existing, 1)
+            self.assertEqual(rows[0][STOP_REASON], reviewed_reason)
+
+    def test_discover_keeps_existing_pending_approval_when_new_scan_is_generic(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            csv_path = root / "jobs.csv"
+            summary_path = root / "summary.md"
+            approval_reason = "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+            write_rows(
+                csv_path,
+                [
+                    {
+                        DATE: "2026-08-03",
+                        COMPANY: "חברה",
+                        TITLE: "בקר/ית תקציב",
+                        LOCATION: "אשדוד",
+                        LINK: "https://www.drushim.co.il/job/37735694/66ab8947/",
+                        SCORE: "100",
+                        REQUIREMENTS: "תואר בכלכלה",
+                        FIT: "תקציב",
+                        STATUS: PENDING,
+                        STOP_REASON: approval_reason,
+                    }
+                ],
+            )
+            summary_path.write_text("- מספר המשרות שנסרקו: 0\n", encoding="utf-8")
+            job = DiscoveredJob(
+                source="Drushim",
+                title="בקר/ית תקציב",
+                company="חברה",
+                location="אשדוד",
+                link="https://www.drushim.co.il/job/37735694/66ab8947/",
+                description="בקרה תקציבית, Excel ודוחות.",
+                requirements="תואר בכלכלה.",
+            )
+
+            with patch("src.discovery_scanner.default_sources", return_value=[Source("Drushim", "https://example.test", "drushim")]):
+                with patch("src.discovery_scanner.scan_sources", return_value=([job], 1, {})):
+                    result = discover(csv_path, summary_path, root / "report.json", root / "report.md", rescore_existing=True)
+
+            rows = load_rows(csv_path)
+            self.assertEqual(result.rescored_existing, 1)
+            self.assertEqual(rows[0][STATUS], PENDING)
+            self.assertEqual(rows[0][STOP_REASON], approval_reason)
 
 
 if __name__ == "__main__":

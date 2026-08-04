@@ -700,24 +700,44 @@ MANUAL_DECISION_MARKERS = (
     "הוגש בהצלחה",
 )
 
+REVIEW_DECISION_MARKERS = MANUAL_DECISION_MARKERS + (
+    "באתר הרשמי",
+    "טופס ההגשה",
+    "לאחר בדיקה",
+    "אין לחתום",
+    "לפני כל הגשה",
+    "Manual required:",
+    "Rejected: duplicate",
+    "נעצר:",
+    "נעצר בטופס",
+)
+
 
 def is_scanner_managed_row(row: dict[str, str]) -> bool:
     if row.get(STATUS) == "הוגש":
         return False
     reason = row.get(STOP_REASON, "")
-    if any(marker in reason for marker in MANUAL_DECISION_MARKERS):
+    if any(marker in reason for marker in REVIEW_DECISION_MARKERS):
         return False
     return any(marker in reason for marker in SCANNER_STOP_MARKERS)
 
 
 def update_scanner_row(existing: dict[str, str], scored: ScoredJob) -> bool:
-    manual_decision = any(marker in existing.get(STOP_REASON, "") for marker in MANUAL_DECISION_MARKERS)
+    manual_decision = any(marker in existing.get(STOP_REASON, "") for marker in REVIEW_DECISION_MARKERS)
     if not is_scanner_managed_row(existing) and not (scored.status == REJECTED and existing.get(STATUS) != SUBMITTED and not manual_decision):
         return False
     updated = row_from_scored(scored, existing.get(DATE, "") or datetime.now().strftime("%Y-%m-%d"))
     updated[DATE] = existing.get(DATE, updated[DATE])
+    preserve_pending_approval = (
+        existing.get(STATUS) == PENDING
+        and existing.get(STOP_REASON, "").startswith("נדרש אישור לפני הגשה")
+        and updated.get(STATUS) == PENDING
+        and updated.get(STOP_REASON, "").startswith("נמצא בסריקה חדשה")
+    )
     changed = False
     for field in (COMPANY, TITLE, LOCATION, LINK, SCORE, REQUIREMENTS, FIT, STATUS, STOP_REASON, COVER, CV):
+        if preserve_pending_approval and field in {STATUS, STOP_REASON}:
+            continue
         if existing.get(field, "") != updated.get(field, ""):
             existing[field] = updated.get(field, "")
             changed = True
