@@ -260,6 +260,22 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(scored.status, PENDING)
         self.assertIn("נדרש אישור", scored.stop_reason)
 
+    def test_procurement_department_manager_is_rejected(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="Drushim",
+                title="מנהל.ת מחלקת רכש",
+                company="חברה",
+                location="יבנה",
+                link="https://www.drushim.co.il/job/1/",
+                description="ניהול מחלקת רכש, ספקים, משא ומתן והזמנות.",
+                requirements="ניסיון ברכש וניהול עובדים.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("מנהל/ת רכש", scored.stop_reason)
+
     def test_hybrid_up_to_two_days_is_in_scope(self) -> None:
         scored = score_job(
             DiscoveredJob(
