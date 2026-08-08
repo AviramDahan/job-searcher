@@ -8,6 +8,14 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+try:
+    from .local_env import load_local_env
+except ImportError:
+    from local_env import load_local_env
+
+
+load_local_env()
+
 
 SUBMITTED_TITLE = "הוגשה מועמדות"
 MANUAL_TITLE = "נדרשת הגשה עצמאית / השלמה ידנית"
