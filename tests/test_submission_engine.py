@@ -82,6 +82,23 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertFalse(plans[0].can_attempt)
         self.assertTrue(plans[0].requires_human)
 
+    def test_synced_pending_approval_blocks_jobmaster_auto_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        STOP_REASON: "Approval required by submission engine: requires 3 years of experience. Next: ask operator.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertTrue(plans[0].requires_human)
+
     def test_salary_requirement_adds_approved_salary_to_cover_letter(self) -> None:
         job = row_to_job(
             row(

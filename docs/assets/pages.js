@@ -630,6 +630,64 @@ function renderInsightJobs(jobs = []) {
   `;
 }
 
+function renderConversionSummary(conversion = {}) {
+  const counts = conversion.counts || {};
+  const plan = conversion.submission_plan || {};
+  const sources = Array.isArray(conversion.source_quality) ? conversion.source_quality : [];
+  const recommendations = Array.isArray(conversion.recommendations) ? conversion.recommendations : [];
+  const hasConversion = Object.keys(counts).length > 0 || Object.keys(plan).length > 0;
+
+  if (!hasConversion) {
+    return "";
+  }
+
+  const metricItems = [
+    ["הגשות מתוך מתאימות", `${counts.submitted_rate_from_suitable ?? 0}%`],
+    ["הגשות מתוך מתועדות", `${counts.submitted_rate_from_documented ?? 0}%`],
+    ["מוכנות עכשיו", plan.runnable ?? 0],
+    ["תוכניות מנוע", plan.plans ?? 0],
+  ];
+
+  return `
+    <div class="conversion-panel">
+      <div class="conversion-metrics" aria-label="מדדי המרה">
+        ${metricItems
+          .map(
+            ([label, value]) => `
+              <span class="conversion-metric">
+                <strong>${escapeHtml(value)}</strong>
+                <span>${escapeHtml(label)}</span>
+              </span>
+            `
+          )
+          .join("")}
+      </div>
+      <div class="source-quality" aria-label="איכות מקורות">
+        ${sources
+          .slice(0, 5)
+          .map(
+            (source) => `
+              <span class="source-pill" title="${escapeHtml(`הוגשו ${source.submitted || 0}, ממתינות ${source.pending || 0}, ידניות ${source.manual_required || 0}`)}">
+                ${escapeHtml(source.source || "מקור")} · ${escapeHtml(source.submission_rate ?? 0)}%
+              </span>
+            `
+          )
+          .join("")}
+      </div>
+      ${
+        recommendations.length
+          ? `<ul class="conversion-recommendations">
+              ${recommendations
+                .slice(0, 3)
+                .map((recommendation) => `<li>${escapeHtml(recommendation)}</li>`)
+                .join("")}
+            </ul>`
+          : ""
+      }
+    </div>
+  `;
+}
+
 function renderInsights() {
   if (!els.insights) {
     return;
@@ -640,8 +698,9 @@ function renderInsights() {
   const blockers = Array.isArray(insights.blocker_counts) ? insights.blocker_counts : [];
   const snapshot = insights.snapshot || {};
   const safeAuto = Number(snapshot.safe_auto_submit_now || 0);
+  const conversionSummary = renderConversionSummary(state.data.conversion || {});
 
-  if (!actions.length && !blockers.length) {
+  if (!actions.length && !blockers.length && !conversionSummary) {
     els.insights.innerHTML = "";
     return;
   }
@@ -659,6 +718,7 @@ function renderInsights() {
       </div>
       <span class="state-pill local">${escapeHtml(snapshot.high_score_actionable || 0)} משרות דורשות פעולה</span>
     </div>
+    ${conversionSummary}
     <div class="insight-grid">
       ${actions
         .map(

@@ -276,6 +276,38 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(scored.status, REJECTED)
         self.assertIn("מנהל/ת רכש", scored.stop_reason)
 
+    def test_head_of_economics_domain_is_rejected_as_senior_management(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="ראש תחום כלכלה ותקציבים",
+                company="חברה",
+                location="באר שבע",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=6",
+                description="ניהול תחום כלכלה ותקציבים, עבודה מול הנהלה ודוחות.",
+                requirements="תואר בכלכלה וניסיון של 3 שנים.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertLess(scored.score, 70)
+
+    def test_inventory_and_procurement_manager_is_rejected_as_senior_management(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="Drushim",
+                title="מנהל/ת אפסנאות ורכש מקומי",
+                company="חברה",
+                location="באר שבע",
+                link="https://www.drushim.co.il/job/2/",
+                description="ניהול אפסנאות ורכש, ספקים והזמנות.",
+                requirements="ניסיון ברכש וניהול.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertLess(scored.score, 70)
+
     def test_hybrid_up_to_two_days_is_in_scope(self) -> None:
         scored = score_job(
             DiscoveredJob(

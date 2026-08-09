@@ -17,6 +17,7 @@ from zoneinfo import ZoneInfo
 try:
     from .action_insights import build_insights
     from .candidate_profile import load_candidate_profile
+    from .conversion_audit import build_audit, load_json_list
     from .job_records import (
         COMPANY,
         COVER,
@@ -49,6 +50,7 @@ try:
 except ImportError:
     from action_insights import build_insights
     from candidate_profile import load_candidate_profile
+    from conversion_audit import build_audit, load_json_list
     from job_records import (
         COMPANY,
         COVER,
@@ -92,6 +94,7 @@ class DashboardPaths:
     manual_log: Path
     retry_queue: Path
     dashboard_log: Path
+    submission_plan: Path | None = None
 
 
 def resolve_project_path(value: str | Path, root: Path = PROJECT_ROOT) -> Path:
@@ -106,6 +109,7 @@ def default_paths(root: Path = PROJECT_ROOT) -> DashboardPaths:
         manual_log=resolve_project_path(os.environ.get("MANUAL_ALERT_LOG", "outputs/manual_alert_log.json"), root),
         retry_queue=resolve_project_path(os.environ.get("RETRY_QUEUE_JSON", "outputs/retry_queue.json"), root),
         dashboard_log=resolve_project_path(os.environ.get("DASHBOARD_ALERT_LOG", "data/runtime/dashboard_alert_log.json"), root),
+        submission_plan=resolve_project_path(os.environ.get("SUBMISSION_ENGINE_PLAN_JSON", "outputs/submission_engine_plan.json"), root),
     )
 
 
@@ -213,6 +217,7 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
     scanned = parse_summary_value(paths.summary, "מספר המשרות שנסרקו", default=len(rows))
     candidate = load_candidate_profile()
     jobs = sorted((serialize_job(row) for row in rows), key=lambda item: (item["score"], item["date"]), reverse=True)
+    submission_plan_path = paths.submission_plan or paths.retry_queue.with_name("submission_engine_plan.json")
     return {
         "generated_at": now_string(timezone),
         "candidate": {"full_name": candidate.full_name},
@@ -221,6 +226,7 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
             "summary": str(paths.summary),
             "manual_log": str(paths.manual_log),
             "retry_queue": str(paths.retry_queue),
+            "submission_plan": str(submission_plan_path),
         },
         "telegram": {
             "configured": bool(os.environ.get("TELEGRAM_BOT_TOKEN") and os.environ.get("TELEGRAM_CHAT_ID")),
@@ -237,6 +243,7 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
         "insights": build_insights(rows),
+        "conversion": build_audit(rows, scanned, load_json_list(submission_plan_path), load_json_list(paths.retry_queue)),
         "jobs": jobs,
     }
 

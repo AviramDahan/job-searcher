@@ -9,9 +9,11 @@ from zoneinfo import ZoneInfo
 
 try:
     from .action_insights import build_insights
+    from .conversion_audit import build_audit, load_json_list
     from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 except ImportError:
     from action_insights import build_insights
+    from conversion_audit import build_audit, load_json_list
     from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
 
 
@@ -56,11 +58,20 @@ def serialize_row(row: dict[str, str]) -> dict[str, str | int]:
     }
 
 
-def build_payload(csv_path: Path, summary_path: Path, candidate_name: str, timezone: str = DEFAULT_TIMEZONE) -> dict:
+def build_payload(
+    csv_path: Path,
+    summary_path: Path,
+    candidate_name: str,
+    timezone: str = DEFAULT_TIMEZONE,
+    submission_plan_path: Path | None = None,
+    retry_queue_path: Path | None = None,
+) -> dict:
     rows = load_rows(csv_path)
     counts = Counter(row.get(STATUS, "") for row in rows)
     scanned = parse_summary_count(summary_path, "מספר המשרות שנסרקו", default=len(rows))
     jobs = sorted((serialize_row(row) for row in rows), key=lambda item: (int(item["score"]), str(item["date"])), reverse=True)
+    submission_plan_path = submission_plan_path or summary_path.with_name("submission_engine_plan.json")
+    retry_queue_path = retry_queue_path or summary_path.with_name("retry_queue.json")
     return {
         "generated_at": now_string(timezone),
         "candidate": {"full_name": candidate_name},
@@ -74,6 +85,12 @@ def build_payload(csv_path: Path, summary_path: Path, candidate_name: str, timez
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
         "insights": build_insights(rows),
+        "conversion": build_audit(
+            rows,
+            scanned,
+            load_json_list(submission_plan_path),
+            load_json_list(retry_queue_path),
+        ),
         "jobs": jobs,
     }
 
@@ -88,11 +105,13 @@ def main() -> int:
     parser.add_argument("--csv", type=Path, default=Path("outputs/job_applications.csv"))
     parser.add_argument("--summary", type=Path, default=Path("outputs/job_search_summary.md"))
     parser.add_argument("--out", type=Path, default=Path("docs/assets/job-data.json"))
+    parser.add_argument("--submission-plan", type=Path, default=Path("outputs/submission_engine_plan.json"))
+    parser.add_argument("--retry-queue", type=Path, default=Path("outputs/retry_queue.json"))
     parser.add_argument("--candidate-name", default="קורן דהן")
     parser.add_argument("--timezone", default=DEFAULT_TIMEZONE)
     args = parser.parse_args()
 
-    payload = build_payload(args.csv, args.summary, args.candidate_name, args.timezone)
+    payload = build_payload(args.csv, args.summary, args.candidate_name, args.timezone, args.submission_plan, args.retry_queue)
     write_payload(payload, args.out)
     print(json.dumps({"ok": True, "out": str(args.out), "jobs": len(payload["jobs"])}, ensure_ascii=False))
     return 0

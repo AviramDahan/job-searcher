@@ -241,7 +241,7 @@ def _candidate_fact_lists(context: str, profile: CandidateProfile) -> tuple[list
 
 def _has_explicit_pending_approval(job: SubmissionJob) -> bool:
     reason = (job.stop_reason or "").strip()
-    return job.status == PENDING and reason.startswith("נדרש אישור לפני הגשה")
+    return job.status == PENDING and reason.startswith(("נדרש אישור לפני הגשה", "Approval required by submission engine:"))
 
 
 def _default_decision(
