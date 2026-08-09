@@ -37,8 +37,6 @@ PRIMARY_LOCATION_TERMS = (
     "beersheba",
     "אשדוד",
     "ashdod",
-    "יבנה",
-    "yavne",
     "אופקים",
     "ofakim",
     "קריית מלאכי",
@@ -55,6 +53,8 @@ PRIMARY_LOCATION_TERMS = (
 )
 
 SECONDARY_LOCATION_TERMS = (
+    "יבנה",
+    "yavne",
     "רחובות",
     "rehovot",
     "נס ציונה",
@@ -127,6 +127,27 @@ def assess_location(location: str, context: str = "") -> LocationAssessment:
     combined = clean_text(f"{clean_location} {context}")
 
     primary_matches = matching_terms(combined, PRIMARY_LOCATION_TERMS)
+    location_primary_matches = matching_terms(clean_location, PRIMARY_LOCATION_TERMS)
+    if location_primary_matches:
+        return LocationAssessment(
+            decision=LocationDecision.IN_SCOPE,
+            reason=f"מיקום באזורי היעד: {', '.join(location_primary_matches[:3])}.",
+            matched_terms=location_primary_matches,
+            score_points=20,
+        )
+
+    secondary_matches = matching_terms(clean_location, SECONDARY_LOCATION_TERMS)
+    if secondary_matches:
+        return LocationAssessment(
+            decision=LocationDecision.OUT_OF_SCOPE,
+            reason=(
+                f"נפסל: המיקום '{clean_location}' רחוק משדרות ואינו רלוונטי לפי מדיניות המיקום המעודכנת "
+                f"({', '.join(secondary_matches[:3])})."
+            ),
+            matched_terms=secondary_matches,
+            score_points=0,
+        )
+
     if primary_matches:
         return LocationAssessment(
             decision=LocationDecision.IN_SCOPE,
@@ -141,18 +162,6 @@ def assess_location(location: str, context: str = "") -> LocationAssessment:
             reason="מודל היברידי מתאים למדיניות: עד שתי הגעות שבועיות למשרד.",
             matched_terms=("hybrid_up_to_two_days",),
             score_points=16,
-        )
-
-    secondary_matches = matching_terms(clean_location, SECONDARY_LOCATION_TERMS)
-    if secondary_matches:
-        return LocationAssessment(
-            decision=LocationDecision.APPROVAL_REQUIRED,
-            reason=(
-                "מיקום באזור משני מחוץ לרשימת היעד הראשית "
-                f"({', '.join(secondary_matches[:3])}); נדרש אישור מרחק או מודל עבודה לפני הגשה."
-            ),
-            matched_terms=secondary_matches,
-            score_points=8,
         )
 
     hybrid_matches = matching_terms(combined, HYBRID_TERMS)

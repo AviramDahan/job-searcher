@@ -329,15 +329,15 @@ class BrowserPlanningAdapter:
         elif job.status == REJECTED:
             reason = "The tracker already marks this job as rejected."
             next_step = "Do not attempt this application unless the row is manually restored after a fresh review."
-        elif _has_explicit_pending_approval(job):
-            reason = job.stop_reason
-            next_step = "Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         elif job.score < 70:
             reason = "The fit score is below the minimum submission threshold."
             next_step = "Keep the job rejected or rescore it after reading a live updated posting."
         elif location_assessment.decision == LocationDecision.OUT_OF_SCOPE:
             reason = location_assessment.reason
             next_step = "Do not apply unless the live posting shows an approved target location or a confirmed hybrid model of up to two weekly office visits."
+        elif _has_explicit_pending_approval(job):
+            reason = job.stop_reason
+            next_step = "Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         elif location_assessment.decision == LocationDecision.APPROVAL_REQUIRED and decision == SubmissionDecision.POLICY_REQUIRED:
             reason = location_assessment.reason
             next_step = "Ask the operator to approve the distance or work model before attempting submission."

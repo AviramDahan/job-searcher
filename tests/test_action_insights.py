@@ -27,16 +27,16 @@ class ActionInsightsTests(unittest.TestCase):
         self.assertIn("ידניות", insights["next_actions"][0]["title"])
         self.assertEqual(insights["next_actions"][0]["jobs"][0]["company"], "IAI")
 
-    def test_pending_location_and_experience_generate_separate_actions(self) -> None:
+    def test_pending_unclear_location_and_experience_generate_separate_actions(self) -> None:
         rows = [
             {
                 COMPANY: "Renuar",
                 TITLE: "רפרנט/ית ייבוא",
-                LOCATION: "ראשון לציון",
+                LOCATION: "מספר מקומות",
                 LINK: "https://jobs.example.test/2",
                 SCORE: "100",
                 STATUS: PENDING,
-                STOP_REASON: "נדרש אישור לפני הגשה: מיקום באזור משני מחוץ לרשימת היעד הראשית.",
+                STOP_REASON: "נדרש אישור לפני הגשה: המיקום לא מספיק ברור.",
             },
             {
                 COMPANY: "BudgetCo",
@@ -51,8 +51,26 @@ class ActionInsightsTests(unittest.TestCase):
 
         titles = [action["title"] for action in build_insights(rows)["next_actions"]]
 
-        self.assertIn("להחליט אם מרחיבים מיקומים", titles)
+        self.assertIn("לברר רק מיקומים לא ברורים", titles)
         self.assertIn("למפות ניסיון גבולי לדרישות חובה", titles)
+
+    def test_far_location_is_counted_but_not_a_pending_next_action(self) -> None:
+        rows = [
+            {
+                COMPANY: "Renuar",
+                TITLE: "רפרנט/ית ייבוא",
+                LOCATION: "ראשון לציון",
+                LINK: "https://jobs.example.test/2",
+                SCORE: "100",
+                STATUS: REJECTED,
+                STOP_REASON: "נפסל: המיקום 'ראשון לציון' רחוק משדרות ואינו רלוונטי לפי מדיניות המיקום המעודכנת.",
+            }
+        ]
+
+        insights = build_insights(rows)
+
+        self.assertEqual(categories_for_row(rows[0])[0].category, "secondary_location")
+        self.assertNotIn("לברר רק מיקומים לא ברורים", [action["title"] for action in insights["next_actions"]])
 
     def test_rejected_system_requirement_is_counted_but_not_a_next_action(self) -> None:
         row = {

@@ -482,7 +482,7 @@ The automation logic follows these rules:
 - Stop and document jobs that require CAPTCHA, email/SMS verification, account creation, missing mandatory answers, numeric salary expectations, unknown legal declarations, relocation, heavy travel, or uncertain mandatory requirements.
 - Reject jobs with mandatory SAP/ERP/MRP when the candidate profile says the candidate has no experience with those systems.
 - Reject jobs requiring more than 4 years of experience. Treat `3-4` years or interpretation-sensitive experience as `נדרש אישור`.
-- Do not submit jobs outside the target geography unless the posting explicitly confirms a hybrid model with up to two weekly office visits. Secondary locations such as רחובות, לוד, רמלה, ראשון לציון, and נס ציונה require approval.
+- Do not submit jobs outside the target geography unless the posting explicitly confirms full remote work or another approved southern location. יבנה, רחובות, לוד, רמלה, ראשון לציון, נס ציונה, גדרה, and גן יבנה are not relevant for Koren and should be rejected when they are the office location.
 - Do not claim skills, tools, education, certifications, licenses, or work history that are not in the candidate profile/CV.
 - Prefer company career pages over intermediary job boards when a direct application path exists.
 - Avoid duplicate applications by generating stable job keys from platform IDs and URLs.

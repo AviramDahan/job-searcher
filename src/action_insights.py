@@ -71,9 +71,9 @@ BLOCKER_RULES = (
     ),
     BlockerRule(
         category="secondary_location",
-        label="מיקום מורחב דורש החלטה",
+        label="מיקום רחוק לא רלוונטי",
         patterns=("מיקום באזור משני", "ראשון לציון", "רחובות", "לוד", "רמלה", "נס ציונה", "יבנה"),
-        recommendation="לאשר רק אם המרחק, ההיברידיות או תנאי ההגעה סבירים לקורן.",
+        recommendation="לא להשקיע בהגשה למיקום זה אלא אם המודעה כוללת גם מיקום דרומי מאושר או עבודה מרחוק מלאה.",
         priority=85,
     ),
     BlockerRule(
@@ -223,7 +223,7 @@ def blocker_counts(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
 
 def build_next_actions(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
     manual = top_rows(rows, MANUAL_REQUIRED, limit=5)
-    location = top_rows(rows, PENDING, {"secondary_location", "unclear_location"}, limit=5)
+    location = top_rows(rows, PENDING, {"unclear_location"}, limit=5)
     experience = top_rows(rows, PENDING, {"experience_interpretation"}, limit=5)
     systems = top_rows(rows, PENDING, {"system_skill_gap"}, limit=5)
     adapter = top_rows(rows, PENDING, {"site_adapter_gap"}, limit=5)
@@ -241,9 +241,9 @@ def build_next_actions(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
     if location:
         actions.append(
             {
-                "title": "להחליט אם מרחיבים מיקומים",
-                "impact": f"{len(location)} משרות מובילות יכולות להתקדם אם ראשון לציון/רחובות/לוד/רמלה/יבנה או מיקום לא ברור יאושרו.",
-                "recommendation": "לאשר רק משרות עם הגעה סבירה או היברידיות מפורשת עד פעמיים בשבוע.",
+                "title": "לברר רק מיקומים לא ברורים",
+                "impact": f"{len(location)} משרות מובילות נעצרו כי המיקום לא מספיק ברור.",
+                "recommendation": "לא להרחיב ליבנה/רחובות/לוד/רמלה/ראשון לציון; לבדוק רק אם יש מיקום דרומי מאושר או עבודה מרחוק מלאה.",
                 "jobs": location,
             }
         )

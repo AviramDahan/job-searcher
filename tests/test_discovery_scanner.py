@@ -324,6 +324,22 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(scored.status, PENDING)
         self.assertNotIn("נדרש אישור", scored.stop_reason)
 
+    def test_far_secondary_location_is_rejected_without_approval_queue(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="Drushim",
+                title="קניין/ית רכש",
+                company="חברה",
+                location="רחובות",
+                link="https://www.drushim.co.il/job/3/",
+                description="רכש, ספקים, משא ומתן והזמנות.",
+                requirements="תואר ראשון, Excel ואנגלית. היברידי עד פעמיים בשבוע.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("רחוק משדרות", scored.stop_reason)
+
     def test_discover_appends_new_rows_without_overwriting_existing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

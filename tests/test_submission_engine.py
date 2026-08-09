@@ -99,6 +99,24 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertFalse(plans[0].can_attempt)
         self.assertTrue(plans[0].requires_human)
 
+    def test_far_location_policy_overrides_old_pending_approval_reason(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LOCATION: "ראשון לציון",
+                        STOP_REASON: "Approval required by submission engine: old secondary-location approval needed.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertIn("רחוק משדרות", plans[0].reason)
+
     def test_salary_requirement_adds_approved_salary_to_cover_letter(self) -> None:
         job = row_to_job(
             row(
