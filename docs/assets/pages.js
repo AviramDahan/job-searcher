@@ -4,6 +4,7 @@ const els = {
   syncStatus: document.querySelector("#syncStatus"),
   metrics: document.querySelector("#metrics"),
   insights: document.querySelector("#insights"),
+  locationPolicy: document.querySelector("#locationPolicy"),
   searchInput: document.querySelector("#searchInput"),
   scoreFilter: document.querySelector("#scoreFilter"),
   sortBy: document.querySelector("#sortBy"),
@@ -32,6 +33,7 @@ const MANUAL_REJECTED_STATUS = "נפסל";
 const MANUAL_REJECTION_REASON = "נפסל בבחירה ידנית";
 const MANUAL_STORAGE_KEY = "job-searcher-manual-submissions-v1";
 const MANUAL_REJECTIONS_STORAGE_KEY = "job-searcher-manual-rejections-v1";
+const LOCATION_PREFS_STORAGE_KEY = "job-searcher-location-preferences-v1";
 const SYNC_CONFIG_PATH = "assets/dashboard-config.json";
 const SYNC_TIMEOUT_MS = 12000;
 const SYNC_UNAVAILABLE_MESSAGE = "הסנכרון לא זמין. אנא רענן או בדוק מצב סנכרון.";
@@ -44,6 +46,9 @@ const state = {
   status: "all",
   manualSubmissions: {},
   manualRejections: {},
+  locationPreferences: {
+    approvedLocations: {},
+  },
   sync: {
     config: {},
     enabled: false,
@@ -107,6 +112,31 @@ function normalizeManualRejectionEntry(value = {}) {
   };
 }
 
+function normalizeLocationPreferenceEntry(value = {}) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const key = String(value.key || value.city_key || "").trim();
+  const label = String(value.label || value.city || value.city_label || "").trim();
+  if (!key || !label) {
+    return null;
+  }
+
+  const terms = Array.isArray(value.terms)
+    ? value.terms.map((term) => String(term || "").trim()).filter(Boolean)
+    : [label, key];
+
+  return {
+    key,
+    label,
+    terms: [...new Set(terms)],
+    approved: value.approved === undefined ? true : value.approved === true || String(value.approved || "").toLowerCase() === "true",
+    updatedAt: String(value.updatedAt || value.updated_at || "").trim(),
+    source: String(value.source || "remote").trim(),
+  };
+}
+
 function normalizeManualSubmissions(value) {
   const normalized = {};
   if (!value || typeof value !== "object") {
@@ -137,9 +167,31 @@ function normalizeManualRejections(value) {
   return normalized;
 }
 
+function normalizeLocationPreferences(value) {
+  const approvedLocations = {};
+  const preferences = value && typeof value === "object" ? value : {};
+  const approved = preferences.approved_locations || preferences.approvedLocations || {};
+  const entries = Array.isArray(approved) ? approved : Object.values(approved || {});
+
+  entries.forEach((entry) => {
+    const normalizedEntry = normalizeLocationPreferenceEntry(entry);
+    if (normalizedEntry) {
+      approvedLocations[normalizedEntry.key] = normalizedEntry;
+    }
+  });
+
+  return { approvedLocations };
+}
+
+function remoteLocationPreferences(value) {
+  const normalized = normalizeLocationPreferences(value);
+  return { approved_locations: normalized.approvedLocations };
+}
+
 function saveManualSubmissions() {
   localStorage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(state.manualSubmissions));
   localStorage.setItem(MANUAL_REJECTIONS_STORAGE_KEY, JSON.stringify(state.manualRejections));
+  localStorage.setItem(LOCATION_PREFS_STORAGE_KEY, JSON.stringify(state.locationPreferences));
 }
 
 function timestampNow() {
@@ -316,6 +368,7 @@ async function jsonBlobRequest(endpoint, params = {}) {
       generated_at: currentState.generated_at || "",
       manual_submissions: currentState.manual_submissions || {},
       manual_rejections: currentState.manual_rejections || {},
+      location_preferences: remoteLocationPreferences(currentState.location_preferences),
       events: currentState.events || [],
     };
   }
@@ -325,6 +378,7 @@ async function jsonBlobRequest(endpoint, params = {}) {
     generated_at: new Date().toISOString(),
     manual_submissions: currentState.manual_submissions || {},
     manual_rejections: currentState.manual_rejections || {},
+    location_preferences: remoteLocationPreferences(currentState.location_preferences),
     events: Array.isArray(currentState.events) ? currentState.events : [],
   };
   const eventId = String(params.event_id || `${params.action}:${params.job_key}:${timestampNow()}`);
@@ -358,6 +412,20 @@ async function jsonBlobRequest(endpoint, params = {}) {
     delete nextState.manual_rejections[params.job_key];
   }
 
+  if (!duplicate && params.action === "setLocationPreference") {
+    nextState.location_preferences.approved_locations[params.city_key] = {
+      key: String(params.city_key || ""),
+      label: String(params.city_label || ""),
+      terms: String(params.city_terms || "")
+        .split("|")
+        .map((term) => term.trim())
+        .filter(Boolean),
+      approved: String(params.approved || "").toLowerCase() === "true",
+      updatedAt: timestampNow(),
+      source: "remote",
+    };
+  }
+
   if (!duplicate) {
     nextState.events.push({
       created_at: timestampNow(),
@@ -369,6 +437,9 @@ async function jsonBlobRequest(endpoint, params = {}) {
       location: String(params.location || ""),
       link: String(params.link || ""),
       score: String(params.score || ""),
+      city_key: String(params.city_key || ""),
+      city_label: String(params.city_label || ""),
+      approved: String(params.approved || ""),
     });
   }
 
@@ -390,15 +461,18 @@ async function jsonBlobRequest(endpoint, params = {}) {
     generated_at: nextState.generated_at,
     manual_submissions: nextState.manual_submissions,
     manual_rejections: nextState.manual_rejections,
+    location_preferences: nextState.location_preferences,
     telegram: { sent: false, reason: "jsonblob_transport_no_server_secret" },
   };
 }
 
-function mergeRemoteManualState(remoteSubmissions, remoteRejections) {
+function mergeRemoteState(remoteSubmissions, remoteRejections, remoteLocationPreferences) {
   const remoteSubmitted = normalizeManualSubmissions(remoteSubmissions);
   const remoteRejected = normalizeManualRejections(remoteRejections);
+  const remoteLocations = normalizeLocationPreferences(remoteLocationPreferences);
   state.manualSubmissions = remoteSubmitted;
   state.manualRejections = remoteRejected;
+  state.locationPreferences = remoteLocations;
   saveManualSubmissions();
 }
 
@@ -415,7 +489,7 @@ async function loadRemoteManualSubmissions() {
     if (!payload || payload.ok === false) {
       throw new Error(payload?.error || "sync_error");
     }
-    mergeRemoteManualState(payload.manual_submissions || {}, payload.manual_rejections || {});
+    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
   } catch (error) {
@@ -470,6 +544,91 @@ function truncateForSync(value, maxLength = 900) {
   return `${clean.slice(0, maxLength - 1)}…`;
 }
 
+function slugifyCity(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^\p{L}\p{N}_-]+/gu, "")
+    .slice(0, 80);
+}
+
+function optionTerms(option = {}) {
+  const terms = Array.isArray(option.terms) ? option.terms : [];
+  return [...new Set([option.label, option.key, ...terms].map((term) => String(term || "").trim()).filter(Boolean))];
+}
+
+function locationOptionByKey(key) {
+  const policy = state.data?.location_policy || {};
+  const options = [...(policy.default_approved || []), ...(policy.user_approvable || [])];
+  const remote = state.locationPreferences.approvedLocations[key];
+  return (
+    options.find((option) => option.key === key) ||
+    (remote
+      ? {
+          key: remote.key,
+          label: remote.label,
+          terms: remote.terms || [remote.label],
+        }
+      : null)
+  );
+}
+
+function approvedLocationEntries() {
+  return Object.values(state.locationPreferences.approvedLocations).filter((entry) => entry && entry.approved);
+}
+
+function isLocationApproved(key) {
+  return Boolean(state.locationPreferences.approvedLocations[key]?.approved);
+}
+
+async function pushLocationPreference(option, approved) {
+  const blockedMessage = syncWriteBlockMessage();
+  if (blockedMessage) {
+    showToast(blockedMessage);
+    return;
+  }
+
+  const cityKey = String(option.key || slugifyCity(option.label)).trim();
+  const cityLabel = String(option.label || cityKey).trim();
+  const terms = optionTerms({ ...option, key: cityKey, label: cityLabel });
+  const eventId = `setLocationPreference:${cityKey}:${approved}:${timestampNow()}:${Math.random().toString(36).slice(2)}`;
+  state.sync.saving = true;
+  state.sync.lastError = "";
+  renderChrome();
+
+  try {
+    const payload = await syncRequest(
+      {
+        action: "setLocationPreference",
+        event_id: eventId,
+        city_key: cityKey,
+        city_label: cityLabel,
+        city_terms: terms.join("|"),
+        approved: approved ? "true" : "false",
+        user_agent: navigator.userAgent,
+      },
+      "POST"
+    );
+
+    if (!payload || payload.ok === false) {
+      throw new Error(payload?.error || "sync_error");
+    }
+
+    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    state.sync.loaded = true;
+    state.sync.lastSyncedAt = timestampNow();
+    showToast(approved ? "העיר נוספה למדיניות החיפוש" : "העיר הוסרה ממדיניות החיפוש");
+  } catch (error) {
+    state.sync.lastError = error.message || "sync_error";
+    showToast(SYNC_UNAVAILABLE_MESSAGE);
+  } finally {
+    state.sync.saving = false;
+    render();
+    refreshOpenModal();
+  }
+}
+
 async function pushManualAction(action, key, submittedAt = "", note = "") {
   const blockedMessage = syncWriteBlockMessage();
   if (blockedMessage) {
@@ -508,7 +667,7 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
       throw new Error(payload?.error || "sync_error");
     }
 
-    mergeRemoteManualState(payload.manual_submissions || {}, payload.manual_rejections || {});
+    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
     const successMessages = {
@@ -685,6 +844,93 @@ function renderConversionSummary(conversion = {}) {
           : ""
       }
     </div>
+  `;
+}
+
+function renderLocationPolicy() {
+  if (!els.locationPolicy || !state.data) {
+    return;
+  }
+
+  const policy = state.data.location_policy || {};
+  const defaultApproved = Array.isArray(policy.default_approved) ? policy.default_approved : [];
+  const userApprovable = Array.isArray(policy.user_approvable) ? policy.user_approvable : [];
+  const knownKeys = new Set([...defaultApproved, ...userApprovable].map((option) => option.key));
+  const customApproved = approvedLocationEntries().filter((entry) => !knownKeys.has(entry.key));
+  const syncBlockedMessage = syncWriteBlockMessage();
+  const disabled = syncBlockedMessage ? " disabled" : "";
+
+  const defaultChips = defaultApproved
+    .map(
+      (option) => `
+        <span class="city-chip locked" title="מאושר כברירת מחדל">
+          ${escapeHtml(option.label)}
+        </span>
+      `
+    )
+    .join("");
+
+  const optionalChips = userApprovable
+    .map((option) => {
+      const approved = isLocationApproved(option.key);
+      return `
+        <button
+          type="button"
+          class="city-chip toggle${approved ? " approved" : ""}"
+          data-location-action="toggle"
+          data-location-key="${escapeHtml(option.key)}"
+          aria-pressed="${approved ? "true" : "false"}"
+          ${disabled}
+        >
+          ${escapeHtml(option.label)}
+        </button>
+      `;
+    })
+    .join("");
+
+  const customChips = customApproved
+    .map(
+      (entry) => `
+        <button
+          type="button"
+          class="city-chip toggle approved custom"
+          data-location-action="toggle"
+          data-location-key="${escapeHtml(entry.key)}"
+          aria-pressed="true"
+          ${disabled}
+        >
+          ${escapeHtml(entry.label)}
+        </button>
+      `
+    )
+    .join("");
+
+  els.locationPolicy.innerHTML = `
+    <div class="location-head">
+      <div>
+        <p class="eyebrow">מדיניות מיקום</p>
+        <h2>ערי חיפוש מאושרות</h2>
+      </div>
+      <span class="state-pill local">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} ערים מאושרות</span>
+    </div>
+    <div class="location-groups">
+      <section class="location-group">
+        <h3>ברירת מחדל</h3>
+        <div class="city-grid">${defaultChips}</div>
+      </section>
+      <section class="location-group">
+        <h3>בחירה</h3>
+        <div class="city-grid">${optionalChips}${customChips}</div>
+      </section>
+      <form class="custom-city-form" data-location-action="custom">
+        <label class="search-box" for="customCityInput">
+          <span>עיר נוספת</span>
+          <input id="customCityInput" name="city" type="text" autocomplete="off" maxlength="80" />
+        </label>
+        <button type="submit" class="manual-button"${disabled}>הוסף</button>
+      </form>
+    </div>
+    ${syncBlockedMessage ? `<section class="sync-warning" role="alert">${escapeHtml(syncBlockedMessage)}</section>` : ""}
   `;
 }
 
@@ -1009,6 +1255,7 @@ function render() {
   renderChrome();
   renderMetrics();
   renderInsights();
+  renderLocationPolicy();
   renderJobs();
   renderDetails();
 }
@@ -1023,6 +1270,41 @@ els.insights?.addEventListener("click", (event) => {
   if (job) {
     openJobModal(job);
   }
+});
+
+els.locationPolicy?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-location-action='toggle']");
+  if (!button) {
+    return;
+  }
+
+  const key = button.dataset.locationKey;
+  const option = locationOptionByKey(key);
+  if (!option) {
+    showToast("לא נמצאו פרטי עיר לעדכון");
+    return;
+  }
+
+  void pushLocationPreference(option, !isLocationApproved(key));
+});
+
+els.locationPolicy?.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-location-action='custom']");
+  if (!form) {
+    return;
+  }
+  event.preventDefault();
+  const input = form.querySelector("input[name='city']");
+  const label = String(input?.value || "").trim();
+  const key = `custom_${slugifyCity(label)}`;
+  if (!label || key === "custom_") {
+    showToast("יש להזין שם עיר");
+    return;
+  }
+  if (input) {
+    input.value = "";
+  }
+  void pushLocationPreference({ key, label, terms: [label] }, true);
 });
 
 els.jobList.addEventListener("click", (event) => {

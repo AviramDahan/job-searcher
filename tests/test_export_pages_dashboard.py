@@ -42,6 +42,9 @@ class ExportPagesDashboardTests(unittest.TestCase):
             self.assertEqual(payload["conversion"]["counts"]["scanned"], 10)
             self.assertEqual(payload["conversion"]["submission_plan"]["decisions"]["not_supported"], 1)
             self.assertEqual(payload["conversion"]["retry_queue"]["modes"]["company_fallback"], 1)
+            self.assertIn("location_policy", payload)
+            self.assertIn("שדרות", [item["label"] for item in payload["location_policy"]["default_approved"]])
+            self.assertIn("רחובות", [item["label"] for item in payload["location_policy"]["user_approvable"]])
 
 
 if __name__ == "__main__":

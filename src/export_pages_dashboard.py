@@ -11,10 +11,12 @@ try:
     from .action_insights import build_insights
     from .conversion_audit import build_audit, load_json_list
     from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
+    from .location_policy import location_policy_payload
 except ImportError:
     from action_insights import build_insights
     from conversion_audit import build_audit, load_json_list
     from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
+    from location_policy import location_policy_payload
 
 
 DEFAULT_TIMEZONE = "Asia/Jerusalem"
@@ -84,6 +86,7 @@ def build_payload(
             "rejected": counts[REJECTED],
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
+        "location_policy": location_policy_payload(),
         "insights": build_insights(rows),
         "conversion": build_audit(
             rows,

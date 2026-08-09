@@ -43,6 +43,7 @@ try:
         score_int,
         write_rows,
     )
+    from .location_policy import location_policy_payload
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
@@ -76,6 +77,7 @@ except ImportError:
         score_int,
         write_rows,
     )
+    from location_policy import location_policy_payload
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
@@ -95,6 +97,7 @@ class DashboardPaths:
     retry_queue: Path
     dashboard_log: Path
     submission_plan: Path | None = None
+    location_preferences: Path | None = None
 
 
 def resolve_project_path(value: str | Path, root: Path = PROJECT_ROOT) -> Path:
@@ -110,6 +113,7 @@ def default_paths(root: Path = PROJECT_ROOT) -> DashboardPaths:
         retry_queue=resolve_project_path(os.environ.get("RETRY_QUEUE_JSON", "outputs/retry_queue.json"), root),
         dashboard_log=resolve_project_path(os.environ.get("DASHBOARD_ALERT_LOG", "data/runtime/dashboard_alert_log.json"), root),
         submission_plan=resolve_project_path(os.environ.get("SUBMISSION_ENGINE_PLAN_JSON", "outputs/submission_engine_plan.json"), root),
+        location_preferences=resolve_project_path(os.environ.get("LOCATION_PREFERENCES_JSON", "outputs/location_preferences.json"), root),
     )
 
 
@@ -211,6 +215,56 @@ def retry_queue_summary(path: Path) -> dict[str, Any]:
     return {"total": len(items), "modes": dict(modes)}
 
 
+def location_preferences_path(paths: DashboardPaths) -> Path:
+    return paths.location_preferences or paths.summary.with_name("location_preferences.json")
+
+
+def normalize_location_preferences(data: Any) -> dict[str, Any]:
+    preferences = data.get("location_preferences", data) if isinstance(data, dict) else {}
+    approved = preferences.get("approved_locations", {}) if isinstance(preferences, dict) else {}
+    if isinstance(approved, list):
+        approved_items = {str(item.get("key", "")): item for item in approved if isinstance(item, dict) and item.get("key")}
+    elif isinstance(approved, dict):
+        approved_items = {
+            str(key): ({**value, "key": str(value.get("key") or key)} if isinstance(value, dict) else value)
+            for key, value in approved.items()
+        }
+    else:
+        approved_items = {}
+    return {"approved_locations": approved_items}
+
+
+def save_location_preference(paths: DashboardPaths, payload: dict[str, Any]) -> dict[str, Any]:
+    path = location_preferences_path(paths)
+    preferences = normalize_location_preferences(load_json(path, {}))
+    key = " ".join(str(payload.get("city_key", "")).split()).strip()
+    label = " ".join(str(payload.get("city_label", "")).split()).strip()
+    if not key:
+        raise ValueError("missing_city_key")
+    if not label:
+        raise ValueError("missing_city_label")
+
+    terms = payload.get("city_terms", [])
+    if isinstance(terms, str):
+        terms = [item.strip() for item in terms.split("|") if item.strip()]
+    elif isinstance(terms, list):
+        terms = [" ".join(str(item).split()).strip() for item in terms if " ".join(str(item).split()).strip()]
+    else:
+        terms = []
+    approved = str(payload.get("approved", "")).strip().lower() in {"1", "true", "yes", "y", "כן", "approved"}
+    preferences["approved_locations"][key] = {
+        "key": key,
+        "label": label,
+        "terms": list(dict.fromkeys([label, key, *terms])),
+        "approved": approved,
+        "updatedAt": now_string(),
+        "source": "local-dashboard",
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"ok": True, "location_preferences": preferences}, ensure_ascii=False, indent=2), encoding="utf-8")
+    return preferences
+
+
 def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> dict[str, Any]:
     rows = load_rows(paths.csv)
     counts = Counter(row.get(STATUS, "") for row in rows)
@@ -242,6 +296,8 @@ def dashboard_state(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> 
             "rejected": counts[REJECTED],
             "suitable": sum(counts[status] for status in SUITABLE_STATUSES),
         },
+        "location_policy": location_policy_payload(),
+        "location_preferences": normalize_location_preferences(load_json(location_preferences_path(paths), {})),
         "insights": build_insights(rows),
         "conversion": build_audit(rows, scanned, load_json_list(submission_plan_path), load_json_list(paths.retry_queue)),
         "jobs": jobs,
@@ -448,6 +504,10 @@ def make_handler(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> typ
                     result = plan_job_submission(paths, str(payload.get("key", "")))
                     self.send_json({"ok": True, "engine": result})
                     return
+                if route == "/api/location-preferences":
+                    preferences = save_location_preference(paths, payload)
+                    self.send_json({"ok": True, "location_preferences": preferences, "state": dashboard_state(paths, timezone)})
+                    return
                 self.send_json({"ok": False, "error": "not_found"}, status=404)
             except KeyError:
                 self.send_json({"ok": False, "error": "job_not_found"}, status=404)
@@ -470,6 +530,7 @@ def main() -> int:
     parser.add_argument("--manual-log", type=Path, default=default_paths().manual_log)
     parser.add_argument("--retry-queue", type=Path, default=default_paths().retry_queue)
     parser.add_argument("--dashboard-log", type=Path, default=default_paths().dashboard_log)
+    parser.add_argument("--location-preferences", type=Path, default=default_paths().location_preferences)
     args = parser.parse_args()
 
     paths = DashboardPaths(
@@ -478,6 +539,7 @@ def main() -> int:
         manual_log=resolve_project_path(args.manual_log),
         retry_queue=resolve_project_path(args.retry_queue),
         dashboard_log=resolve_project_path(args.dashboard_log),
+        location_preferences=resolve_project_path(args.location_preferences),
     )
     handler = make_handler(paths)
     server = ThreadingHTTPServer((args.host, args.port), handler)

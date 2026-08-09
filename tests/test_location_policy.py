@@ -30,6 +30,18 @@ class LocationPolicyTests(unittest.TestCase):
         self.assertEqual(assessment.decision, LocationDecision.OUT_OF_SCOPE)
         self.assertIn("רחובות", assessment.matched_terms)
 
+    def test_dashboard_approved_city_becomes_in_scope(self) -> None:
+        assessment = assess_location("רחובות", approved_location_terms=("רחובות", "rehovot"))
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+        self.assertIn("אושר בדשבורד", assessment.reason)
+
+    def test_full_remote_can_override_far_office_city(self) -> None:
+        assessment = assess_location("רחובות", "עבודה מרחוק מלאה")
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+        self.assertIn("מרחוק", assessment.reason)
+
 
 if __name__ == "__main__":
     unittest.main()

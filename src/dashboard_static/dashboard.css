@@ -158,6 +158,107 @@ h3 {
   font-size: 13px;
 }
 
+.location-policy {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 8px 22px rgba(28, 39, 49, 0.04);
+}
+
+.location-policy:empty {
+  display: none;
+}
+
+.location-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
+}
+
+.location-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr) minmax(220px, 0.7fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.location-group,
+.custom-city-form {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  gap: 8px;
+}
+
+.location-group h3 {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.city-grid {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 7px;
+}
+
+.city-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid #d5dde1;
+  border-radius: 999px;
+  background: #f7f9fa;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.city-chip.toggle {
+  background: var(--surface);
+}
+
+.city-chip.toggle:hover,
+.city-chip.toggle:focus-visible {
+  border-color: #b9d4d1;
+  background: #eef6f5;
+  color: var(--accent-ink);
+  outline: none;
+}
+
+.city-chip.approved,
+.city-chip.locked {
+  border-color: #b7ddc6;
+  background: #e8f6ee;
+  color: var(--green);
+}
+
+.city-chip.custom {
+  border-color: #b5d5f1;
+  background: #eaf4ff;
+  color: #1b5d92;
+}
+
+.city-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.custom-city-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
 .filters {
   display: grid;
   grid-template-columns: minmax(250px, 1.4fr) auto minmax(130px, 0.35fr) minmax(130px, 0.35fr);
@@ -511,6 +612,14 @@ textarea:focus {
     grid-template-columns: 1fr 1fr;
   }
 
+  .location-groups {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .custom-city-form {
+    grid-column: 1 / -1;
+  }
+
   .segmented {
     width: 100%;
   }
@@ -544,6 +653,13 @@ textarea:focus {
 
   .metrics,
   .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .location-head,
+  .location-groups,
+  .custom-city-form {
+    display: grid;
     grid-template-columns: 1fr;
   }
 

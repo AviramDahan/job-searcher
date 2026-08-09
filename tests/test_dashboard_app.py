@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.dashboard_app import DashboardPaths, build_alert_payload, dashboard_state, plan_job_submission, resend_telegram, update_job
+from src.dashboard_app import DashboardPaths, build_alert_payload, dashboard_state, plan_job_submission, resend_telegram, save_location_preference, update_job
 from src.job_records import (
     COMPANY,
     COVER,
@@ -86,6 +86,7 @@ class DashboardAppTests(unittest.TestCase):
             manual_log=root / "manual_alert_log.json",
             retry_queue=root / "retry_queue.json",
             dashboard_log=root / "dashboard_alert_log.json",
+            location_preferences=root / "location_preferences.json",
         )
         write_rows(self.paths.csv, sample_rows())
         self.paths.summary.write_text("- מספר המשרות שנסרקו: 50\n", encoding="utf-8-sig")
@@ -128,7 +129,24 @@ class DashboardAppTests(unittest.TestCase):
         self.assertEqual(state["conversion"]["submission_plan"]["decisions"]["policy_required"], 1)
         self.assertEqual(state["telegram"]["manual_alerts"]["sent"], 1)
         self.assertEqual(state["retry_queue"]["total"], 2)
+        self.assertIn("location_policy", state)
+        self.assertIn("רחובות", [item["label"] for item in state["location_policy"]["user_approvable"]])
         self.assertEqual(state["jobs"][0]["company"], "Acme")
+
+    def test_save_location_preference_updates_dashboard_state(self) -> None:
+        preferences = save_location_preference(
+            self.paths,
+            {
+                "city_key": "rehovot",
+                "city_label": "רחובות",
+                "city_terms": "רחובות|rehovot",
+                "approved": "true",
+            },
+        )
+        state = dashboard_state(self.paths)
+
+        self.assertTrue(preferences["approved_locations"]["rehovot"]["approved"])
+        self.assertEqual(state["location_preferences"]["approved_locations"]["rehovot"]["label"], "רחובות")
 
     def test_update_job_adds_note_without_changing_status(self) -> None:
         key = "jobmaster:1001"

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from src.candidate_profile import CandidateProfile, SystemSkillFact
 from src.job_records import COMPANY, COVER, FIT, LINK, LOCATION, MANUAL_REQUIRED, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE
@@ -116,6 +119,28 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
         self.assertFalse(plans[0].can_attempt)
         self.assertIn("רחוק משדרות", plans[0].reason)
+
+    def test_dashboard_approved_location_allows_planning(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            preferences_path = Path(tmp) / "location_preferences.json"
+            preferences_path.write_text(
+                json.dumps(
+                    {
+                        "location_preferences": {
+                            "approved_locations": [
+                                {"key": "rehovot", "label": "רחובות", "terms": ["רחובות", "rehovot"], "approved": True}
+                            ]
+                        }
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            with patch.dict(os.environ, {"JOB_SEARCH_LOCATION_PREFERENCES": str(preferences_path)}, clear=False):
+                plans = plan_jobs([row(**{LOCATION: "רחובות"})], profile=profile(), min_score=70)
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_AUTO.value)
+        self.assertTrue(plans[0].can_attempt)
 
     def test_salary_requirement_adds_approved_salary_to_cover_letter(self) -> None:
         job = row_to_job(

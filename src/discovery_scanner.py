@@ -92,7 +92,6 @@ TARGET_LOCATION_TERMS = (
     "באר שבע",
     'ב"ש',
     "אשדוד",
-    "יבנה",
     "אופקים",
     "קריית מלאכי",
     "קרית מלאכי",
@@ -102,6 +101,7 @@ TARGET_LOCATION_TERMS = (
 )
 
 SECONDARY_LOCATION_TERMS = (
+    "יבנה",
     "רחובות",
     "לוד",
     "רמלה",

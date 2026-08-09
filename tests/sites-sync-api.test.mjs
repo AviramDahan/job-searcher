@@ -7,6 +7,7 @@ let remoteState = {
   generated_at: "2026-08-02T00:00:00.000Z",
   manual_submissions: {},
   manual_rejections: {},
+  location_preferences: { approved_locations: {} },
   events: [],
 };
 
@@ -110,5 +111,37 @@ const clearReject = await handleSyncAction(
 
 assert.equal(clearReject.ok, true);
 assert.equal(clearReject.manual_rejections["job-2"], undefined);
+
+const approveLocation = await handleSyncAction(
+  {
+    action: "setLocationPreference",
+    event_id: "event-5",
+    city_key: "rehovot",
+    city_label: "רחובות",
+    city_terms: "רחובות|rehovot",
+    approved: "true",
+  },
+  env
+);
+
+assert.equal(approveLocation.ok, true);
+assert.equal(approveLocation.location_preferences.approved_locations.rehovot.approved, true);
+assert.equal(approveLocation.location_preferences.approved_locations.rehovot.label, "רחובות");
+assert.deepEqual(approveLocation.location_preferences.approved_locations.rehovot.terms, ["רחובות", "rehovot"]);
+
+const rejectLocation = await handleSyncAction(
+  {
+    action: "setLocationPreference",
+    event_id: "event-6",
+    city_key: "rehovot",
+    city_label: "רחובות",
+    city_terms: "רחובות|rehovot",
+    approved: "false",
+  },
+  env
+);
+
+assert.equal(rejectLocation.ok, true);
+assert.equal(rejectLocation.location_preferences.approved_locations.rehovot.approved, false);
 
 console.log(JSON.stringify({ ok: true }));

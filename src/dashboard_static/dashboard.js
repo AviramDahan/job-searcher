@@ -3,6 +3,7 @@ const els = {
   generatedAt: document.querySelector("#generatedAt"),
   telegramState: document.querySelector("#telegramState"),
   metrics: document.querySelector("#metrics"),
+  locationPolicy: document.querySelector("#locationPolicy"),
   searchInput: document.querySelector("#searchInput"),
   scoreFilter: document.querySelector("#scoreFilter"),
   sortBy: document.querySelector("#sortBy"),
@@ -29,6 +30,7 @@ const state = {
   status: "all",
   busy: false,
   enginePlans: new Map(),
+  locationPreferences: { approvedLocations: {} },
 };
 
 const escapeHtml = (value = "") =>
@@ -63,10 +65,80 @@ async function api(path, options = {}) {
 async function loadState() {
   const payload = await api("/api/state");
   state.data = payload.state;
+  state.locationPreferences = {
+    approvedLocations: payload.state.location_preferences?.approved_locations || {},
+  };
   if (!state.selectedKey && state.data.jobs.length > 0) {
     state.selectedKey = state.data.jobs[0].key;
   }
   render();
+}
+
+function slugifyCity(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^\p{L}\p{N}_-]+/gu, "")
+    .slice(0, 80);
+}
+
+function optionTerms(option = {}) {
+  const terms = Array.isArray(option.terms) ? option.terms : [];
+  return [...new Set([option.label, option.key, ...terms].map((term) => String(term || "").trim()).filter(Boolean))];
+}
+
+function locationOptionByKey(key) {
+  const policy = state.data?.location_policy || {};
+  const options = [...(policy.default_approved || []), ...(policy.user_approvable || [])];
+  const remote = state.locationPreferences.approvedLocations[key];
+  return (
+    options.find((option) => option.key === key) ||
+    (remote
+      ? {
+          key: remote.key,
+          label: remote.label,
+          terms: remote.terms || [remote.label],
+        }
+      : null)
+  );
+}
+
+function approvedLocationEntries() {
+  return Object.values(state.locationPreferences.approvedLocations).filter((entry) => entry && entry.approved);
+}
+
+function isLocationApproved(key) {
+  return Boolean(state.locationPreferences.approvedLocations[key]?.approved);
+}
+
+async function saveLocationPreference(option, approved) {
+  state.busy = true;
+  render();
+  try {
+    const cityKey = String(option.key || slugifyCity(option.label)).trim();
+    const cityLabel = String(option.label || cityKey).trim();
+    const payload = await api("/api/location-preferences", {
+      method: "POST",
+      body: JSON.stringify({
+        city_key: cityKey,
+        city_label: cityLabel,
+        city_terms: optionTerms({ ...option, key: cityKey, label: cityLabel }).join("|"),
+        approved: approved ? "true" : "false",
+      }),
+    });
+    state.data = payload.state;
+    state.locationPreferences = {
+      approvedLocations: payload.location_preferences?.approved_locations || {},
+    };
+    showToast(approved ? "העיר נוספה למדיניות החיפוש" : "העיר הוסרה ממדיניות החיפוש");
+    render();
+  } catch (error) {
+    showToast(error.message);
+  } finally {
+    state.busy = false;
+    render();
+  }
 }
 
 function renderMetrics() {
@@ -90,6 +162,68 @@ function renderMetrics() {
       return `<article class="metric"><span class="metric-value">${escapeHtml(value)}</span><span class="metric-label">${escapeHtml(label + suffix)}</span></article>`;
     })
     .join("");
+}
+
+function renderLocationPolicy() {
+  if (!els.locationPolicy || !state.data) {
+    return;
+  }
+
+  const policy = state.data.location_policy || {};
+  const defaultApproved = Array.isArray(policy.default_approved) ? policy.default_approved : [];
+  const userApprovable = Array.isArray(policy.user_approvable) ? policy.user_approvable : [];
+  const knownKeys = new Set([...defaultApproved, ...userApprovable].map((option) => option.key));
+  const customApproved = approvedLocationEntries().filter((entry) => !knownKeys.has(entry.key));
+  const disabled = state.busy ? " disabled" : "";
+
+  const defaultChips = defaultApproved
+    .map((option) => `<span class="city-chip locked">${escapeHtml(option.label)}</span>`)
+    .join("");
+  const optionalChips = userApprovable
+    .map((option) => {
+      const approved = isLocationApproved(option.key);
+      return `
+        <button type="button" class="city-chip toggle${approved ? " approved" : ""}" data-location-action="toggle" data-location-key="${escapeHtml(
+        option.key
+      )}" aria-pressed="${approved ? "true" : "false"}"${disabled}>${escapeHtml(option.label)}</button>
+      `;
+    })
+    .join("");
+  const customChips = customApproved
+    .map(
+      (entry) =>
+        `<button type="button" class="city-chip toggle approved custom" data-location-action="toggle" data-location-key="${escapeHtml(
+          entry.key
+        )}" aria-pressed="true"${disabled}>${escapeHtml(entry.label)}</button>`
+    )
+    .join("");
+
+  els.locationPolicy.innerHTML = `
+    <div class="location-head">
+      <div>
+        <p class="eyebrow">מדיניות מיקום</p>
+        <h2>ערי חיפוש מאושרות</h2>
+      </div>
+      <span class="state-pill ready">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} ערים מאושרות</span>
+    </div>
+    <div class="location-groups">
+      <section class="location-group">
+        <h3>ברירת מחדל</h3>
+        <div class="city-grid">${defaultChips}</div>
+      </section>
+      <section class="location-group">
+        <h3>בחירה</h3>
+        <div class="city-grid">${optionalChips}${customChips}</div>
+      </section>
+      <form class="custom-city-form" data-location-action="custom">
+        <label class="search-box" for="customCityInput">
+          <span>עיר נוספת</span>
+          <input id="customCityInput" name="city" type="text" autocomplete="off" maxlength="80" />
+        </label>
+        <button type="submit" class="action-button primary"${disabled}>הוסף</button>
+      </form>
+    </div>
+  `;
 }
 
 function currentJobs() {
@@ -244,6 +378,7 @@ function render() {
   }
   renderChrome();
   renderMetrics();
+  renderLocationPolicy();
   renderJobs();
   renderDetails();
 }
@@ -327,6 +462,39 @@ els.jobDetails.addEventListener("click", (event) => {
   } else {
     updateJob(action);
   }
+});
+
+els.locationPolicy?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-location-action='toggle']");
+  if (!button) {
+    return;
+  }
+  const key = button.dataset.locationKey;
+  const option = locationOptionByKey(key);
+  if (!option) {
+    showToast("לא נמצאו פרטי עיר לעדכון");
+    return;
+  }
+  void saveLocationPreference(option, !isLocationApproved(key));
+});
+
+els.locationPolicy?.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-location-action='custom']");
+  if (!form) {
+    return;
+  }
+  event.preventDefault();
+  const input = form.querySelector("input[name='city']");
+  const label = String(input?.value || "").trim();
+  const key = `custom_${slugifyCity(label)}`;
+  if (!label || key === "custom_") {
+    showToast("יש להזין שם עיר");
+    return;
+  }
+  if (input) {
+    input.value = "";
+  }
+  void saveLocationPreference({ key, label, terms: [label] }, true);
 });
 
 els.searchInput.addEventListener("input", render);

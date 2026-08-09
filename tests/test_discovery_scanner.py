@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -339,6 +341,38 @@ class DiscoveryScannerTests(unittest.TestCase):
 
         self.assertEqual(scored.status, REJECTED)
         self.assertIn("רחוק משדרות", scored.stop_reason)
+
+    def test_dashboard_approved_secondary_location_can_be_pending(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            preferences_path = Path(tmp) / "location_preferences.json"
+            preferences_path.write_text(
+                json.dumps(
+                    {
+                        "location_preferences": {
+                            "approved_locations": [
+                                {"key": "rehovot", "label": "רחובות", "terms": ["רחובות", "rehovot"], "approved": True}
+                            ]
+                        }
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            with patch.dict(os.environ, {"JOB_SEARCH_LOCATION_PREFERENCES": str(preferences_path)}, clear=False):
+                scored = score_job(
+                    DiscoveredJob(
+                        source="Drushim",
+                        title="קניין/ית רכש",
+                        company="חברה",
+                        location="רחובות",
+                        link="https://www.drushim.co.il/job/4/",
+                        description="רכש, ספקים, משא ומתן והזמנות.",
+                        requirements="תואר ראשון, Excel ואנגלית.",
+                    )
+                )
+
+        self.assertEqual(scored.status, PENDING)
+        self.assertIn("אושר בדשבורד", scored.fit)
 
     def test_discover_appends_new_rows_without_overwriting_existing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
