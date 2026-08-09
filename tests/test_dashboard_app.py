@@ -131,6 +131,8 @@ class DashboardAppTests(unittest.TestCase):
         self.assertEqual(state["retry_queue"]["total"], 2)
         self.assertIn("location_policy", state)
         self.assertIn("רחובות", [item["label"] for item in state["location_policy"]["user_approvable"]])
+        self.assertIn("ניר עם", [item["label"] for item in state["location_policy"]["nearby_options"]])
+        self.assertTrue(state["location_policy"]["map_points"])
         self.assertEqual(state["jobs"][0]["company"], "Acme")
 
     def test_save_location_preference_updates_dashboard_state(self) -> None:

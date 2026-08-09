@@ -560,7 +560,7 @@ function optionTerms(option = {}) {
 
 function locationOptionByKey(key) {
   const policy = state.data?.location_policy || {};
-  const options = [...(policy.default_approved || []), ...(policy.user_approvable || [])];
+  const options = [...(policy.default_approved || []), ...(policy.user_approvable || []), ...(policy.nearby_options || []), ...(policy.map_points || [])];
   const remote = state.locationPreferences.approvedLocations[key];
   return (
     options.find((option) => option.key === key) ||
@@ -580,6 +580,40 @@ function approvedLocationEntries() {
 
 function isLocationApproved(key) {
   return Boolean(state.locationPreferences.approvedLocations[key]?.approved);
+}
+
+function isDefaultLocation(key) {
+  const policy = state.data?.location_policy || {};
+  return (policy.default_approved || []).some((option) => option.key === key);
+}
+
+function isScannedLocation(key) {
+  return isDefaultLocation(key) || isLocationApproved(key);
+}
+
+function projectMapPoint(point = {}, bounds = {}) {
+  const minLat = Number(bounds.min_lat ?? 29.45);
+  const maxLat = Number(bounds.max_lat ?? 33.35);
+  const minLng = Number(bounds.min_lng ?? 34.25);
+  const maxLng = Number(bounds.max_lng ?? 35.95);
+  const lng = Number(point.lng);
+  const lat = Number(point.lat);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return null;
+  }
+  const x = ((lng - minLng) / (maxLng - minLng)) * 100;
+  const y = (1 - (lat - minLat) / (maxLat - minLat)) * 100;
+  return {
+    x: Math.max(0, Math.min(100, x)),
+    y: Math.max(0, Math.min(100, y)),
+  };
+}
+
+function mapPointClass(point = {}) {
+  if (point.key === state.data?.location_policy?.home?.key) {
+    return "home";
+  }
+  return isScannedLocation(point.key) ? "scanned" : "not-scanned";
 }
 
 async function pushLocationPreference(option, approved) {
@@ -847,6 +881,76 @@ function renderConversionSummary(conversion = {}) {
   `;
 }
 
+function renderLocationMap(policy = {}, interactionsDisabled = false) {
+  const map = policy.map || {};
+  const bounds = map.bounds || {};
+  const outline = Array.isArray(map.outline) ? map.outline : [];
+  const points = Array.isArray(policy.map_points) ? policy.map_points : [];
+  const outlinePath = outline
+    .map((point, index) => {
+      const projected = projectMapPoint(point, bounds);
+      if (!projected) {
+        return "";
+      }
+      return `${index === 0 ? "M" : "L"} ${projected.x.toFixed(2)} ${projected.y.toFixed(2)}`;
+    })
+    .filter(Boolean)
+    .join(" ");
+  const focusBounds = map.focus_bounds || {};
+  const focusTopLeft = projectMapPoint({ lat: focusBounds.max_lat, lng: focusBounds.min_lng }, bounds);
+  const focusBottomRight = projectMapPoint({ lat: focusBounds.min_lat, lng: focusBounds.max_lng }, bounds);
+  const focusRect =
+    focusTopLeft && focusBottomRight
+      ? `<rect class="map-focus" x="${focusTopLeft.x.toFixed(2)}" y="${focusTopLeft.y.toFixed(2)}" width="${(
+          focusBottomRight.x - focusTopLeft.x
+        ).toFixed(2)}" height="${(focusBottomRight.y - focusTopLeft.y).toFixed(2)}" rx="2" />`
+      : "";
+
+  const labels = new Set(["sderot", "ashkelon", "netivot", "kiryat_gat", "beer_sheva", "ashdod", "yavne", "rehovot"]);
+  const renderedPoints = points
+    .map((point) => {
+      const projected = projectMapPoint(point, bounds);
+      if (!projected) {
+        return "";
+      }
+      const pointClass = mapPointClass(point);
+      const toggleable = pointClass !== "home" && !point.locked && !interactionsDisabled;
+      const scannedText = pointClass === "not-scanned" ? "לא בסריקה" : "בסריקה";
+      const attrs = toggleable
+        ? `data-location-action="toggle" data-location-key="${escapeHtml(point.key)}" role="button" tabindex="0" aria-pressed="${isLocationApproved(point.key) ? "true" : "false"}"`
+        : "";
+      return `
+        <g class="map-point ${pointClass}${toggleable ? " toggleable" : ""}" transform="translate(${projected.x.toFixed(2)} ${projected.y.toFixed(2)})" ${attrs}>
+          <title>${escapeHtml(`${point.label} · ${scannedText}`)}</title>
+          <circle r="${pointClass === "home" ? "2.5" : "1.55"}"></circle>
+          ${
+            labels.has(point.key)
+              ? `<text x="2.8" y="-2.2" class="map-label">${escapeHtml(point.label)}</text>`
+              : ""
+          }
+        </g>
+      `;
+    })
+    .join("");
+
+  return `
+    <section class="location-map-panel" aria-label="מפת מיקומים">
+      <div class="map-canvas">
+        <svg viewBox="0 0 100 100" role="img" aria-label="מפת ישראל עם סימון שדרות ומיקומי חיפוש">
+          <path class="israel-outline" d="${escapeHtml(outlinePath)} Z"></path>
+          ${focusRect}
+          ${renderedPoints}
+        </svg>
+      </div>
+      <div class="map-legend" aria-label="מקרא מפה">
+        <span><i class="legend-dot home"></i>קורן · שדרות</span>
+        <span><i class="legend-dot scanned"></i>בסריקה</span>
+        <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
+      </div>
+    </section>
+  `;
+}
+
 function renderLocationPolicy() {
   if (!els.locationPolicy || !state.data) {
     return;
@@ -855,7 +959,8 @@ function renderLocationPolicy() {
   const policy = state.data.location_policy || {};
   const defaultApproved = Array.isArray(policy.default_approved) ? policy.default_approved : [];
   const userApprovable = Array.isArray(policy.user_approvable) ? policy.user_approvable : [];
-  const knownKeys = new Set([...defaultApproved, ...userApprovable].map((option) => option.key));
+  const nearbyOptions = Array.isArray(policy.nearby_options) ? policy.nearby_options : [];
+  const knownKeys = new Set([...defaultApproved, ...userApprovable, ...nearbyOptions].map((option) => option.key));
   const customApproved = approvedLocationEntries().filter((entry) => !knownKeys.has(entry.key));
   const syncBlockedMessage = syncWriteBlockMessage();
   const disabled = syncBlockedMessage ? " disabled" : "";
@@ -877,6 +982,24 @@ function renderLocationPolicy() {
         <button
           type="button"
           class="city-chip toggle${approved ? " approved" : ""}"
+          data-location-action="toggle"
+          data-location-key="${escapeHtml(option.key)}"
+          aria-pressed="${approved ? "true" : "false"}"
+          ${disabled}
+        >
+          ${escapeHtml(option.label)}
+        </button>
+      `;
+    })
+    .join("");
+
+  const nearbyChips = nearbyOptions
+    .map((option) => {
+      const approved = isLocationApproved(option.key);
+      return `
+        <button
+          type="button"
+          class="city-chip toggle nearby${approved ? " approved" : ""}"
           data-location-action="toggle"
           data-location-key="${escapeHtml(option.key)}"
           aria-pressed="${approved ? "true" : "false"}"
@@ -913,6 +1036,7 @@ function renderLocationPolicy() {
       </div>
       <span class="state-pill local">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} ערים מאושרות</span>
     </div>
+    ${renderLocationMap(policy, Boolean(syncBlockedMessage))}
     <div class="location-groups">
       <section class="location-group">
         <h3>ברירת מחדל</h3>
@@ -920,7 +1044,11 @@ function renderLocationPolicy() {
       </section>
       <section class="location-group">
         <h3>בחירה</h3>
-        <div class="city-grid">${optionalChips}${customChips}</div>
+        <div class="city-grid">${optionalChips}</div>
+      </section>
+      <section class="location-group wide">
+        <h3>יישובים וקיבוצים סביב שדרות</h3>
+        <div class="city-grid">${nearbyChips}${customChips}</div>
       </section>
       <form class="custom-city-form" data-location-action="custom">
         <label class="search-box" for="customCityInput">
@@ -1285,6 +1413,24 @@ els.locationPolicy?.addEventListener("click", (event) => {
     return;
   }
 
+  void pushLocationPreference(option, !isLocationApproved(key));
+});
+
+els.locationPolicy?.addEventListener("keydown", (event) => {
+  if (!["Enter", " "].includes(event.key)) {
+    return;
+  }
+  const button = event.target.closest("[data-location-action='toggle']");
+  if (!button) {
+    return;
+  }
+  event.preventDefault();
+  const key = button.dataset.locationKey;
+  const option = locationOptionByKey(key);
+  if (!option) {
+    showToast("לא נמצאו פרטי עיר לעדכון");
+    return;
+  }
   void pushLocationPreference(option, !isLocationApproved(key));
 });
 

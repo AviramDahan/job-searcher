@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-09 18:33",
+  "generated_at": "2026-08-09 19:01",
   "candidate": {
     "full_name": "קורן דהן"
   },
@@ -13,6 +13,88 @@
     "suitable": 55
   },
   "location_policy": {
+    "home": {
+      "key": "sderot",
+      "label": "שדרות",
+      "lat": 31.525,
+      "lng": 34.596
+    },
+    "map": {
+      "bounds": {
+        "min_lat": 29.45,
+        "max_lat": 33.35,
+        "min_lng": 34.25,
+        "max_lng": 35.95
+      },
+      "focus_bounds": {
+        "min_lat": 31.25,
+        "max_lat": 31.95,
+        "min_lng": 34.42,
+        "max_lng": 34.9
+      },
+      "outline": [
+        {
+          "lat": 33.25,
+          "lng": 35.55
+        },
+        {
+          "lat": 32.85,
+          "lng": 35.65
+        },
+        {
+          "lat": 32.45,
+          "lng": 35.55
+        },
+        {
+          "lat": 31.78,
+          "lng": 35.42
+        },
+        {
+          "lat": 31.35,
+          "lng": 35.28
+        },
+        {
+          "lat": 30.75,
+          "lng": 35.15
+        },
+        {
+          "lat": 30.25,
+          "lng": 35.0
+        },
+        {
+          "lat": 29.55,
+          "lng": 34.88
+        },
+        {
+          "lat": 29.5,
+          "lng": 34.73
+        },
+        {
+          "lat": 30.55,
+          "lng": 34.55
+        },
+        {
+          "lat": 31.2,
+          "lng": 34.74
+        },
+        {
+          "lat": 31.7,
+          "lng": 34.56
+        },
+        {
+          "lat": 32.1,
+          "lng": 34.58
+        },
+        {
+          "lat": 32.65,
+          "lng": 34.8
+        },
+        {
+          "lat": 33.05,
+          "lng": 35.05
+        }
+      ]
+    },
     "default_approved": [
       {
         "key": "sderot",
@@ -21,7 +103,10 @@
           "שדרות",
           "sderot"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.525,
+        "lng": 34.596
       },
       {
         "key": "netivot",
@@ -30,7 +115,10 @@
           "נתיבות",
           "netivot"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.423,
+        "lng": 34.589
       },
       {
         "key": "ashkelon",
@@ -39,7 +127,10 @@
           "אשקלון",
           "ashkelon"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.668,
+        "lng": 34.574
       },
       {
         "key": "kiryat_gat",
@@ -49,7 +140,10 @@
           "קרית גת",
           "kiryat gat"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.609,
+        "lng": 34.764
       },
       {
         "key": "beer_sheva",
@@ -61,7 +155,10 @@
           "be'er sheva",
           "beersheba"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.253,
+        "lng": 34.791
       },
       {
         "key": "ashdod",
@@ -70,7 +167,10 @@
           "אשדוד",
           "ashdod"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.802,
+        "lng": 34.644
       },
       {
         "key": "ofakim",
@@ -79,7 +179,10 @@
           "אופקים",
           "ofakim"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.314,
+        "lng": 34.62
       },
       {
         "key": "kiryat_malachi",
@@ -89,7 +192,10 @@
           "קרית מלאכי",
           "kiryat malachi"
         ],
-        "locked": true
+        "kind": "city",
+        "locked": true,
+        "lat": 31.731,
+        "lng": 34.746
       },
       {
         "key": "beer_tuvya",
@@ -98,7 +204,10 @@
           "באר טוביה",
           "beer tuvya"
         ],
-        "locked": true
+        "kind": "moshav",
+        "locked": true,
+        "lat": 31.74,
+        "lng": 34.72
       },
       {
         "key": "timorim",
@@ -107,7 +216,10 @@
           "תימורים",
           "timorim"
         ],
-        "locked": true
+        "kind": "moshav",
+        "locked": true,
+        "lat": 31.715,
+        "lng": 34.765
       },
       {
         "key": "lehavim",
@@ -116,7 +228,10 @@
           "להבים",
           "lehavim"
         ],
-        "locked": true
+        "kind": "town",
+        "locked": true,
+        "lat": 31.372,
+        "lng": 34.817
       }
     ],
     "user_approvable": [
@@ -126,7 +241,10 @@
         "terms": [
           "יבנה",
           "yavne"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.878,
+        "lng": 34.739
       },
       {
         "key": "rehovot",
@@ -134,7 +252,10 @@
         "terms": [
           "רחובות",
           "rehovot"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.894,
+        "lng": 34.812
       },
       {
         "key": "lod",
@@ -142,7 +263,10 @@
         "terms": [
           "לוד",
           "lod"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.951,
+        "lng": 34.888
       },
       {
         "key": "ramla",
@@ -150,7 +274,10 @@
         "terms": [
           "רמלה",
           "ramla"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.929,
+        "lng": 34.865
       },
       {
         "key": "rishon_lezion",
@@ -159,7 +286,10 @@
           "ראשון לציון",
           "rishon lezion",
           "rishon letsiyon"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.973,
+        "lng": 34.792
       },
       {
         "key": "ness_ziona",
@@ -167,7 +297,10 @@
         "terms": [
           "נס ציונה",
           "ness ziona"
-        ]
+        ],
+        "kind": "city",
+        "lat": 31.93,
+        "lng": 34.798
       },
       {
         "key": "gedera",
@@ -175,7 +308,10 @@
         "terms": [
           "גדרה",
           "gedera"
-        ]
+        ],
+        "kind": "town",
+        "lat": 31.814,
+        "lng": 34.779
       },
       {
         "key": "gan_yavne",
@@ -183,7 +319,834 @@
         "terms": [
           "גן יבנה",
           "gan yavne"
-        ]
+        ],
+        "kind": "town",
+        "lat": 31.787,
+        "lng": 34.706
+      }
+    ],
+    "nearby_options": [
+      {
+        "key": "ibim",
+        "label": "איבים",
+        "terms": [
+          "איבים",
+          "ibim"
+        ],
+        "kind": "village",
+        "lat": 31.536,
+        "lng": 34.609
+      },
+      {
+        "key": "nir_am",
+        "label": "ניר עם",
+        "terms": [
+          "ניר עם",
+          "nir am"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.519,
+        "lng": 34.58
+      },
+      {
+        "key": "gevim",
+        "label": "גבים",
+        "terms": [
+          "גבים",
+          "gevim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.507,
+        "lng": 34.599
+      },
+      {
+        "key": "or_haner",
+        "label": "אור הנר",
+        "terms": [
+          "אור הנר",
+          "or haner"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.558,
+        "lng": 34.596
+      },
+      {
+        "key": "mefalsim",
+        "label": "מפלסים",
+        "terms": [
+          "מפלסים",
+          "mefalsim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.501,
+        "lng": 34.562
+      },
+      {
+        "key": "erez",
+        "label": "ארז",
+        "terms": [
+          "ארז",
+          "erez"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.56,
+        "lng": 34.565
+      },
+      {
+        "key": "yad_mordechai",
+        "label": "יד מרדכי",
+        "terms": [
+          "יד מרדכי",
+          "yad mordechai"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.588,
+        "lng": 34.559
+      },
+      {
+        "key": "netiv_haasara",
+        "label": "נתיב העשרה",
+        "terms": [
+          "נתיב העשרה",
+          "netiv haasara"
+        ],
+        "kind": "moshav",
+        "lat": 31.572,
+        "lng": 34.537
+      },
+      {
+        "key": "zikim",
+        "label": "זיקים",
+        "terms": [
+          "זיקים",
+          "zikim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.612,
+        "lng": 34.522
+      },
+      {
+        "key": "carmia",
+        "label": "כרמיה",
+        "terms": [
+          "כרמיה",
+          "carmia"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.604,
+        "lng": 34.542
+      },
+      {
+        "key": "kfar_aza",
+        "label": "כפר עזה",
+        "terms": [
+          "כפר עזה",
+          "kfar aza"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.484,
+        "lng": 34.532
+      },
+      {
+        "key": "saad",
+        "label": "סעד",
+        "terms": [
+          "סעד",
+          "saad"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.47,
+        "lng": 34.536
+      },
+      {
+        "key": "alumim",
+        "label": "עלומים",
+        "terms": [
+          "עלומים",
+          "alumim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.454,
+        "lng": 34.513
+      },
+      {
+        "key": "nahal_oz",
+        "label": "נחל עוז",
+        "terms": [
+          "נחל עוז",
+          "nahal oz"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.472,
+        "lng": 34.497
+      },
+      {
+        "key": "tkuma",
+        "label": "תקומה",
+        "terms": [
+          "תקומה",
+          "tkuma"
+        ],
+        "kind": "moshav",
+        "lat": 31.449,
+        "lng": 34.583
+      },
+      {
+        "key": "shuva",
+        "label": "שובה",
+        "terms": [
+          "שובה",
+          "shuva"
+        ],
+        "kind": "moshav",
+        "lat": 31.45,
+        "lng": 34.545
+      },
+      {
+        "key": "beeri",
+        "label": "בארי",
+        "terms": [
+          "בארי",
+          "beeri"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.424,
+        "lng": 34.491
+      },
+      {
+        "key": "reim",
+        "label": "רעים",
+        "terms": [
+          "רעים",
+          "reim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.386,
+        "lng": 34.459
+      },
+      {
+        "key": "yakhini",
+        "label": "יכיני",
+        "terms": [
+          "יכיני",
+          "yakhini"
+        ],
+        "kind": "moshav",
+        "lat": 31.482,
+        "lng": 34.602
+      },
+      {
+        "key": "bror_hayil",
+        "label": "ברור חיל",
+        "terms": [
+          "ברור חיל",
+          "bror hayil"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.556,
+        "lng": 34.648
+      },
+      {
+        "key": "dorot",
+        "label": "דורות",
+        "terms": [
+          "דורות",
+          "dorot"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.506,
+        "lng": 34.646
+      },
+      {
+        "key": "ruhama",
+        "label": "רוחמה",
+        "terms": [
+          "רוחמה",
+          "ruhama"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.496,
+        "lng": 34.705
+      },
+      {
+        "key": "mabuim",
+        "label": "מבועים",
+        "terms": [
+          "מבועים",
+          "mabuim"
+        ],
+        "kind": "moshav",
+        "lat": 31.448,
+        "lng": 34.655
+      },
+      {
+        "key": "gilat",
+        "label": "גילת",
+        "terms": [
+          "גילת",
+          "gilat"
+        ],
+        "kind": "moshav",
+        "lat": 31.327,
+        "lng": 34.649
+      },
+      {
+        "key": "patish",
+        "label": "פטיש",
+        "terms": [
+          "פטיש",
+          "patish"
+        ],
+        "kind": "moshav",
+        "lat": 31.326,
+        "lng": 34.558
+      }
+    ],
+    "map_points": [
+      {
+        "key": "sderot",
+        "label": "שדרות",
+        "terms": [
+          "שדרות",
+          "sderot"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.525,
+        "lng": 34.596,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "netivot",
+        "label": "נתיבות",
+        "terms": [
+          "נתיבות",
+          "netivot"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.423,
+        "lng": 34.589,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "ashkelon",
+        "label": "אשקלון",
+        "terms": [
+          "אשקלון",
+          "ashkelon"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.668,
+        "lng": 34.574,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "kiryat_gat",
+        "label": "קריית גת",
+        "terms": [
+          "קריית גת",
+          "קרית גת",
+          "kiryat gat"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.609,
+        "lng": 34.764,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "beer_sheva",
+        "label": "באר שבע",
+        "terms": [
+          "באר שבע",
+          "ב\"ש",
+          "beer sheva",
+          "be'er sheva",
+          "beersheba"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.253,
+        "lng": 34.791,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "ashdod",
+        "label": "אשדוד",
+        "terms": [
+          "אשדוד",
+          "ashdod"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.802,
+        "lng": 34.644,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "ofakim",
+        "label": "אופקים",
+        "terms": [
+          "אופקים",
+          "ofakim"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.314,
+        "lng": 34.62,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "kiryat_malachi",
+        "label": "קריית מלאכי",
+        "terms": [
+          "קריית מלאכי",
+          "קרית מלאכי",
+          "kiryat malachi"
+        ],
+        "kind": "city",
+        "locked": true,
+        "lat": 31.731,
+        "lng": 34.746,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "beer_tuvya",
+        "label": "באר טוביה",
+        "terms": [
+          "באר טוביה",
+          "beer tuvya"
+        ],
+        "kind": "moshav",
+        "locked": true,
+        "lat": 31.74,
+        "lng": 34.72,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "timorim",
+        "label": "תימורים",
+        "terms": [
+          "תימורים",
+          "timorim"
+        ],
+        "kind": "moshav",
+        "locked": true,
+        "lat": 31.715,
+        "lng": 34.765,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "lehavim",
+        "label": "להבים",
+        "terms": [
+          "להבים",
+          "lehavim"
+        ],
+        "kind": "town",
+        "locked": true,
+        "lat": 31.372,
+        "lng": 34.817,
+        "policy_group": "default_approved"
+      },
+      {
+        "key": "yavne",
+        "label": "יבנה",
+        "terms": [
+          "יבנה",
+          "yavne"
+        ],
+        "kind": "city",
+        "lat": 31.878,
+        "lng": 34.739,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "rehovot",
+        "label": "רחובות",
+        "terms": [
+          "רחובות",
+          "rehovot"
+        ],
+        "kind": "city",
+        "lat": 31.894,
+        "lng": 34.812,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "lod",
+        "label": "לוד",
+        "terms": [
+          "לוד",
+          "lod"
+        ],
+        "kind": "city",
+        "lat": 31.951,
+        "lng": 34.888,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "ramla",
+        "label": "רמלה",
+        "terms": [
+          "רמלה",
+          "ramla"
+        ],
+        "kind": "city",
+        "lat": 31.929,
+        "lng": 34.865,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "rishon_lezion",
+        "label": "ראשון לציון",
+        "terms": [
+          "ראשון לציון",
+          "rishon lezion",
+          "rishon letsiyon"
+        ],
+        "kind": "city",
+        "lat": 31.973,
+        "lng": 34.792,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "ness_ziona",
+        "label": "נס ציונה",
+        "terms": [
+          "נס ציונה",
+          "ness ziona"
+        ],
+        "kind": "city",
+        "lat": 31.93,
+        "lng": 34.798,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "gedera",
+        "label": "גדרה",
+        "terms": [
+          "גדרה",
+          "gedera"
+        ],
+        "kind": "town",
+        "lat": 31.814,
+        "lng": 34.779,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "gan_yavne",
+        "label": "גן יבנה",
+        "terms": [
+          "גן יבנה",
+          "gan yavne"
+        ],
+        "kind": "town",
+        "lat": 31.787,
+        "lng": 34.706,
+        "policy_group": "user_approvable"
+      },
+      {
+        "key": "ibim",
+        "label": "איבים",
+        "terms": [
+          "איבים",
+          "ibim"
+        ],
+        "kind": "village",
+        "lat": 31.536,
+        "lng": 34.609,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "nir_am",
+        "label": "ניר עם",
+        "terms": [
+          "ניר עם",
+          "nir am"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.519,
+        "lng": 34.58,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "gevim",
+        "label": "גבים",
+        "terms": [
+          "גבים",
+          "gevim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.507,
+        "lng": 34.599,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "or_haner",
+        "label": "אור הנר",
+        "terms": [
+          "אור הנר",
+          "or haner"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.558,
+        "lng": 34.596,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "mefalsim",
+        "label": "מפלסים",
+        "terms": [
+          "מפלסים",
+          "mefalsim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.501,
+        "lng": 34.562,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "erez",
+        "label": "ארז",
+        "terms": [
+          "ארז",
+          "erez"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.56,
+        "lng": 34.565,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "yad_mordechai",
+        "label": "יד מרדכי",
+        "terms": [
+          "יד מרדכי",
+          "yad mordechai"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.588,
+        "lng": 34.559,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "netiv_haasara",
+        "label": "נתיב העשרה",
+        "terms": [
+          "נתיב העשרה",
+          "netiv haasara"
+        ],
+        "kind": "moshav",
+        "lat": 31.572,
+        "lng": 34.537,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "zikim",
+        "label": "זיקים",
+        "terms": [
+          "זיקים",
+          "zikim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.612,
+        "lng": 34.522,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "carmia",
+        "label": "כרמיה",
+        "terms": [
+          "כרמיה",
+          "carmia"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.604,
+        "lng": 34.542,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "kfar_aza",
+        "label": "כפר עזה",
+        "terms": [
+          "כפר עזה",
+          "kfar aza"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.484,
+        "lng": 34.532,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "saad",
+        "label": "סעד",
+        "terms": [
+          "סעד",
+          "saad"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.47,
+        "lng": 34.536,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "alumim",
+        "label": "עלומים",
+        "terms": [
+          "עלומים",
+          "alumim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.454,
+        "lng": 34.513,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "nahal_oz",
+        "label": "נחל עוז",
+        "terms": [
+          "נחל עוז",
+          "nahal oz"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.472,
+        "lng": 34.497,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "tkuma",
+        "label": "תקומה",
+        "terms": [
+          "תקומה",
+          "tkuma"
+        ],
+        "kind": "moshav",
+        "lat": 31.449,
+        "lng": 34.583,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "shuva",
+        "label": "שובה",
+        "terms": [
+          "שובה",
+          "shuva"
+        ],
+        "kind": "moshav",
+        "lat": 31.45,
+        "lng": 34.545,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "beeri",
+        "label": "בארי",
+        "terms": [
+          "בארי",
+          "beeri"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.424,
+        "lng": 34.491,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "reim",
+        "label": "רעים",
+        "terms": [
+          "רעים",
+          "reim"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.386,
+        "lng": 34.459,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "yakhini",
+        "label": "יכיני",
+        "terms": [
+          "יכיני",
+          "yakhini"
+        ],
+        "kind": "moshav",
+        "lat": 31.482,
+        "lng": 34.602,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "bror_hayil",
+        "label": "ברור חיל",
+        "terms": [
+          "ברור חיל",
+          "bror hayil"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.556,
+        "lng": 34.648,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "dorot",
+        "label": "דורות",
+        "terms": [
+          "דורות",
+          "dorot"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.506,
+        "lng": 34.646,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "ruhama",
+        "label": "רוחמה",
+        "terms": [
+          "רוחמה",
+          "ruhama"
+        ],
+        "kind": "kibbutz",
+        "lat": 31.496,
+        "lng": 34.705,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "mabuim",
+        "label": "מבועים",
+        "terms": [
+          "מבועים",
+          "mabuim"
+        ],
+        "kind": "moshav",
+        "lat": 31.448,
+        "lng": 34.655,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "gilat",
+        "label": "גילת",
+        "terms": [
+          "גילת",
+          "gilat"
+        ],
+        "kind": "moshav",
+        "lat": 31.327,
+        "lng": 34.649,
+        "policy_group": "nearby_options"
+      },
+      {
+        "key": "patish",
+        "label": "פטיש",
+        "terms": [
+          "פטיש",
+          "patish"
+        ],
+        "kind": "moshav",
+        "lat": 31.326,
+        "lng": 34.558,
+        "policy_group": "nearby_options"
       }
     ]
   },

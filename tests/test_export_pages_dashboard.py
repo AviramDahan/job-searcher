@@ -47,5 +47,9 @@ class ExportPagesDashboardTests(unittest.TestCase):
             self.assertIn("רחובות", [item["label"] for item in payload["location_policy"]["user_approvable"]])
 
 
+            self.assertIn("ניר עם", [item["label"] for item in payload["location_policy"]["nearby_options"]])
+            self.assertTrue(payload["location_policy"]["map_points"])
+
+
 if __name__ == "__main__":
     unittest.main()

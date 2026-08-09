@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from src.location_policy import LocationDecision, assess_location
+from src.location_policy import LocationDecision, assess_location, location_policy_payload
 
 
 class LocationPolicyTests(unittest.TestCase):
@@ -41,6 +41,25 @@ class LocationPolicyTests(unittest.TestCase):
 
         self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
         self.assertIn("מרחוק", assessment.reason)
+
+
+    def test_nearby_settlement_requires_dashboard_approval(self) -> None:
+        assessment = assess_location("ניר עם", approved_location_terms=())
+
+        self.assertEqual(assessment.decision, LocationDecision.OUT_OF_SCOPE)
+
+    def test_nearby_settlement_becomes_in_scope_after_dashboard_approval(self) -> None:
+        assessment = assess_location("ניר עם", approved_location_terms=("ניר עם", "nir am"))
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+        self.assertIn("ניר עם", assessment.matched_terms)
+
+    def test_location_policy_payload_includes_map_and_nearby_locations(self) -> None:
+        payload = location_policy_payload()
+
+        self.assertEqual(payload["home"]["key"], "sderot")
+        self.assertIn("map_points", payload)
+        self.assertIn("ניר עם", [item["label"] for item in payload["nearby_options"]])
 
 
 if __name__ == "__main__":

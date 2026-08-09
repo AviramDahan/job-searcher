@@ -28,33 +28,82 @@ DEFAULT_LOCATION_PREFERENCES_PATH = Path("outputs/location_preferences.json")
 LOCATION_PREFERENCES_ENV = "JOB_SEARCH_LOCATION_PREFERENCES"
 
 DEFAULT_APPROVED_LOCATION_OPTIONS = (
-    {"key": "sderot", "label": "שדרות", "terms": ("שדרות", "sderot")},
-    {"key": "netivot", "label": "נתיבות", "terms": ("נתיבות", "netivot")},
-    {"key": "ashkelon", "label": "אשקלון", "terms": ("אשקלון", "ashkelon")},
-    {"key": "kiryat_gat", "label": "קריית גת", "terms": ("קריית גת", "קרית גת", "kiryat gat")},
-    {"key": "beer_sheva", "label": "באר שבע", "terms": ("באר שבע", 'ב"ש', "beer sheva", "be'er sheva", "beersheba")},
-    {"key": "ashdod", "label": "אשדוד", "terms": ("אשדוד", "ashdod")},
-    {"key": "ofakim", "label": "אופקים", "terms": ("אופקים", "ofakim")},
-    {"key": "kiryat_malachi", "label": "קריית מלאכי", "terms": ("קריית מלאכי", "קרית מלאכי", "kiryat malachi")},
-    {"key": "beer_tuvya", "label": "באר טוביה", "terms": ("באר טוביה", "beer tuvya")},
-    {"key": "timorim", "label": "תימורים", "terms": ("תימורים", "timorim")},
-    {"key": "lehavim", "label": "להבים", "terms": ("להבים", "lehavim")},
+    {"key": "sderot", "label": "שדרות", "terms": ("שדרות", "sderot"), "lat": 31.525, "lng": 34.596, "kind": "city"},
+    {"key": "netivot", "label": "נתיבות", "terms": ("נתיבות", "netivot"), "lat": 31.423, "lng": 34.589, "kind": "city"},
+    {"key": "ashkelon", "label": "אשקלון", "terms": ("אשקלון", "ashkelon"), "lat": 31.668, "lng": 34.574, "kind": "city"},
+    {"key": "kiryat_gat", "label": "קריית גת", "terms": ("קריית גת", "קרית גת", "kiryat gat"), "lat": 31.609, "lng": 34.764, "kind": "city"},
+    {
+        "key": "beer_sheva",
+        "label": "באר שבע",
+        "terms": ("באר שבע", 'ב"ש', "beer sheva", "be'er sheva", "beersheba"),
+        "lat": 31.253,
+        "lng": 34.791,
+        "kind": "city",
+    },
+    {"key": "ashdod", "label": "אשדוד", "terms": ("אשדוד", "ashdod"), "lat": 31.802, "lng": 34.644, "kind": "city"},
+    {"key": "ofakim", "label": "אופקים", "terms": ("אופקים", "ofakim"), "lat": 31.314, "lng": 34.620, "kind": "city"},
+    {
+        "key": "kiryat_malachi",
+        "label": "קריית מלאכי",
+        "terms": ("קריית מלאכי", "קרית מלאכי", "kiryat malachi"),
+        "lat": 31.731,
+        "lng": 34.746,
+        "kind": "city",
+    },
+    {"key": "beer_tuvya", "label": "באר טוביה", "terms": ("באר טוביה", "beer tuvya"), "lat": 31.740, "lng": 34.720, "kind": "moshav"},
+    {"key": "timorim", "label": "תימורים", "terms": ("תימורים", "timorim"), "lat": 31.715, "lng": 34.765, "kind": "moshav"},
+    {"key": "lehavim", "label": "להבים", "terms": ("להבים", "lehavim"), "lat": 31.372, "lng": 34.817, "kind": "town"},
 )
 
 USER_APPROVABLE_LOCATION_OPTIONS = (
-    {"key": "yavne", "label": "יבנה", "terms": ("יבנה", "yavne")},
-    {"key": "rehovot", "label": "רחובות", "terms": ("רחובות", "rehovot")},
-    {"key": "lod", "label": "לוד", "terms": ("לוד", "lod")},
-    {"key": "ramla", "label": "רמלה", "terms": ("רמלה", "ramla")},
-    {"key": "rishon_lezion", "label": "ראשון לציון", "terms": ("ראשון לציון", "rishon lezion", "rishon letsiyon")},
-    {"key": "ness_ziona", "label": "נס ציונה", "terms": ("נס ציונה", "ness ziona")},
-    {"key": "gedera", "label": "גדרה", "terms": ("גדרה", "gedera")},
-    {"key": "gan_yavne", "label": "גן יבנה", "terms": ("גן יבנה", "gan yavne")},
+    {"key": "yavne", "label": "יבנה", "terms": ("יבנה", "yavne"), "lat": 31.878, "lng": 34.739, "kind": "city"},
+    {"key": "rehovot", "label": "רחובות", "terms": ("רחובות", "rehovot"), "lat": 31.894, "lng": 34.812, "kind": "city"},
+    {"key": "lod", "label": "לוד", "terms": ("לוד", "lod"), "lat": 31.951, "lng": 34.888, "kind": "city"},
+    {"key": "ramla", "label": "רמלה", "terms": ("רמלה", "ramla"), "lat": 31.929, "lng": 34.865, "kind": "city"},
+    {
+        "key": "rishon_lezion",
+        "label": "ראשון לציון",
+        "terms": ("ראשון לציון", "rishon lezion", "rishon letsiyon"),
+        "lat": 31.973,
+        "lng": 34.792,
+        "kind": "city",
+    },
+    {"key": "ness_ziona", "label": "נס ציונה", "terms": ("נס ציונה", "ness ziona"), "lat": 31.930, "lng": 34.798, "kind": "city"},
+    {"key": "gedera", "label": "גדרה", "terms": ("גדרה", "gedera"), "lat": 31.814, "lng": 34.779, "kind": "town"},
+    {"key": "gan_yavne", "label": "גן יבנה", "terms": ("גן יבנה", "gan yavne"), "lat": 31.787, "lng": 34.706, "kind": "town"},
+)
+
+NEARBY_LOCATION_OPTIONS = (
+    {"key": "ibim", "label": "איבים", "terms": ("איבים", "ibim"), "lat": 31.536, "lng": 34.609, "kind": "village"},
+    {"key": "nir_am", "label": "ניר עם", "terms": ("ניר עם", "nir am"), "lat": 31.519, "lng": 34.580, "kind": "kibbutz"},
+    {"key": "gevim", "label": "גבים", "terms": ("גבים", "gevim"), "lat": 31.507, "lng": 34.599, "kind": "kibbutz"},
+    {"key": "or_haner", "label": "אור הנר", "terms": ("אור הנר", "or haner"), "lat": 31.558, "lng": 34.596, "kind": "kibbutz"},
+    {"key": "mefalsim", "label": "מפלסים", "terms": ("מפלסים", "mefalsim"), "lat": 31.501, "lng": 34.562, "kind": "kibbutz"},
+    {"key": "erez", "label": "ארז", "terms": ("ארז", "erez"), "lat": 31.560, "lng": 34.565, "kind": "kibbutz"},
+    {"key": "yad_mordechai", "label": "יד מרדכי", "terms": ("יד מרדכי", "yad mordechai"), "lat": 31.588, "lng": 34.559, "kind": "kibbutz"},
+    {"key": "netiv_haasara", "label": "נתיב העשרה", "terms": ("נתיב העשרה", "netiv haasara"), "lat": 31.572, "lng": 34.537, "kind": "moshav"},
+    {"key": "zikim", "label": "זיקים", "terms": ("זיקים", "zikim"), "lat": 31.612, "lng": 34.522, "kind": "kibbutz"},
+    {"key": "carmia", "label": "כרמיה", "terms": ("כרמיה", "carmia"), "lat": 31.604, "lng": 34.542, "kind": "kibbutz"},
+    {"key": "kfar_aza", "label": "כפר עזה", "terms": ("כפר עזה", "kfar aza"), "lat": 31.484, "lng": 34.532, "kind": "kibbutz"},
+    {"key": "saad", "label": "סעד", "terms": ("סעד", "saad"), "lat": 31.470, "lng": 34.536, "kind": "kibbutz"},
+    {"key": "alumim", "label": "עלומים", "terms": ("עלומים", "alumim"), "lat": 31.454, "lng": 34.513, "kind": "kibbutz"},
+    {"key": "nahal_oz", "label": "נחל עוז", "terms": ("נחל עוז", "nahal oz"), "lat": 31.472, "lng": 34.497, "kind": "kibbutz"},
+    {"key": "tkuma", "label": "תקומה", "terms": ("תקומה", "tkuma"), "lat": 31.449, "lng": 34.583, "kind": "moshav"},
+    {"key": "shuva", "label": "שובה", "terms": ("שובה", "shuva"), "lat": 31.450, "lng": 34.545, "kind": "moshav"},
+    {"key": "beeri", "label": "בארי", "terms": ("בארי", "beeri"), "lat": 31.424, "lng": 34.491, "kind": "kibbutz"},
+    {"key": "reim", "label": "רעים", "terms": ("רעים", "reim"), "lat": 31.386, "lng": 34.459, "kind": "kibbutz"},
+    {"key": "yakhini", "label": "יכיני", "terms": ("יכיני", "yakhini"), "lat": 31.482, "lng": 34.602, "kind": "moshav"},
+    {"key": "bror_hayil", "label": "ברור חיל", "terms": ("ברור חיל", "bror hayil"), "lat": 31.556, "lng": 34.648, "kind": "kibbutz"},
+    {"key": "dorot", "label": "דורות", "terms": ("דורות", "dorot"), "lat": 31.506, "lng": 34.646, "kind": "kibbutz"},
+    {"key": "ruhama", "label": "רוחמה", "terms": ("רוחמה", "ruhama"), "lat": 31.496, "lng": 34.705, "kind": "kibbutz"},
+    {"key": "mabuim", "label": "מבועים", "terms": ("מבועים", "mabuim"), "lat": 31.448, "lng": 34.655, "kind": "moshav"},
+    {"key": "gilat", "label": "גילת", "terms": ("גילת", "gilat"), "lat": 31.327, "lng": 34.649, "kind": "moshav"},
+    {"key": "patish", "label": "פטיש", "terms": ("פטיש", "patish"), "lat": 31.326, "lng": 34.558, "kind": "moshav"},
 )
 
 LOCATION_OPTION_ALIASES = {
     str(option["key"]): tuple(str(term) for term in option["terms"])
-    for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS)
+    for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS)
 }
 
 
@@ -225,15 +274,55 @@ def load_approved_location_terms(preferences_path: str | Path | None = None) -> 
     return unique_terms(terms)
 
 
+def option_payload(option: dict[str, Any], locked: bool = False) -> dict[str, Any]:
+    payload = {
+        "key": option["key"],
+        "label": option["label"],
+        "terms": list(option["terms"]),
+        "kind": option.get("kind", "city"),
+    }
+    if locked:
+        payload["locked"] = True
+    if "lat" in option and "lng" in option:
+        payload["lat"] = option["lat"]
+        payload["lng"] = option["lng"]
+    return payload
+
+
 def location_policy_payload() -> dict[str, Any]:
+    default_approved = [option_payload(option, locked=True) for option in DEFAULT_APPROVED_LOCATION_OPTIONS]
+    user_approvable = [option_payload(option) for option in USER_APPROVABLE_LOCATION_OPTIONS]
+    nearby_options = [option_payload(option) for option in NEARBY_LOCATION_OPTIONS]
     return {
-        "default_approved": [
-            {"key": option["key"], "label": option["label"], "terms": list(option["terms"]), "locked": True}
-            for option in DEFAULT_APPROVED_LOCATION_OPTIONS
-        ],
-        "user_approvable": [
-            {"key": option["key"], "label": option["label"], "terms": list(option["terms"])}
-            for option in USER_APPROVABLE_LOCATION_OPTIONS
+        "home": {"key": "sderot", "label": "שדרות", "lat": 31.525, "lng": 34.596},
+        "map": {
+            "bounds": {"min_lat": 29.45, "max_lat": 33.35, "min_lng": 34.25, "max_lng": 35.95},
+            "focus_bounds": {"min_lat": 31.25, "max_lat": 31.95, "min_lng": 34.42, "max_lng": 34.90},
+            "outline": [
+                {"lat": 33.25, "lng": 35.55},
+                {"lat": 32.85, "lng": 35.65},
+                {"lat": 32.45, "lng": 35.55},
+                {"lat": 31.78, "lng": 35.42},
+                {"lat": 31.35, "lng": 35.28},
+                {"lat": 30.75, "lng": 35.15},
+                {"lat": 30.25, "lng": 35.00},
+                {"lat": 29.55, "lng": 34.88},
+                {"lat": 29.50, "lng": 34.73},
+                {"lat": 30.55, "lng": 34.55},
+                {"lat": 31.20, "lng": 34.74},
+                {"lat": 31.70, "lng": 34.56},
+                {"lat": 32.10, "lng": 34.58},
+                {"lat": 32.65, "lng": 34.80},
+                {"lat": 33.05, "lng": 35.05},
+            ],
+        },
+        "default_approved": default_approved,
+        "user_approvable": user_approvable,
+        "nearby_options": nearby_options,
+        "map_points": [
+            *[dict(item, policy_group="default_approved") for item in default_approved],
+            *[dict(item, policy_group="user_approvable") for item in user_approvable],
+            *[dict(item, policy_group="nearby_options") for item in nearby_options],
         ],
     }
 
