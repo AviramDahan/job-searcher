@@ -591,24 +591,6 @@ function isScannedLocation(key) {
   return isDefaultLocation(key) || isLocationApproved(key);
 }
 
-function projectMapPoint(point = {}, bounds = {}) {
-  const minLat = Number(bounds.min_lat ?? 29.45);
-  const maxLat = Number(bounds.max_lat ?? 33.35);
-  const minLng = Number(bounds.min_lng ?? 34.25);
-  const maxLng = Number(bounds.max_lng ?? 35.95);
-  const lng = Number(point.lng);
-  const lat = Number(point.lat);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    return null;
-  }
-  const x = ((lng - minLng) / (maxLng - minLng)) * 100;
-  const y = (1 - (lat - minLat) / (maxLat - minLat)) * 100;
-  return {
-    x: Math.max(0, Math.min(100, x)),
-    y: Math.max(0, Math.min(100, y)),
-  };
-}
-
 function mapPointClass(point = {}) {
   if (point.key === state.data?.location_policy?.home?.key) {
     return "home";
@@ -881,72 +863,191 @@ function renderConversionSummary(conversion = {}) {
   `;
 }
 
-function renderLocationMap(policy = {}, interactionsDisabled = false) {
-  const map = policy.map || {};
-  const bounds = map.bounds || {};
-  const outline = Array.isArray(map.outline) ? map.outline : [];
-  const points = Array.isArray(policy.map_points) ? policy.map_points : [];
-  const outlinePath = outline
-    .map((point, index) => {
-      const projected = projectMapPoint(point, bounds);
-      if (!projected) {
-        return "";
-      }
-      return `${index === 0 ? "M" : "L"} ${projected.x.toFixed(2)} ${projected.y.toFixed(2)}`;
-    })
-    .filter(Boolean)
-    .join(" ");
-  const focusBounds = map.focus_bounds || {};
-  const focusTopLeft = projectMapPoint({ lat: focusBounds.max_lat, lng: focusBounds.min_lng }, bounds);
-  const focusBottomRight = projectMapPoint({ lat: focusBounds.min_lat, lng: focusBounds.max_lng }, bounds);
-  const focusRect =
-    focusTopLeft && focusBottomRight
-      ? `<rect class="map-focus" x="${focusTopLeft.x.toFixed(2)}" y="${focusTopLeft.y.toFixed(2)}" width="${(
-          focusBottomRight.x - focusTopLeft.x
-        ).toFixed(2)}" height="${(focusBottomRight.y - focusTopLeft.y).toFixed(2)}" rx="2" />`
-      : "";
+let locationMapInitHandle = 0;
+let activeLocationMap = null;
 
-  const labels = new Set(["sderot", "ashkelon", "netivot", "kiryat_gat", "beer_sheva", "ashdod", "yavne", "rehovot"]);
-  const renderedPoints = points
-    .map((point) => {
-      const projected = projectMapPoint(point, bounds);
-      if (!projected) {
-        return "";
-      }
-      const pointClass = mapPointClass(point);
-      const toggleable = pointClass !== "home" && !point.locked && !interactionsDisabled;
-      const scannedText = pointClass === "not-scanned" ? "לא בסריקה" : "בסריקה";
-      const attrs = toggleable
-        ? `data-location-action="toggle" data-location-key="${escapeHtml(point.key)}" role="button" tabindex="0" aria-pressed="${isLocationApproved(point.key) ? "true" : "false"}"`
-        : "";
-      return `
-        <g class="map-point ${pointClass}${toggleable ? " toggleable" : ""}" transform="translate(${projected.x.toFixed(2)} ${projected.y.toFixed(2)})" ${attrs}>
-          <title>${escapeHtml(`${point.label} · ${scannedText}`)}</title>
-          <circle r="${pointClass === "home" ? "2.5" : "1.55"}"></circle>
-          ${
-            labels.has(point.key)
-              ? `<text x="2.8" y="-2.2" class="map-label">${escapeHtml(point.label)}</text>`
-              : ""
-          }
-        </g>
-      `;
-    })
-    .join("");
+function locationMapPoints(policy = {}) {
+  return (Array.isArray(policy.map_points) ? policy.map_points : []).filter(
+    (point) => Number.isFinite(Number(point.lat)) && Number.isFinite(Number(point.lng))
+  );
+}
+
+function locationStatusText(point = {}) {
+  return mapPointClass(point) === "not-scanned" ? "לא בסריקה" : "בסריקה";
+}
+
+function locationMapBounds(bounds = {}) {
+  return [
+    [Number(bounds.min_lat ?? 29.45), Number(bounds.min_lng ?? 34.25)],
+    [Number(bounds.max_lat ?? 33.35), Number(bounds.max_lng ?? 35.95)],
+  ];
+}
+
+function locationMapFocusBounds(bounds = {}) {
+  return [
+    [Number(bounds.min_lat ?? 31.25), Number(bounds.min_lng ?? 34.42)],
+    [Number(bounds.max_lat ?? 31.95), Number(bounds.max_lng ?? 34.9)],
+  ];
+}
+
+function markerIconForPoint(point = {}) {
+  const pointClass = mapPointClass(point);
+  const size = pointClass === "home" ? 26 : 18;
+  return window.L.divIcon({
+    className: `location-map-pin ${pointClass}`,
+    html: `<span>${pointClass === "home" ? "קורן" : ""}</span>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+function markerTooltip(point = {}) {
+  return `
+    <strong>${escapeHtml(point.label || "")}</strong>
+    <span>${escapeHtml(locationStatusText(point))}</span>
+  `;
+}
+
+function bindMapViewButtons(panel, map, policy = {}) {
+  const israelBounds = locationMapBounds(policy.map?.bounds || {});
+  const focusBounds = locationMapFocusBounds(policy.map?.focus_bounds || {});
+  panel.querySelectorAll("[data-map-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const view = button.dataset.mapView;
+      panel.querySelectorAll("[data-map-view]").forEach((item) => item.classList.toggle("active", item === button));
+      map.fitBounds(view === "israel" ? israelBounds : focusBounds, {
+        padding: [28, 28],
+        maxZoom: view === "israel" ? 8 : 11,
+      });
+    });
+  });
+}
+
+function initializeLocationMap(interactionsDisabled = false) {
+  const panel = els.locationPolicy?.querySelector(".location-map-panel");
+  const canvas = panel?.querySelector("[data-location-map-canvas]");
+  if (!panel || !canvas || !state.data?.location_policy) {
+    return;
+  }
+
+  const policy = state.data.location_policy;
+  const points = locationMapPoints(policy);
+  if (!window.L || points.length === 0) {
+    panel.classList.add("map-unavailable");
+    return;
+  }
+
+  if (activeLocationMap) {
+    activeLocationMap.remove();
+    activeLocationMap = null;
+  }
+
+  canvas.replaceChildren();
+  const map = window.L.map(canvas, {
+    attributionControl: true,
+    scrollWheelZoom: false,
+    zoomControl: true,
+  });
+  map.setView([31.52, 34.63], 9);
+
+  window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 18,
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+
+  const markerLayer = window.L.markerClusterGroup
+    ? window.L.markerClusterGroup({
+        showCoverageOnHover: false,
+        spiderfyOnMaxZoom: true,
+        disableClusteringAtZoom: 12,
+        maxClusterRadius: 34,
+        iconCreateFunction(cluster) {
+          const states = cluster.getAllChildMarkers().map((marker) => marker.options.scanState);
+          const clusterState = states.every((stateName) => stateName === "scanned")
+            ? "scanned"
+            : states.every((stateName) => stateName === "not-scanned")
+              ? "not-scanned"
+              : "mixed";
+          return window.L.divIcon({
+            html: `<span>${cluster.getChildCount()}</span>`,
+            className: `location-marker-cluster ${clusterState}`,
+            iconSize: window.L.point(38, 38),
+          });
+        },
+      })
+    : window.L.layerGroup();
+
+  points.forEach((point) => {
+    const pointClass = mapPointClass(point);
+    const marker = window.L.marker([Number(point.lat), Number(point.lng)], {
+      icon: markerIconForPoint(point),
+      keyboard: false,
+      scanState: pointClass === "not-scanned" ? "not-scanned" : "scanned",
+      title: `${point.label} - ${locationStatusText(point)}`,
+    }).bindTooltip(markerTooltip(point), {
+      className: "location-map-tooltip",
+      direction: "top",
+      offset: [0, -12],
+      opacity: 0.96,
+    });
+
+    if (pointClass !== "home" && !point.locked && !interactionsDisabled) {
+      marker.on("click", () => {
+        const option = locationOptionByKey(point.key);
+        if (option) {
+          void pushLocationPreference(option, !isLocationApproved(point.key));
+        }
+      });
+    }
+    markerLayer.addLayer(marker);
+  });
+
+  markerLayer.addTo(map);
+  map.fitBounds(locationMapFocusBounds(policy.map?.focus_bounds || {}), { padding: [28, 28], maxZoom: 11 });
+  bindMapViewButtons(panel, map, policy);
+  activeLocationMap = map;
+  requestAnimationFrame(() => map.invalidateSize());
+}
+
+function scheduleLocationMapInit(interactionsDisabled = false) {
+  if (locationMapInitHandle) {
+    cancelAnimationFrame(locationMapInitHandle);
+  }
+  locationMapInitHandle = requestAnimationFrame(() => {
+    initializeLocationMap(interactionsDisabled);
+  });
+}
+
+function renderLocationMap(policy = {}, interactionsDisabled = false) {
+  const points = locationMapPoints(policy);
+  const scannedCount = points.filter((point) => isScannedLocation(point.key)).length;
+  const nearbyCount = (policy.nearby_options || []).length;
 
   return `
     <section class="location-map-panel" aria-label="מפת מיקומים">
-      <div class="map-canvas">
-        <svg viewBox="0 0 100 100" role="img" aria-label="מפת ישראל עם סימון שדרות ומיקומי חיפוש">
-          <path class="israel-outline" d="${escapeHtml(outlinePath)} Z"></path>
-          ${focusRect}
-          ${renderedPoints}
-        </svg>
+      <div class="location-map-stage">
+        <div class="map-canvas leaflet-map" data-location-map-canvas></div>
+        <div class="map-fallback">
+          <strong>המפה לא נטענה</strong>
+          <span>רשימת המיקומים זמינה למטה.</span>
+        </div>
       </div>
-      <div class="map-legend" aria-label="מקרא מפה">
-        <span><i class="legend-dot home"></i>קורן · שדרות</span>
-        <span><i class="legend-dot scanned"></i>בסריקה</span>
-        <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
-      </div>
+      <aside class="map-side" aria-label="מקרא מפה">
+        <div class="map-toolbar" aria-label="תצוגת מפה">
+          <button type="button" class="map-view-button active" data-map-view="sderot"${interactionsDisabled ? " disabled" : ""}>אזור שדרות</button>
+          <button type="button" class="map-view-button" data-map-view="israel"${interactionsDisabled ? " disabled" : ""}>ישראל</button>
+        </div>
+        <div class="map-legend">
+          <span><i class="legend-dot home"></i>קורן · שדרות</span>
+          <span><i class="legend-dot scanned"></i>בסריקה</span>
+          <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
+        </div>
+        <div class="map-summary-grid" aria-label="סיכום מיקומים במפה">
+          <span><strong>${escapeHtml(scannedCount)}</strong><small>במדיניות הסריקה</small></span>
+          <span><strong>${escapeHtml(points.length - scannedCount)}</strong><small>לא מסומנים</small></span>
+          <span><strong>${escapeHtml(nearbyCount)}</strong><small>יישובים סביב שדרות</small></span>
+        </div>
+      </aside>
     </section>
   `;
 }
@@ -1060,6 +1161,7 @@ function renderLocationPolicy() {
     </div>
     ${syncBlockedMessage ? `<section class="sync-warning" role="alert">${escapeHtml(syncBlockedMessage)}</section>` : ""}
   `;
+  scheduleLocationMapInit(Boolean(syncBlockedMessage));
 }
 
 function renderInsights() {

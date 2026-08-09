@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Job Searcher - Koren Dashboard</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="assets/pages.css?v=20260809-locations" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="assets/pages.css?v=20260809-leaflet-map" />
   </head>
   <body>
     <div class="app-shell">
@@ -80,6 +82,8 @@
     </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-    <script type="module" src="assets/pages.js?v=20260809-locations"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script type="module" src="assets/pages.js?v=20260809-leaflet-map"></script>
   </body>
 </html>
