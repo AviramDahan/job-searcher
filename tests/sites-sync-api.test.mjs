@@ -51,6 +51,31 @@ assert.equal(mark.telegram.sent, true);
 assert.equal(mark.manual_submissions["job-1"].submittedAt, "2026-08-02 08:00");
 assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 1);
 
+const corrupted = await handleSyncAction(
+  {
+    action: "markManualSubmitted",
+    event_id: "event-corrupted",
+    job_key: "job-corrupted",
+    company: "????? ????",
+    title: "רכזת רכש",
+    location: "?????",
+    link: "https://example.test/job-corrupted",
+    score: "82",
+    manual_submitted_at: "2026-08-02 08:30",
+    requirements: "?????, Excel",
+    fit: "????? ????",
+  },
+  env
+);
+
+const telegramCallsAfterCorrupted = calls.filter((call) => call.url.startsWith("https://api.telegram.org/"));
+const corruptedTelegramPayload = JSON.parse(telegramCallsAfterCorrupted.at(-1).options.body);
+assert.equal(corrupted.ok, true);
+assert.equal(corrupted.telegram.sent, true);
+assert.equal(telegramCallsAfterCorrupted.length, 2);
+assert.equal(corruptedTelegramPayload.text.includes("????"), false);
+assert.equal(corruptedTelegramPayload.text.includes("חברה לא זמינה בגלל בעיית קידוד במקור"), true);
+
 const duplicate = await handleSyncAction(
   {
     action: "markManualSubmitted",
@@ -63,7 +88,7 @@ const duplicate = await handleSyncAction(
 
 assert.equal(duplicate.duplicate, true);
 assert.equal(duplicate.manual_submissions["job-1"].submittedAt, "2026-08-02 08:00");
-assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 1);
+assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 2);
 
 const clear = await handleSyncAction(
   {
@@ -98,7 +123,7 @@ assert.equal(reject.telegram.sent, false);
 assert.equal(reject.telegram.reason, "manual_reject_action");
 assert.equal(reject.manual_rejections["job-2"].rejectedAt, "2026-08-02 10:00");
 assert.equal(reject.manual_submissions["job-2"], undefined);
-assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 1);
+assert.equal(calls.filter((call) => call.url.startsWith("https://api.telegram.org/")).length, 2);
 
 const clearReject = await handleSyncAction(
   {

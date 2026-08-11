@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -30,56 +31,83 @@ COMPANY_INFO_LABEL = "מידע כללי על החברה"
 BLOCKER_LABEL = "סיבת עצירה"
 RECOMMENDATION_LABEL = "המלצה"
 RETRY_RESULT_LABEL = "תוצאת ניסיון"
+BROKEN_TEXT_PATTERN = re.compile(r"\?{3,}")
+ENCODING_FALLBACK_TEXT = "טקסט לא זמין בגלל בעיית קידוד במקור"
 
 
 def bullets(items: list[str]) -> str:
     return "\n".join(f"- {item}" for item in items)
 
 
+def has_broken_text(value: object) -> bool:
+    return bool(BROKEN_TEXT_PATTERN.search(str(value or "")))
+
+
+def safe_text(value: object, fallback: str = ENCODING_FALLBACK_TEXT) -> str:
+    text = str(value or "").strip()
+    if has_broken_text(text):
+        return fallback
+    return text
+
+
 def build_message(item: dict) -> str:
     matched = item.get("matched_requirements") or []
-    matched_text = matched if isinstance(matched, str) else bullets(matched)
+    matched_text = matched if isinstance(matched, str) else bullets([safe_text(value) for value in matched])
+    matched_text = safe_text(matched_text, "דרישות לא זמינות בגלל בעיית קידוד במקור")
+
+    company = safe_text(item.get("company", ""), "חברה לא זמינה בגלל בעיית קידוד במקור")
+    title = safe_text(item.get("title", ""), "משרה לא זמינה בגלל בעיית קידוד במקור")
+    score = safe_text(item.get("score", ""))
+    link = safe_text(item.get("link", ""), "קישור לא זמין בגלל בעיית קידוד במקור")
+    company_info = safe_text(item.get("company_info", ""), "מידע חברה לא זמין בגלל בעיית קידוד במקור")
+    blocker = safe_text(item.get("blocker", ""), "סיבת העצירה לא זמינה בגלל בעיית קידוד במקור")
+    recommendation = safe_text(item.get("recommendation", ""), "המלצה לא זמינה בגלל בעיית קידוד במקור")
+    submitted_at = safe_text(item.get("submitted_at", ""))
+    attempted_at = safe_text(item.get("attempted_at", ""))
+    retry_result = safe_text(item.get("retry_result", ""), "תוצאת הניסיון לא זמינה בגלל בעיית קידוד במקור")
 
     if item.get("kind") == "submitted":
         return (
             f"{SUBMITTED_TITLE}\n"
-            f"{DATE_LABEL}: {item.get('submitted_at', '')}\n"
-            f"{COMPANY_LABEL}: {item['company']}\n"
-            f"{JOB_LABEL}: {item['title']}\n"
-            f"{SCORE_LABEL}: {item.get('score', '')}/100\n"
-            f"{LINK_LABEL}: {item['link']}\n\n"
+            f"{DATE_LABEL}: {submitted_at}\n"
+            f"{COMPANY_LABEL}: {company}\n"
+            f"{JOB_LABEL}: {title}\n"
+            f"{SCORE_LABEL}: {score}/100\n"
+            f"{LINK_LABEL}: {link}\n\n"
             f"{MATCHED_LABEL}:\n{matched_text}\n\n"
-            f"{COMPANY_INFO_LABEL}:\n{item.get('company_info', '')}"
+            f"{COMPANY_INFO_LABEL}:\n{company_info}"
         )
 
     if item.get("kind") == "retry":
         return (
             f"{RETRY_TITLE}\n"
-            f"{DATE_LABEL}: {item.get('attempted_at', '')}\n"
-            f"{COMPANY_LABEL}: {item['company']}\n"
-            f"{JOB_LABEL}: {item['title']}\n"
-            f"{SCORE_LABEL}: {item.get('score', '')}/100\n"
-            f"{LINK_LABEL}: {item['link']}\n\n"
+            f"{DATE_LABEL}: {attempted_at}\n"
+            f"{COMPANY_LABEL}: {company}\n"
+            f"{JOB_LABEL}: {title}\n"
+            f"{SCORE_LABEL}: {score}/100\n"
+            f"{LINK_LABEL}: {link}\n\n"
             f"{MATCHED_LABEL}:\n{matched_text}\n\n"
-            f"{COMPANY_INFO_LABEL}:\n{item.get('company_info', '')}\n\n"
-            f"{RETRY_RESULT_LABEL}:\n{item.get('retry_result', '')}\n\n"
-            f"{RECOMMENDATION_LABEL}:\n{item.get('recommendation', '')}"
+            f"{COMPANY_INFO_LABEL}:\n{company_info}\n\n"
+            f"{RETRY_RESULT_LABEL}:\n{retry_result}\n\n"
+            f"{RECOMMENDATION_LABEL}:\n{recommendation}"
         )
 
     return (
         f"{MANUAL_TITLE}\n"
-        f"{COMPANY_LABEL}: {item['company']}\n"
-        f"{JOB_LABEL}: {item['title']}\n"
-        f"{SCORE_LABEL}: {item.get('score', '')}/100\n"
-        f"{LINK_LABEL}: {item['link']}\n\n"
+        f"{COMPANY_LABEL}: {company}\n"
+        f"{JOB_LABEL}: {title}\n"
+        f"{SCORE_LABEL}: {score}/100\n"
+        f"{LINK_LABEL}: {link}\n\n"
         f"{MATCHED_LABEL}:\n{matched_text}\n\n"
-        f"{COMPANY_INFO_LABEL}:\n{item.get('company_info', '')}\n\n"
-        f"{BLOCKER_LABEL}:\n{item.get('blocker', '')}\n\n"
-        f"{RECOMMENDATION_LABEL}:\n{item.get('recommendation', '')}"
+        f"{COMPANY_INFO_LABEL}:\n{company_info}\n\n"
+        f"{BLOCKER_LABEL}:\n{blocker}\n\n"
+        f"{RECOMMENDATION_LABEL}:\n{recommendation}"
     )
 
 
 def _post_message(token: str, chat_id: str, text: str) -> dict:
+    if has_broken_text(text):
+        raise ValueError("telegram_text_contains_replacement_question_marks")
     payload = json.dumps(
         {
             "chat_id": chat_id,
@@ -162,6 +190,8 @@ def main() -> int:
             results.append({"kind": item.get("kind"), "title": item.get("title"), "ok": False, "error": f"telegram_http_{exc.code}"})
         except URLError:
             results.append({"kind": item.get("kind"), "title": item.get("title"), "ok": False, "error": "telegram_network_error"})
+        except ValueError as exc:
+            results.append({"kind": item.get("kind"), "title": item.get("title"), "ok": False, "error": str(exc)})
 
     log_path = args.log or args.alerts_json.with_name(args.alerts_json.stem + "_sent_log.json")
     log_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8-sig")

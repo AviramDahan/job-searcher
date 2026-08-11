@@ -2,6 +2,8 @@ const STATE_KEY = "manual_submissions";
 const DEFAULT_STATE_NAME = "default";
 const MAX_FIELD_LENGTH = 1200;
 const MAX_NOTE_LENGTH = 500;
+const BROKEN_TEXT_PATTERN = /\?{3,}/;
+const ENCODING_FALLBACK_TEXT = "טקסט לא זמין בגלל בעיית קידוד במקור";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -69,6 +71,15 @@ function clean(value, maxLength = MAX_FIELD_LENGTH) {
   return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
 }
 
+function hasBrokenText(value) {
+  return BROKEN_TEXT_PATTERN.test(String(value || ""));
+}
+
+function safeTelegramText(value, fallback = ENCODING_FALLBACK_TEXT, maxLength = MAX_FIELD_LENGTH) {
+  const text = clean(value, maxLength);
+  return hasBrokenText(text) ? fallback : text;
+}
+
 async function requestParams(request) {
   const url = new URL(request.url);
   const params = Object.fromEntries(url.searchParams.entries());
@@ -128,13 +139,13 @@ async function sendTelegram(env, params, submittedAt) {
     return { sent: false, reason: "missing_telegram_config" };
   }
 
-  const company = clean(params.company);
-  const title = clean(params.title);
-  const location = clean(params.location);
-  const link = clean(params.link, 2000);
-  const score = clean(params.score, 20);
-  const requirements = clean(params.requirements);
-  const fit = clean(params.fit);
+  const company = safeTelegramText(params.company, "חברה לא זמינה בגלל בעיית קידוד במקור");
+  const title = safeTelegramText(params.title, "משרה לא זמינה בגלל בעיית קידוד במקור");
+  const location = safeTelegramText(params.location, "מיקום לא זמין בגלל בעיית קידוד במקור");
+  const link = safeTelegramText(params.link, "קישור לא זמין בגלל בעיית קידוד במקור", 2000);
+  const score = safeTelegramText(params.score, "", 20);
+  const requirements = safeTelegramText(params.requirements, "דרישות לא זמינות בגלל בעיית קידוד במקור");
+  const fit = safeTelegramText(params.fit, "סיבות התאמה לא זמינות בגלל בעיית קידוד במקור");
   const text = [
     "הוגשה ידנית בדשבורד",
     `תאריך ושעה: ${submittedAt}`,
@@ -153,6 +164,10 @@ async function sendTelegram(env, params, submittedAt) {
     "מידע כללי על החברה:",
     `${company}${location ? " | " + location : ""}`,
   ].join("\n");
+
+  if (hasBrokenText(text)) {
+    return { sent: false, reason: "telegram_text_contains_replacement_question_marks" };
+  }
 
   const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: "POST",
