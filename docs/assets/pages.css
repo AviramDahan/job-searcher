@@ -348,6 +348,16 @@ h3 {
   background: var(--green);
 }
 
+.location-map-pin.radius {
+  background: #1b5d92;
+}
+
+.location-map-pin.in-radius:not(.home) {
+  box-shadow:
+    0 0 0 5px rgba(27, 93, 146, 0.2),
+    0 2px 8px rgba(22, 32, 38, 0.28);
+}
+
 .location-map-pin.home {
   background: #0b3d91;
   color: #fff;
@@ -373,6 +383,16 @@ h3 {
 
 .location-marker-cluster.scanned {
   background: var(--green);
+}
+
+.location-marker-cluster.radius {
+  background: #1b5d92;
+}
+
+.location-marker-cluster.in-radius {
+  box-shadow:
+    0 0 0 5px rgba(27, 93, 146, 0.2),
+    0 2px 10px rgba(22, 32, 38, 0.26);
 }
 
 .location-marker-cluster.not-scanned {
@@ -408,6 +428,14 @@ h3 {
 .location-map-popup strong,
 .location-map-popup span {
   display: block;
+}
+
+.location-radius-overlay {
+  filter: drop-shadow(0 8px 12px rgba(27, 93, 146, 0.14));
+}
+
+.location-region-overlay {
+  filter: drop-shadow(0 8px 12px rgba(15, 118, 110, 0.12));
 }
 
 .map-popup-button {
@@ -553,6 +581,11 @@ h3 {
 
 .legend-dot.scanned {
   background: var(--green);
+}
+
+.legend-dot.radius {
+  background: #1b5d92;
+  box-shadow: 0 0 0 3px rgba(27, 93, 146, 0.18);
 }
 
 .legend-dot.not-scanned {

@@ -50,6 +50,9 @@ class ExportPagesDashboardTests(unittest.TestCase):
             self.assertIn("ניר עם", [item["label"] for item in payload["location_policy"]["nearby_options"]])
             self.assertTrue(payload["location_policy"]["map_points"])
             self.assertIn("מרכז", [item["label"] for item in payload["location_policy"]["region_options"]])
+            for region in payload["location_policy"]["region_options"]:
+                self.assertIn("map_area", region)
+                self.assertGreaterEqual(len(region["map_area"]["polygon"]), 3)
             self.assertIn(80, payload["location_policy"]["radius_options_km"])
 
 

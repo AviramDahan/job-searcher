@@ -203,6 +203,54 @@ REGION_LOCATION_OPTIONS = (
     },
 )
 
+REGION_MAP_AREAS: dict[str, dict[str, Any]] = {
+    "region_south": {
+        "description": "approximate_visual_region",
+        "polygon": [
+            {"lat": 31.93, "lng": 34.50},
+            {"lat": 31.92, "lng": 34.98},
+            {"lat": 31.45, "lng": 35.25},
+            {"lat": 29.58, "lng": 34.95},
+            {"lat": 29.50, "lng": 34.78},
+            {"lat": 30.70, "lng": 34.38},
+            {"lat": 31.55, "lng": 34.43},
+        ],
+    },
+    "region_shephela": {
+        "description": "approximate_visual_region",
+        "polygon": [
+            {"lat": 31.58, "lng": 34.66},
+            {"lat": 31.82, "lng": 34.62},
+            {"lat": 32.04, "lng": 34.78},
+            {"lat": 32.02, "lng": 34.97},
+            {"lat": 31.86, "lng": 35.03},
+            {"lat": 31.62, "lng": 34.92},
+        ],
+    },
+    "region_center": {
+        "description": "approximate_visual_region",
+        "polygon": [
+            {"lat": 31.86, "lng": 34.69},
+            {"lat": 32.24, "lng": 34.72},
+            {"lat": 32.28, "lng": 35.00},
+            {"lat": 32.08, "lng": 35.13},
+            {"lat": 31.89, "lng": 35.03},
+            {"lat": 31.81, "lng": 34.82},
+        ],
+    },
+    "region_north": {
+        "description": "approximate_visual_region",
+        "polygon": [
+            {"lat": 32.18, "lng": 34.78},
+            {"lat": 33.28, "lng": 35.06},
+            {"lat": 33.28, "lng": 35.78},
+            {"lat": 32.74, "lng": 35.90},
+            {"lat": 32.27, "lng": 35.45},
+            {"lat": 32.10, "lng": 35.04},
+        ],
+    },
+}
+
 LOCATION_OPTION_ALIASES = {
     str(option["key"]): tuple(str(term) for term in option["terms"])
     for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS, *REGION_LOCATION_OPTIONS)
@@ -435,6 +483,12 @@ def option_payload(option: dict[str, Any], locked: bool = False) -> dict[str, An
     if "lat" in option and "lng" in option:
         payload["lat"] = option["lat"]
         payload["lng"] = option["lng"]
+    map_area = REGION_MAP_AREAS.get(str(option["key"]))
+    if map_area:
+        payload["map_area"] = {
+            "description": map_area.get("description", "approximate_visual_region"),
+            "polygon": [dict(point) for point in map_area.get("polygon", [])],
+        }
     return payload
 
 

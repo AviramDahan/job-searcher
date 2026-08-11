@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-11 09:13",
+  "generated_at": "2026-08-11 09:34",
   "candidate": {
     "full_name": "קורן דהן"
   },
@@ -625,7 +625,40 @@
           "ashdod",
           "אשדוד"
         ],
-        "kind": "region"
+        "kind": "region",
+        "map_area": {
+          "description": "approximate_visual_region",
+          "polygon": [
+            {
+              "lat": 31.93,
+              "lng": 34.5
+            },
+            {
+              "lat": 31.92,
+              "lng": 34.98
+            },
+            {
+              "lat": 31.45,
+              "lng": 35.25
+            },
+            {
+              "lat": 29.58,
+              "lng": 34.95
+            },
+            {
+              "lat": 29.5,
+              "lng": 34.78
+            },
+            {
+              "lat": 30.7,
+              "lng": 34.38
+            },
+            {
+              "lat": 31.55,
+              "lng": 34.43
+            }
+          ]
+        }
       },
       {
         "key": "region_shephela",
@@ -648,7 +681,36 @@
           "kiryat malachi",
           "קריית מלאכי"
         ],
-        "kind": "region"
+        "kind": "region",
+        "map_area": {
+          "description": "approximate_visual_region",
+          "polygon": [
+            {
+              "lat": 31.58,
+              "lng": 34.66
+            },
+            {
+              "lat": 31.82,
+              "lng": 34.62
+            },
+            {
+              "lat": 32.04,
+              "lng": 34.78
+            },
+            {
+              "lat": 32.02,
+              "lng": 34.97
+            },
+            {
+              "lat": 31.86,
+              "lng": 35.03
+            },
+            {
+              "lat": 31.62,
+              "lng": 34.92
+            }
+          ]
+        }
       },
       {
         "key": "region_center",
@@ -672,7 +734,36 @@
           "רעננה",
           "כפר סבא"
         ],
-        "kind": "region"
+        "kind": "region",
+        "map_area": {
+          "description": "approximate_visual_region",
+          "polygon": [
+            {
+              "lat": 31.86,
+              "lng": 34.69
+            },
+            {
+              "lat": 32.24,
+              "lng": 34.72
+            },
+            {
+              "lat": 32.28,
+              "lng": 35.0
+            },
+            {
+              "lat": 32.08,
+              "lng": 35.13
+            },
+            {
+              "lat": 31.89,
+              "lng": 35.03
+            },
+            {
+              "lat": 31.81,
+              "lng": 34.82
+            }
+          ]
+        }
       },
       {
         "key": "region_north",
@@ -694,7 +785,36 @@
           "צפת",
           "גליל"
         ],
-        "kind": "region"
+        "kind": "region",
+        "map_area": {
+          "description": "approximate_visual_region",
+          "polygon": [
+            {
+              "lat": 32.18,
+              "lng": 34.78
+            },
+            {
+              "lat": 33.28,
+              "lng": 35.06
+            },
+            {
+              "lat": 33.28,
+              "lng": 35.78
+            },
+            {
+              "lat": 32.74,
+              "lng": 35.9
+            },
+            {
+              "lat": 32.27,
+              "lng": 35.45
+            },
+            {
+              "lat": 32.1,
+              "lng": 35.04
+            }
+          ]
+        }
       }
     ],
     "radius_options_km": [

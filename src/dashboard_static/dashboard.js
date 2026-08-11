@@ -124,15 +124,53 @@ function isDefaultLocation(key) {
   return (policy.default_approved || []).some((option) => option.key === key);
 }
 
-function isScannedLocation(key) {
-  return isDefaultLocation(key) || isLocationApproved(key);
+function selectedRadiusKm() {
+  return Math.max(0, Math.min(Number.parseInt(String(state.locationPreferences.radiusKm || "0"), 10) || 0, 250));
+}
+
+function homeLocation(policy = state.data?.location_policy || {}) {
+  return policy.home || {};
+}
+
+function distanceKm(lat1, lng1, lat2, lng2) {
+  const earthRadiusKm = 6371;
+  const toRadians = (value) => (Number(value) * Math.PI) / 180;
+  const dLat = toRadians(lat2 - lat1);
+  const dLng = toRadians(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * earthRadiusKm * Math.asin(Math.sqrt(a));
+}
+
+function isPointWithinRadius(point = {}, policy = state.data?.location_policy || {}) {
+  const radius = selectedRadiusKm();
+  const home = homeLocation(policy);
+  if (!radius || point.key === home.key) {
+    return false;
+  }
+  const lat = Number(point.lat);
+  const lng = Number(point.lng);
+  const homeLat = Number(home.lat);
+  const homeLng = Number(home.lng);
+  if (![lat, lng, homeLat, homeLng].every(Number.isFinite)) {
+    return false;
+  }
+  return distanceKm(homeLat, homeLng, lat, lng) <= radius + 0.001;
+}
+
+function isScannedLocation(key, point = null) {
+  return isDefaultLocation(key) || isLocationApproved(key) || (point ? isPointWithinRadius(point) : false);
 }
 
 function mapPointClass(point = {}) {
   if (point.key === state.data?.location_policy?.home?.key) {
     return "home";
   }
-  return isScannedLocation(point.key) ? "scanned" : "not-scanned";
+  if (isDefaultLocation(point.key) || isLocationApproved(point.key)) {
+    return "scanned";
+  }
+  return isPointWithinRadius(point) ? "radius" : "not-scanned";
 }
 
 async function saveLocationPreference(option, approved) {
@@ -222,7 +260,14 @@ function locationMapPoints(policy = {}) {
 }
 
 function locationStatusText(point = {}) {
-  return mapPointClass(point) === "not-scanned" ? "לא בסריקה" : "בסריקה";
+  const pointClass = mapPointClass(point);
+  if (pointClass === "not-scanned") {
+    return "לא בסריקה";
+  }
+  if (pointClass === "radius") {
+    return `בתוך רדיוס ${selectedRadiusKm()} ק״מ`;
+  }
+  return "בסריקה";
 }
 
 function locationMapBounds(bounds = {}) {
@@ -239,11 +284,82 @@ function locationMapFocusBounds(bounds = {}) {
   ];
 }
 
+function regionPolygonLatLngs(region = {}) {
+  const polygon = Array.isArray(region.map_area?.polygon) ? region.map_area.polygon : [];
+  return polygon
+    .map((point) => [Number(point.lat), Number(point.lng)])
+    .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+}
+
+function activeRegionOptions(policy = state.data?.location_policy || {}) {
+  return (Array.isArray(policy.region_options) ? policy.region_options : []).filter(
+    (option) => isLocationApproved(option.key) && regionPolygonLatLngs(option).length >= 3
+  );
+}
+
+function extendBoundsWithLatLngs(bounds, latLngs = []) {
+  latLngs.forEach(([lat, lng]) => bounds.extend([lat, lng]));
+  return bounds;
+}
+
+function addLocationAreaOverlays(map, policy = {}) {
+  const bounds = window.L.latLngBounds(locationMapFocusBounds(policy.map?.focus_bounds || {}));
+  activeRegionOptions(policy).forEach((region) => {
+    const polygon = regionPolygonLatLngs(region);
+    extendBoundsWithLatLngs(bounds, polygon);
+    window.L.polygon(polygon, {
+      className: "location-region-overlay",
+      color: "#0f766e",
+      fillColor: "#0f766e",
+      fillOpacity: 0.14,
+      opacity: 0.82,
+      weight: 2,
+      dashArray: "7 6",
+    })
+      .addTo(map)
+      .bindTooltip(`אזור ${region.label}`, {
+        className: "location-map-tooltip",
+        direction: "center",
+        opacity: 0.92,
+        sticky: true,
+      });
+  });
+
+  const radius = selectedRadiusKm();
+  const home = homeLocation(policy);
+  const homeLat = Number(home.lat);
+  const homeLng = Number(home.lng);
+  if (radius > 0 && Number.isFinite(homeLat) && Number.isFinite(homeLng)) {
+    const circle = window.L.circle([homeLat, homeLng], {
+      className: "location-radius-overlay",
+      color: "#1b5d92",
+      fillColor: "#1b5d92",
+      fillOpacity: 0.08,
+      opacity: 0.88,
+      radius: radius * 1000,
+      weight: 2,
+      dashArray: "8 6",
+    })
+      .addTo(map)
+      .bindTooltip(`רדיוס ${radius} ק״מ משדרות`, {
+        className: "location-map-tooltip",
+        direction: "center",
+        opacity: 0.92,
+        sticky: true,
+      });
+    bounds.extend(circle.getBounds().getSouthWest());
+    bounds.extend(circle.getBounds().getNorthEast());
+  }
+
+  return bounds;
+}
+
 function markerIconForPoint(point = {}) {
   const pointClass = mapPointClass(point);
   const size = pointClass === "home" ? 26 : 18;
+  const radiusClass = isPointWithinRadius(point) ? " in-radius" : "";
   return window.L.divIcon({
-    className: `location-map-pin ${pointClass}`,
+    className: `location-map-pin ${pointClass}${radiusClass}`,
     html: `<span>${pointClass === "home" ? "קורן" : ""}</span>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
@@ -323,22 +439,32 @@ function initializeLocationMap() {
     attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
 
+  const overlayBounds = addLocationAreaOverlays(map, policy);
+  const hasActiveRegionOverlay = activeRegionOptions(policy).length > 0;
+  const hasRadiusOverlay = selectedRadiusKm() > 0;
   const markerLayer = window.L.markerClusterGroup
     ? window.L.markerClusterGroup({
         showCoverageOnHover: false,
         spiderfyOnMaxZoom: true,
-        disableClusteringAtZoom: 12,
-        maxClusterRadius: 34,
+        disableClusteringAtZoom: hasRadiusOverlay ? 9 : 12,
+        maxClusterRadius: hasRadiusOverlay ? 22 : 34,
         iconCreateFunction(cluster) {
-          const states = cluster.getAllChildMarkers().map((marker) => marker.options.scanState);
+          const childMarkers = cluster.getAllChildMarkers();
+          const states = childMarkers.map((marker) => marker.options.scanState);
+          const activeStates = new Set(["scanned", "radius"]);
           const clusterState = states.every((stateName) => stateName === "scanned")
             ? "scanned"
+            : states.every((stateName) => stateName === "radius")
+              ? "radius"
+              : states.every((stateName) => activeStates.has(stateName))
+                ? "scanned"
             : states.every((stateName) => stateName === "not-scanned")
               ? "not-scanned"
               : "mixed";
+          const radiusClass = childMarkers.some((marker) => marker.options.withinRadius) ? " in-radius" : "";
           return window.L.divIcon({
             html: `<span>${cluster.getChildCount()}</span>`,
-            className: `location-marker-cluster ${clusterState}`,
+            className: `location-marker-cluster ${clusterState}${radiusClass}`,
             iconSize: window.L.point(38, 38),
           });
         },
@@ -350,7 +476,8 @@ function initializeLocationMap() {
     const marker = window.L.marker([Number(point.lat), Number(point.lng)], {
       icon: markerIconForPoint(point),
       keyboard: false,
-      scanState: pointClass === "not-scanned" ? "not-scanned" : "scanned",
+      scanState: pointClass,
+      withinRadius: isPointWithinRadius(point, policy),
       title: `${point.label} - ${locationStatusText(point)}`,
     })
       .bindTooltip(markerTooltip(point), {
@@ -368,7 +495,7 @@ function initializeLocationMap() {
   });
 
   markerLayer.addTo(map);
-  map.fitBounds(locationMapFocusBounds(policy.map?.focus_bounds || {}), { padding: [28, 28], maxZoom: 11 });
+  map.fitBounds(overlayBounds, { padding: [28, 28], maxZoom: hasActiveRegionOverlay ? 8 : hasRadiusOverlay ? 10 : 11 });
   bindMapViewButtons(panel, map, policy);
   activeLocationMap = map;
   requestAnimationFrame(() => map.invalidateSize());
@@ -385,7 +512,9 @@ function scheduleLocationMapInit() {
 
 function renderLocationMap(policy = {}) {
   const points = locationMapPoints(policy);
-  const scannedCount = points.filter((point) => isScannedLocation(point.key)).length;
+  const scannedCount = points.filter((point) => isScannedLocation(point.key, point)).length;
+  const radius = selectedRadiusKm();
+  const radiusCount = radius ? points.filter((point) => isPointWithinRadius(point, policy)).length : 0;
   const nearbyCount = (policy.nearby_options || []).length;
   const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
   const radiusOptions = Array.isArray(policy.radius_options_km) ? policy.radius_options_km : [25, 40, 60, 80, 100, 150];
@@ -400,7 +529,6 @@ function renderLocationMap(policy = {}) {
       `;
     })
     .join("");
-  const radius = Number(state.locationPreferences.radiusKm || 0);
   const radiusOptionsHtml = [
     `<option value="0"${radius === 0 ? " selected" : ""}>ללא רדיוס</option>`,
     ...radiusOptions.map((value) => `<option value="${escapeHtml(value)}"${radius === Number(value) ? " selected" : ""}>${escapeHtml(value)} ק״מ</option>`),
@@ -423,6 +551,7 @@ function renderLocationMap(policy = {}) {
         <div class="map-legend">
           <span><i class="legend-dot home"></i>קורן - שדרות</span>
           <span><i class="legend-dot scanned"></i>בסריקה</span>
+          <span><i class="legend-dot radius"></i>בתוך רדיוס</span>
           <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
         </div>
         <div class="map-region-panel" aria-label="אזורי סריקה">
@@ -437,6 +566,11 @@ function renderLocationMap(policy = {}) {
         <div class="map-summary-grid" aria-label="סיכום מיקומים במפה">
           <span><strong>${escapeHtml(scannedCount)}</strong><small>במדיניות הסריקה</small></span>
           <span><strong>${escapeHtml(points.length - scannedCount)}</strong><small>לא מסומנים</small></span>
+          ${
+            radius
+              ? `<span><strong>${escapeHtml(radiusCount)}</strong><small>בתוך ${escapeHtml(radius)} ק״מ משדרות</small></span>`
+              : ""
+          }
           <span><strong>${escapeHtml(nearbyCount)}</strong><small>יישובים סביב שדרות</small></span>
         </div>
       </aside>

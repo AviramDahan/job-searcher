@@ -61,6 +61,9 @@ class LocationPolicyTests(unittest.TestCase):
         self.assertIn("map_points", payload)
         self.assertIn("ניר עם", [item["label"] for item in payload["nearby_options"]])
         self.assertIn("דרום", [item["label"] for item in payload["region_options"]])
+        for region in payload["region_options"]:
+            self.assertIn("map_area", region)
+            self.assertGreaterEqual(len(region["map_area"]["polygon"]), 3)
         self.assertIn(60, payload["radius_options_km"])
 
     def test_dashboard_approved_region_becomes_in_scope(self) -> None:
