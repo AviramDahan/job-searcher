@@ -142,6 +142,18 @@ const rejectLocation = await handleSyncAction(
 );
 
 assert.equal(rejectLocation.ok, true);
-assert.equal(rejectLocation.location_preferences.approved_locations.rehovot.approved, false);
+assert.equal(rejectLocation.location_preferences.approved_locations.rehovot, undefined);
+
+const radiusLocation = await handleSyncAction(
+  {
+    action: "setLocationRadius",
+    event_id: "event-7",
+    radius_km: "60",
+  },
+  env
+);
+
+assert.equal(radiusLocation.ok, true);
+assert.equal(radiusLocation.location_preferences.radius_km, 60);
 
 console.log(JSON.stringify({ ok: true }));

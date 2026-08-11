@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.dashboard_app import DashboardPaths, build_alert_payload, dashboard_state, plan_job_submission, resend_telegram, save_location_preference, update_job
+from src.dashboard_app import DashboardPaths, build_alert_payload, dashboard_state, plan_job_submission, resend_telegram, save_location_preference, save_location_radius, update_job
 from src.job_records import (
     COMPANY,
     COVER,
@@ -133,6 +133,8 @@ class DashboardAppTests(unittest.TestCase):
         self.assertIn("רחובות", [item["label"] for item in state["location_policy"]["user_approvable"]])
         self.assertIn("ניר עם", [item["label"] for item in state["location_policy"]["nearby_options"]])
         self.assertTrue(state["location_policy"]["map_points"])
+        self.assertIn("מרכז", [item["label"] for item in state["location_policy"]["region_options"]])
+        self.assertIn(80, state["location_policy"]["radius_options_km"])
         self.assertEqual(state["jobs"][0]["company"], "Acme")
 
     def test_save_location_preference_updates_dashboard_state(self) -> None:
@@ -149,6 +151,27 @@ class DashboardAppTests(unittest.TestCase):
 
         self.assertTrue(preferences["approved_locations"]["rehovot"]["approved"])
         self.assertEqual(state["location_preferences"]["approved_locations"]["rehovot"]["label"], "רחובות")
+
+        preferences = save_location_preference(
+            self.paths,
+            {
+                "city_key": "rehovot",
+                "city_label": "רחובות",
+                "city_terms": "רחובות|rehovot",
+                "approved": "false",
+            },
+        )
+        state = dashboard_state(self.paths)
+
+        self.assertNotIn("rehovot", preferences["approved_locations"])
+        self.assertNotIn("rehovot", state["location_preferences"]["approved_locations"])
+
+    def test_save_location_radius_updates_dashboard_state(self) -> None:
+        preferences = save_location_radius(self.paths, {"radius_km": "60"})
+        state = dashboard_state(self.paths)
+
+        self.assertEqual(preferences["radius_km"], 60)
+        self.assertEqual(state["location_preferences"]["radius_km"], 60)
 
     def test_update_job_adds_note_without_changing_status(self) -> None:
         key = "jobmaster:1001"

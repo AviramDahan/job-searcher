@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-09 19:01",
+  "generated_at": "2026-08-11 09:13",
   "candidate": {
     "full_name": "קורן דהן"
   },
@@ -601,6 +601,109 @@
         "lat": 31.326,
         "lng": 34.558
       }
+    ],
+    "region_options": [
+      {
+        "key": "region_south",
+        "label": "דרום",
+        "terms": [
+          "דרום",
+          "אזור הדרום",
+          "מחוז דרום",
+          "south",
+          "southern district",
+          "sderot",
+          "שדרות",
+          "netivot",
+          "נתיבות",
+          "ashkelon",
+          "אשקלון",
+          "kiryat gat",
+          "קריית גת",
+          "beer sheva",
+          "באר שבע",
+          "ashdod",
+          "אשדוד"
+        ],
+        "kind": "region"
+      },
+      {
+        "key": "region_shephela",
+        "label": "שפלה",
+        "terms": [
+          "שפלה",
+          "אזור השפלה",
+          "yavne",
+          "יבנה",
+          "rehovot",
+          "רחובות",
+          "gedera",
+          "גדרה",
+          "gan yavne",
+          "גן יבנה",
+          "lod",
+          "לוד",
+          "ramla",
+          "רמלה",
+          "kiryat malachi",
+          "קריית מלאכי"
+        ],
+        "kind": "region"
+      },
+      {
+        "key": "region_center",
+        "label": "מרכז",
+        "terms": [
+          "מרכז",
+          "אזור המרכז",
+          "גוש דן",
+          "תל אביב",
+          "tel aviv",
+          "רמת גן",
+          "ramat gan",
+          "גבעתיים",
+          "פתח תקווה",
+          "petah tikva",
+          "ראשון לציון",
+          "rishon lezion",
+          "חולון",
+          "בת ים",
+          "הרצליה",
+          "רעננה",
+          "כפר סבא"
+        ],
+        "kind": "region"
+      },
+      {
+        "key": "region_north",
+        "label": "צפון",
+        "terms": [
+          "צפון",
+          "אזור הצפון",
+          "מחוז צפון",
+          "חיפה",
+          "haifa",
+          "קריות",
+          "עכו",
+          "נהריה",
+          "כרמיאל",
+          "יקנעם",
+          "עפולה",
+          "נצרת",
+          "טבריה",
+          "צפת",
+          "גליל"
+        ],
+        "kind": "region"
+      }
+    ],
+    "radius_options_km": [
+      25,
+      40,
+      60,
+      80,
+      100,
+      150
     ],
     "map_points": [
       {

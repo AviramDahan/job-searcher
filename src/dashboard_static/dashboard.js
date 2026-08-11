@@ -30,7 +30,7 @@ const state = {
   status: "all",
   busy: false,
   enginePlans: new Map(),
-  locationPreferences: { approvedLocations: {} },
+  locationPreferences: { approvedLocations: {}, radiusKm: 0 },
 };
 
 const escapeHtml = (value = "") =>
@@ -67,6 +67,7 @@ async function loadState() {
   state.data = payload.state;
   state.locationPreferences = {
     approvedLocations: payload.state.location_preferences?.approved_locations || {},
+    radiusKm: Number(payload.state.location_preferences?.radius_km || 0),
   };
   if (!state.selectedKey && state.data.jobs.length > 0) {
     state.selectedKey = state.data.jobs[0].key;
@@ -94,6 +95,7 @@ function locationOptionByKey(key) {
     ...(policy.default_approved || []),
     ...(policy.user_approvable || []),
     ...(policy.nearby_options || []),
+    ...(policy.region_options || []),
     ...(policy.map_points || []),
   ];
   const remote = state.locationPreferences.approvedLocations[key];
@@ -151,8 +153,33 @@ async function saveLocationPreference(option, approved) {
     state.data = payload.state;
     state.locationPreferences = {
       approvedLocations: payload.location_preferences?.approved_locations || {},
+      radiusKm: Number(payload.location_preferences?.radius_km || 0),
     };
     showToast(approved ? "העיר נוספה למדיניות החיפוש" : "העיר הוסרה ממדיניות החיפוש");
+    render();
+  } catch (error) {
+    showToast(error.message);
+  } finally {
+    state.busy = false;
+    render();
+  }
+}
+
+async function saveLocationRadius(radiusKm) {
+  state.busy = true;
+  render();
+  try {
+    const radius = Math.max(0, Math.min(Number.parseInt(String(radiusKm || "0"), 10) || 0, 250));
+    const payload = await api("/api/location-radius", {
+      method: "POST",
+      body: JSON.stringify({ radius_km: radius }),
+    });
+    state.data = payload.state;
+    state.locationPreferences = {
+      approvedLocations: payload.location_preferences?.approved_locations || {},
+      radiusKm: Number(payload.location_preferences?.radius_km || 0),
+    };
+    showToast(radius ? `רדיוס החיפוש עודכן ל-${radius} ק״מ` : "רדיוס החיפוש בוטל");
     render();
   } catch (error) {
     showToast(error.message);
@@ -227,6 +254,25 @@ function markerTooltip(point = {}) {
   return `
     <strong>${escapeHtml(point.label || "")}</strong>
     <span>${escapeHtml(locationStatusText(point))}</span>
+  `;
+}
+
+function markerPopup(point = {}) {
+  const pointClass = mapPointClass(point);
+  const toggleable = pointClass !== "home" && !point.locked && !state.busy;
+  const approved = isLocationApproved(point.key);
+  return `
+    <div class="location-map-popup" dir="rtl">
+      <strong>${escapeHtml(point.label || "")}</strong>
+      <span>${escapeHtml(locationStatusText(point))}</span>
+      ${
+        toggleable
+          ? `<button type="button" class="map-popup-button" data-location-action="toggle" data-location-key="${escapeHtml(point.key)}">${
+              approved ? "הסר מהסריקה" : "הוסף לסריקה"
+            }</button>`
+          : ""
+      }
+    </div>
   `;
 }
 
@@ -306,21 +352,18 @@ function initializeLocationMap() {
       keyboard: false,
       scanState: pointClass === "not-scanned" ? "not-scanned" : "scanned",
       title: `${point.label} - ${locationStatusText(point)}`,
-    }).bindTooltip(markerTooltip(point), {
-      className: "location-map-tooltip",
-      direction: "top",
-      offset: [0, -12],
-      opacity: 0.96,
-    });
-
-    if (pointClass !== "home" && !point.locked && !state.busy) {
-      marker.on("click", () => {
-        const option = locationOptionByKey(point.key);
-        if (option) {
-          void saveLocationPreference(option, !isLocationApproved(point.key));
-        }
+    })
+      .bindTooltip(markerTooltip(point), {
+        className: "location-map-tooltip",
+        direction: "top",
+        offset: [0, -12],
+        opacity: 0.96,
+      })
+      .bindPopup(markerPopup(point), {
+        className: "location-map-popup-shell",
+        closeButton: true,
+        minWidth: 170,
       });
-    }
     markerLayer.addLayer(marker);
   });
 
@@ -344,6 +387,24 @@ function renderLocationMap(policy = {}) {
   const points = locationMapPoints(policy);
   const scannedCount = points.filter((point) => isScannedLocation(point.key)).length;
   const nearbyCount = (policy.nearby_options || []).length;
+  const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
+  const radiusOptions = Array.isArray(policy.radius_options_km) ? policy.radius_options_km : [25, 40, 60, 80, 100, 150];
+  const disabled = state.busy ? " disabled" : "";
+  const regionChips = regionOptions
+    .map((option) => {
+      const approved = isLocationApproved(option.key);
+      return `
+        <button type="button" class="region-chip${approved ? " approved" : ""}" data-location-action="toggle" data-location-key="${escapeHtml(
+          option.key
+        )}" aria-pressed="${approved ? "true" : "false"}"${disabled}>${escapeHtml(option.label)}</button>
+      `;
+    })
+    .join("");
+  const radius = Number(state.locationPreferences.radiusKm || 0);
+  const radiusOptionsHtml = [
+    `<option value="0"${radius === 0 ? " selected" : ""}>ללא רדיוס</option>`,
+    ...radiusOptions.map((value) => `<option value="${escapeHtml(value)}"${radius === Number(value) ? " selected" : ""}>${escapeHtml(value)} ק״מ</option>`),
+  ].join("");
 
   return `
     <section class="location-map-panel" aria-label="מפת מיקומים">
@@ -364,6 +425,15 @@ function renderLocationMap(policy = {}) {
           <span><i class="legend-dot scanned"></i>בסריקה</span>
           <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
         </div>
+        <div class="map-region-panel" aria-label="אזורי סריקה">
+          ${regionChips}
+        </div>
+        <label class="map-radius-control">
+          <span>רדיוס משדרות</span>
+          <select data-location-action="radius"${disabled}>
+            ${radiusOptionsHtml}
+          </select>
+        </label>
         <div class="map-summary-grid" aria-label="סיכום מיקומים במפה">
           <span><strong>${escapeHtml(scannedCount)}</strong><small>במדיניות הסריקה</small></span>
           <span><strong>${escapeHtml(points.length - scannedCount)}</strong><small>לא מסומנים</small></span>
@@ -383,7 +453,8 @@ function renderLocationPolicy() {
   const defaultApproved = Array.isArray(policy.default_approved) ? policy.default_approved : [];
   const userApprovable = Array.isArray(policy.user_approvable) ? policy.user_approvable : [];
   const nearbyOptions = Array.isArray(policy.nearby_options) ? policy.nearby_options : [];
-  const knownKeys = new Set([...defaultApproved, ...userApprovable, ...nearbyOptions].map((option) => option.key));
+  const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
+  const knownKeys = new Set([...defaultApproved, ...userApprovable, ...nearbyOptions, ...regionOptions].map((option) => option.key));
   const customApproved = approvedLocationEntries().filter((entry) => !knownKeys.has(entry.key));
   const disabled = state.busy ? " disabled" : "";
 
@@ -425,7 +496,7 @@ function renderLocationPolicy() {
         <p class="eyebrow">מדיניות מיקום</p>
         <h2>ערי חיפוש מאושרות</h2>
       </div>
-      <span class="state-pill ready">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} ערים מאושרות</span>
+      <span class="state-pill ready">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} מיקומים מאושרים</span>
     </div>
     ${renderLocationMap(policy)}
     <div class="location-groups">
@@ -721,6 +792,14 @@ els.locationPolicy?.addEventListener("keydown", (event) => {
     return;
   }
   void saveLocationPreference(option, !isLocationApproved(key));
+});
+
+els.locationPolicy?.addEventListener("change", (event) => {
+  const select = event.target.closest("[data-location-action='radius']");
+  if (!select) {
+    return;
+  }
+  void saveLocationRadius(select.value);
 });
 
 els.locationPolicy?.addEventListener("submit", (event) => {

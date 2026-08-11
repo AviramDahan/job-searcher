@@ -231,7 +231,11 @@ def normalize_location_preferences(data: Any) -> dict[str, Any]:
         }
     else:
         approved_items = {}
-    return {"approved_locations": approved_items}
+    try:
+        radius_km = int(float(str(preferences.get("radius_km") or preferences.get("radiusKm") or "0").strip()))
+    except (TypeError, ValueError):
+        radius_km = 0
+    return {"approved_locations": approved_items, "radius_km": max(0, min(radius_km, 250))}
 
 
 def save_location_preference(paths: DashboardPaths, payload: dict[str, Any]) -> dict[str, Any]:
@@ -252,14 +256,31 @@ def save_location_preference(paths: DashboardPaths, payload: dict[str, Any]) -> 
     else:
         terms = []
     approved = str(payload.get("approved", "")).strip().lower() in {"1", "true", "yes", "y", "כן", "approved"}
-    preferences["approved_locations"][key] = {
-        "key": key,
-        "label": label,
-        "terms": list(dict.fromkeys([label, key, *terms])),
-        "approved": approved,
-        "updatedAt": now_string(),
-        "source": "local-dashboard",
-    }
+    if approved:
+        preferences["approved_locations"][key] = {
+            "key": key,
+            "label": label,
+            "terms": list(dict.fromkeys([label, key, *terms])),
+            "approved": True,
+            "updatedAt": now_string(),
+            "source": "local-dashboard",
+        }
+    else:
+        preferences["approved_locations"].pop(key, None)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"ok": True, "location_preferences": preferences}, ensure_ascii=False, indent=2), encoding="utf-8")
+    return preferences
+
+
+def save_location_radius(paths: DashboardPaths, payload: dict[str, Any]) -> dict[str, Any]:
+    path = location_preferences_path(paths)
+    preferences = normalize_location_preferences(load_json(path, {}))
+    try:
+        radius_km = int(float(str(payload.get("radius_km", "0")).strip()))
+    except (TypeError, ValueError):
+        raise ValueError("invalid_radius_km") from None
+    preferences["radius_km"] = max(0, min(radius_km, 250))
+    preferences["radius_updated_at"] = now_string()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"ok": True, "location_preferences": preferences}, ensure_ascii=False, indent=2), encoding="utf-8")
     return preferences
@@ -506,6 +527,10 @@ def make_handler(paths: DashboardPaths, timezone: str = DEFAULT_TIMEZONE) -> typ
                     return
                 if route == "/api/location-preferences":
                     preferences = save_location_preference(paths, payload)
+                    self.send_json({"ok": True, "location_preferences": preferences, "state": dashboard_state(paths, timezone)})
+                    return
+                if route == "/api/location-radius":
+                    preferences = save_location_radius(paths, payload)
                     self.send_json({"ok": True, "location_preferences": preferences, "state": dashboard_state(paths, timezone)})
                     return
                 self.send_json({"ok": False, "error": "not_found"}, status=404)

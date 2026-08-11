@@ -3,6 +3,11 @@ from __future__ import annotations
 import json
 import os
 import re
+from math import asin
+from math import cos
+from math import radians
+from math import sin
+from math import sqrt
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -26,6 +31,7 @@ class LocationAssessment:
 
 DEFAULT_LOCATION_PREFERENCES_PATH = Path("outputs/location_preferences.json")
 LOCATION_PREFERENCES_ENV = "JOB_SEARCH_LOCATION_PREFERENCES"
+HOME_LOCATION = {"key": "sderot", "label": "שדרות", "lat": 31.525, "lng": 34.596}
 
 DEFAULT_APPROVED_LOCATION_OPTIONS = (
     {"key": "sderot", "label": "שדרות", "terms": ("שדרות", "sderot"), "lat": 31.525, "lng": 34.596, "kind": "city"},
@@ -101,10 +107,112 @@ NEARBY_LOCATION_OPTIONS = (
     {"key": "patish", "label": "פטיש", "terms": ("פטיש", "patish"), "lat": 31.326, "lng": 34.558, "kind": "moshav"},
 )
 
+REGION_LOCATION_OPTIONS = (
+    {
+        "key": "region_south",
+        "label": "דרום",
+        "terms": (
+            "דרום",
+            "אזור הדרום",
+            "מחוז דרום",
+            "south",
+            "southern district",
+            "sderot",
+            "שדרות",
+            "netivot",
+            "נתיבות",
+            "ashkelon",
+            "אשקלון",
+            "kiryat gat",
+            "קריית גת",
+            "beer sheva",
+            "באר שבע",
+            "ashdod",
+            "אשדוד",
+        ),
+        "kind": "region",
+    },
+    {
+        "key": "region_shephela",
+        "label": "שפלה",
+        "terms": (
+            "שפלה",
+            "אזור השפלה",
+            "yavne",
+            "יבנה",
+            "rehovot",
+            "רחובות",
+            "gedera",
+            "גדרה",
+            "gan yavne",
+            "גן יבנה",
+            "lod",
+            "לוד",
+            "ramla",
+            "רמלה",
+            "kiryat malachi",
+            "קריית מלאכי",
+        ),
+        "kind": "region",
+    },
+    {
+        "key": "region_center",
+        "label": "מרכז",
+        "terms": (
+            "מרכז",
+            "אזור המרכז",
+            "גוש דן",
+            "תל אביב",
+            "tel aviv",
+            "רמת גן",
+            "ramat gan",
+            "גבעתיים",
+            "פתח תקווה",
+            "petah tikva",
+            "ראשון לציון",
+            "rishon lezion",
+            "חולון",
+            "בת ים",
+            "הרצליה",
+            "רעננה",
+            "כפר סבא",
+        ),
+        "kind": "region",
+    },
+    {
+        "key": "region_north",
+        "label": "צפון",
+        "terms": (
+            "צפון",
+            "אזור הצפון",
+            "מחוז צפון",
+            "חיפה",
+            "haifa",
+            "קריות",
+            "עכו",
+            "נהריה",
+            "כרמיאל",
+            "יקנעם",
+            "עפולה",
+            "נצרת",
+            "טבריה",
+            "צפת",
+            "גליל",
+        ),
+        "kind": "region",
+    },
+)
+
 LOCATION_OPTION_ALIASES = {
     str(option["key"]): tuple(str(term) for term in option["terms"])
-    for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS)
+    for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS, *REGION_LOCATION_OPTIONS)
 }
+
+LOCATION_OPTIONS_WITH_COORDS = tuple(
+    option
+    for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS)
+    if "lat" in option and "lng" in option
+)
 
 
 PRIMARY_LOCATION_TERMS = (
@@ -231,6 +339,22 @@ def parse_bool(value: Any) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "y", "כן", "approved"}
 
 
+def parse_radius_km(value: Any) -> int:
+    try:
+        radius = int(float(str(value or "").strip()))
+    except (TypeError, ValueError):
+        return 0
+    return max(0, min(radius, 250))
+
+
+def distance_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    earth_radius_km = 6371.0
+    d_lat = radians(lat2 - lat1)
+    d_lng = radians(lng2 - lng1)
+    a = sin(d_lat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(d_lng / 2) ** 2
+    return 2 * earth_radius_km * asin(sqrt(a))
+
+
 def location_terms_from_entry(entry: Any) -> tuple[str, ...]:
     if isinstance(entry, str):
         key = clean_text(entry)
@@ -249,14 +373,18 @@ def location_terms_from_entry(entry: Any) -> tuple[str, ...]:
 
 
 def load_approved_location_terms(preferences_path: str | Path | None = None) -> tuple[str, ...]:
+    return load_location_preferences(preferences_path)["approved_terms"]
+
+
+def load_location_preferences(preferences_path: str | Path | None = None) -> dict[str, Any]:
     raw_path = preferences_path or os.environ.get(LOCATION_PREFERENCES_ENV) or DEFAULT_LOCATION_PREFERENCES_PATH
     path = Path(raw_path)
     if not path.exists():
-        return ()
+        return {"approved_terms": (), "radius_km": 0}
     try:
         payload = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError):
-        return ()
+        return {"approved_terms": (), "radius_km": 0}
 
     preferences = payload.get("location_preferences", payload) if isinstance(payload, dict) else {}
     approved = preferences.get("approved_locations", {}) if isinstance(preferences, dict) else {}
@@ -271,7 +399,28 @@ def load_approved_location_terms(preferences_path: str | Path | None = None) -> 
     terms: list[str] = []
     for entry in entries:
         terms.extend(location_terms_from_entry(entry))
-    return unique_terms(terms)
+    return {
+        "approved_terms": unique_terms(terms),
+        "radius_km": parse_radius_km(preferences.get("radius_km") or preferences.get("radiusKm")) if isinstance(preferences, dict) else 0,
+    }
+
+
+def radius_location_matches(text: str, radius_km: int) -> tuple[dict[str, Any], float] | None:
+    if radius_km <= 0:
+        return None
+    home_lat = float(HOME_LOCATION["lat"])
+    home_lng = float(HOME_LOCATION["lng"])
+    matches: list[tuple[dict[str, Any], float]] = []
+    for option in LOCATION_OPTIONS_WITH_COORDS:
+        matched = matching_terms(text, option.get("terms", ()))
+        if not matched:
+            continue
+        distance = distance_km(home_lat, home_lng, float(option["lat"]), float(option["lng"]))
+        if distance <= radius_km:
+            matches.append((option, distance))
+    if not matches:
+        return None
+    return min(matches, key=lambda item: item[1])
 
 
 def option_payload(option: dict[str, Any], locked: bool = False) -> dict[str, Any]:
@@ -293,8 +442,9 @@ def location_policy_payload() -> dict[str, Any]:
     default_approved = [option_payload(option, locked=True) for option in DEFAULT_APPROVED_LOCATION_OPTIONS]
     user_approvable = [option_payload(option) for option in USER_APPROVABLE_LOCATION_OPTIONS]
     nearby_options = [option_payload(option) for option in NEARBY_LOCATION_OPTIONS]
+    region_options = [option_payload(option) for option in REGION_LOCATION_OPTIONS]
     return {
-        "home": {"key": "sderot", "label": "שדרות", "lat": 31.525, "lng": 34.596},
+        "home": HOME_LOCATION,
         "map": {
             "bounds": {"min_lat": 29.45, "max_lat": 33.35, "min_lng": 34.25, "max_lng": 35.95},
             "focus_bounds": {"min_lat": 31.25, "max_lat": 31.95, "min_lng": 34.42, "max_lng": 34.90},
@@ -319,6 +469,8 @@ def location_policy_payload() -> dict[str, Any]:
         "default_approved": default_approved,
         "user_approvable": user_approvable,
         "nearby_options": nearby_options,
+        "region_options": region_options,
+        "radius_options_km": [25, 40, 60, 80, 100, 150],
         "map_points": [
             *[dict(item, policy_group="default_approved") for item in default_approved],
             *[dict(item, policy_group="user_approvable") for item in user_approvable],
@@ -337,10 +489,17 @@ def assess_location(
     location: str,
     context: str = "",
     approved_location_terms: Iterable[str] | None = None,
+    radius_km: int | None = None,
 ) -> LocationAssessment:
     clean_location = clean_text(location)
     combined = clean_text(f"{clean_location} {context}")
-    user_terms = unique_terms(approved_location_terms if approved_location_terms is not None else load_approved_location_terms())
+    if approved_location_terms is None:
+        preferences = load_location_preferences()
+        user_terms = preferences["approved_terms"]
+        effective_radius_km = parse_radius_km(preferences["radius_km"] if radius_km is None else radius_km)
+    else:
+        user_terms = unique_terms(approved_location_terms)
+        effective_radius_km = parse_radius_km(radius_km)
 
     primary_matches = matching_terms(combined, PRIMARY_LOCATION_TERMS)
     location_primary_matches = matching_terms(clean_location, PRIMARY_LOCATION_TERMS)
@@ -368,6 +527,19 @@ def assess_location(
             reason=f"מיקום אושר בדשבורד לחיפוש והגשה: {', '.join(user_approved_matches[:3])}.",
             matched_terms=user_approved_matches,
             score_points=20,
+        )
+
+    radius_match = radius_location_matches(clean_location, effective_radius_km)
+    if radius_match:
+        option, distance = radius_match
+        return LocationAssessment(
+            decision=LocationDecision.IN_SCOPE,
+            reason=(
+                f"מיקום בתוך רדיוס החיפוש משדרות: {option['label']} "
+                f"({distance:.0f} ק״מ מתוך {effective_radius_km} ק״מ)."
+            ),
+            matched_terms=matching_terms(clean_location, option.get("terms", ())),
+            score_points=18,
         )
 
     secondary_matches = matching_terms(clean_location, SECONDARY_LOCATION_TERMS)

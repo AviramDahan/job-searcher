@@ -48,6 +48,7 @@ const state = {
   manualRejections: {},
   locationPreferences: {
     approvedLocations: {},
+    radiusKm: 0,
   },
   sync: {
     config: {},
@@ -172,6 +173,7 @@ function normalizeLocationPreferences(value) {
   const preferences = value && typeof value === "object" ? value : {};
   const approved = preferences.approved_locations || preferences.approvedLocations || {};
   const entries = Array.isArray(approved) ? approved : Object.values(approved || {});
+  const radiusKm = Math.max(0, Math.min(Number.parseInt(String(preferences.radius_km || preferences.radiusKm || "0"), 10) || 0, 250));
 
   entries.forEach((entry) => {
     const normalizedEntry = normalizeLocationPreferenceEntry(entry);
@@ -180,12 +182,12 @@ function normalizeLocationPreferences(value) {
     }
   });
 
-  return { approvedLocations };
+  return { approvedLocations, radiusKm };
 }
 
 function remoteLocationPreferences(value) {
   const normalized = normalizeLocationPreferences(value);
-  return { approved_locations: normalized.approvedLocations };
+  return { approved_locations: normalized.approvedLocations, radius_km: normalized.radiusKm };
 }
 
 function saveManualSubmissions() {
@@ -413,17 +415,26 @@ async function jsonBlobRequest(endpoint, params = {}) {
   }
 
   if (!duplicate && params.action === "setLocationPreference") {
-    nextState.location_preferences.approved_locations[params.city_key] = {
-      key: String(params.city_key || ""),
-      label: String(params.city_label || ""),
-      terms: String(params.city_terms || "")
-        .split("|")
-        .map((term) => term.trim())
-        .filter(Boolean),
-      approved: String(params.approved || "").toLowerCase() === "true",
-      updatedAt: timestampNow(),
-      source: "remote",
-    };
+    const approved = String(params.approved || "").toLowerCase() === "true";
+    if (approved) {
+      nextState.location_preferences.approved_locations[params.city_key] = {
+        key: String(params.city_key || ""),
+        label: String(params.city_label || ""),
+        terms: String(params.city_terms || "")
+          .split("|")
+          .map((term) => term.trim())
+          .filter(Boolean),
+        approved,
+        updatedAt: timestampNow(),
+        source: "remote",
+      };
+    } else {
+      delete nextState.location_preferences.approved_locations[params.city_key];
+    }
+  }
+
+  if (!duplicate && params.action === "setLocationRadius") {
+    nextState.location_preferences.radius_km = Math.max(0, Math.min(Number.parseInt(String(params.radius_km || "0"), 10) || 0, 250));
   }
 
   if (!duplicate) {
@@ -440,6 +451,7 @@ async function jsonBlobRequest(endpoint, params = {}) {
       city_key: String(params.city_key || ""),
       city_label: String(params.city_label || ""),
       approved: String(params.approved || ""),
+      radius_km: String(params.radius_km || ""),
     });
   }
 
@@ -560,7 +572,13 @@ function optionTerms(option = {}) {
 
 function locationOptionByKey(key) {
   const policy = state.data?.location_policy || {};
-  const options = [...(policy.default_approved || []), ...(policy.user_approvable || []), ...(policy.nearby_options || []), ...(policy.map_points || [])];
+  const options = [
+    ...(policy.default_approved || []),
+    ...(policy.user_approvable || []),
+    ...(policy.nearby_options || []),
+    ...(policy.region_options || []),
+    ...(policy.map_points || []),
+  ];
   const remote = state.locationPreferences.approvedLocations[key];
   return (
     options.find((option) => option.key === key) ||
@@ -635,6 +653,48 @@ async function pushLocationPreference(option, approved) {
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
     showToast(approved ? "העיר נוספה למדיניות החיפוש" : "העיר הוסרה ממדיניות החיפוש");
+  } catch (error) {
+    state.sync.lastError = error.message || "sync_error";
+    showToast(SYNC_UNAVAILABLE_MESSAGE);
+  } finally {
+    state.sync.saving = false;
+    render();
+    refreshOpenModal();
+  }
+}
+
+async function pushLocationRadius(radiusKm) {
+  const blockedMessage = syncWriteBlockMessage();
+  if (blockedMessage) {
+    showToast(blockedMessage);
+    return;
+  }
+
+  const radius = Math.max(0, Math.min(Number.parseInt(String(radiusKm || "0"), 10) || 0, 250));
+  const eventId = `setLocationRadius:${radius}:${timestampNow()}:${Math.random().toString(36).slice(2)}`;
+  state.sync.saving = true;
+  state.sync.lastError = "";
+  renderChrome();
+
+  try {
+    const payload = await syncRequest(
+      {
+        action: "setLocationRadius",
+        event_id: eventId,
+        radius_km: String(radius),
+        user_agent: navigator.userAgent,
+      },
+      "POST"
+    );
+
+    if (!payload || payload.ok === false) {
+      throw new Error(payload?.error || "sync_error");
+    }
+
+    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    state.sync.loaded = true;
+    state.sync.lastSyncedAt = timestampNow();
+    showToast(radius ? `רדיוס החיפוש עודכן ל-${radius} ק״מ` : "רדיוס החיפוש בוטל");
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
     showToast(SYNC_UNAVAILABLE_MESSAGE);
@@ -908,6 +968,25 @@ function markerTooltip(point = {}) {
   `;
 }
 
+function markerPopup(point = {}, interactionsDisabled = false) {
+  const pointClass = mapPointClass(point);
+  const toggleable = pointClass !== "home" && !point.locked && !interactionsDisabled;
+  const approved = isLocationApproved(point.key);
+  return `
+    <div class="location-map-popup" dir="rtl">
+      <strong>${escapeHtml(point.label || "")}</strong>
+      <span>${escapeHtml(locationStatusText(point))}</span>
+      ${
+        toggleable
+          ? `<button type="button" class="map-popup-button" data-location-action="toggle" data-location-key="${escapeHtml(point.key)}">${
+              approved ? "הסר מהסריקה" : "הוסף לסריקה"
+            }</button>`
+          : ""
+      }
+    </div>
+  `;
+}
+
 function bindMapViewButtons(panel, map, policy = {}) {
   const israelBounds = locationMapBounds(policy.map?.bounds || {});
   const focusBounds = locationMapFocusBounds(policy.map?.focus_bounds || {});
@@ -984,21 +1063,18 @@ function initializeLocationMap(interactionsDisabled = false) {
       keyboard: false,
       scanState: pointClass === "not-scanned" ? "not-scanned" : "scanned",
       title: `${point.label} - ${locationStatusText(point)}`,
-    }).bindTooltip(markerTooltip(point), {
-      className: "location-map-tooltip",
-      direction: "top",
-      offset: [0, -12],
-      opacity: 0.96,
-    });
-
-    if (pointClass !== "home" && !point.locked && !interactionsDisabled) {
-      marker.on("click", () => {
-        const option = locationOptionByKey(point.key);
-        if (option) {
-          void pushLocationPreference(option, !isLocationApproved(point.key));
-        }
+    })
+      .bindTooltip(markerTooltip(point), {
+        className: "location-map-tooltip",
+        direction: "top",
+        offset: [0, -12],
+        opacity: 0.96,
+      })
+      .bindPopup(markerPopup(point, interactionsDisabled), {
+        className: "location-map-popup-shell",
+        closeButton: true,
+        minWidth: 170,
       });
-    }
     markerLayer.addLayer(marker);
   });
 
@@ -1022,6 +1098,24 @@ function renderLocationMap(policy = {}, interactionsDisabled = false) {
   const points = locationMapPoints(policy);
   const scannedCount = points.filter((point) => isScannedLocation(point.key)).length;
   const nearbyCount = (policy.nearby_options || []).length;
+  const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
+  const radiusOptions = Array.isArray(policy.radius_options_km) ? policy.radius_options_km : [25, 40, 60, 80, 100, 150];
+  const disabled = interactionsDisabled ? " disabled" : "";
+  const regionChips = regionOptions
+    .map((option) => {
+      const approved = isLocationApproved(option.key);
+      return `
+        <button type="button" class="region-chip${approved ? " approved" : ""}" data-location-action="toggle" data-location-key="${escapeHtml(
+          option.key
+        )}" aria-pressed="${approved ? "true" : "false"}"${disabled}>${escapeHtml(option.label)}</button>
+      `;
+    })
+    .join("");
+  const radius = Number(state.locationPreferences.radiusKm || 0);
+  const radiusOptionsHtml = [
+    `<option value="0"${radius === 0 ? " selected" : ""}>ללא רדיוס</option>`,
+    ...radiusOptions.map((value) => `<option value="${escapeHtml(value)}"${radius === Number(value) ? " selected" : ""}>${escapeHtml(value)} ק״מ</option>`),
+  ].join("");
 
   return `
     <section class="location-map-panel" aria-label="מפת מיקומים">
@@ -1042,6 +1136,15 @@ function renderLocationMap(policy = {}, interactionsDisabled = false) {
           <span><i class="legend-dot scanned"></i>בסריקה</span>
           <span><i class="legend-dot not-scanned"></i>לא בסריקה</span>
         </div>
+        <div class="map-region-panel" aria-label="אזורי סריקה">
+          ${regionChips}
+        </div>
+        <label class="map-radius-control">
+          <span>רדיוס משדרות</span>
+          <select data-location-action="radius"${disabled}>
+            ${radiusOptionsHtml}
+          </select>
+        </label>
         <div class="map-summary-grid" aria-label="סיכום מיקומים במפה">
           <span><strong>${escapeHtml(scannedCount)}</strong><small>במדיניות הסריקה</small></span>
           <span><strong>${escapeHtml(points.length - scannedCount)}</strong><small>לא מסומנים</small></span>
@@ -1061,7 +1164,8 @@ function renderLocationPolicy() {
   const defaultApproved = Array.isArray(policy.default_approved) ? policy.default_approved : [];
   const userApprovable = Array.isArray(policy.user_approvable) ? policy.user_approvable : [];
   const nearbyOptions = Array.isArray(policy.nearby_options) ? policy.nearby_options : [];
-  const knownKeys = new Set([...defaultApproved, ...userApprovable, ...nearbyOptions].map((option) => option.key));
+  const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
+  const knownKeys = new Set([...defaultApproved, ...userApprovable, ...nearbyOptions, ...regionOptions].map((option) => option.key));
   const customApproved = approvedLocationEntries().filter((entry) => !knownKeys.has(entry.key));
   const syncBlockedMessage = syncWriteBlockMessage();
   const disabled = syncBlockedMessage ? " disabled" : "";
@@ -1135,7 +1239,7 @@ function renderLocationPolicy() {
         <p class="eyebrow">מדיניות מיקום</p>
         <h2>ערי חיפוש מאושרות</h2>
       </div>
-      <span class="state-pill local">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} ערים מאושרות</span>
+      <span class="state-pill local">${escapeHtml(defaultApproved.length + approvedLocationEntries().length)} מיקומים מאושרים</span>
     </div>
     ${renderLocationMap(policy, Boolean(syncBlockedMessage))}
     <div class="location-groups">
@@ -1534,6 +1638,14 @@ els.locationPolicy?.addEventListener("keydown", (event) => {
     return;
   }
   void pushLocationPreference(option, !isLocationApproved(key));
+});
+
+els.locationPolicy?.addEventListener("change", (event) => {
+  const select = event.target.closest("[data-location-action='radius']");
+  if (!select) {
+    return;
+  }
+  void pushLocationRadius(select.value);
 });
 
 els.locationPolicy?.addEventListener("submit", (event) => {

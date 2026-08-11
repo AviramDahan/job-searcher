@@ -22,6 +22,14 @@ def parse_bool(value: Any) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "y", "כן", "approved"}
 
 
+def parse_radius_km(value: Any) -> int:
+    try:
+        radius = int(float(str(value or "").strip()))
+    except (TypeError, ValueError):
+        return 0
+    return max(0, min(radius, 250))
+
+
 def normalize_location_preferences(payload: dict[str, Any]) -> dict[str, Any]:
     preferences = payload.get("location_preferences", {})
     approved = preferences.get("approved_locations", {}) if isinstance(preferences, dict) else {}
@@ -63,6 +71,7 @@ def normalize_location_preferences(payload: dict[str, Any]) -> dict[str, Any]:
         "generated_at": clean(payload.get("generated_at")),
         "location_preferences": {
             "approved_locations": sorted(normalized, key=lambda item: item["label"]),
+            "radius_km": parse_radius_km(preferences.get("radius_km") or preferences.get("radiusKm")) if isinstance(preferences, dict) else 0,
         },
     }
 
@@ -105,7 +114,7 @@ def main() -> int:
         fallback = {
             "ok": False,
             "error": str(error),
-            "location_preferences": {"approved_locations": []},
+            "location_preferences": {"approved_locations": [], "radius_km": 0},
         }
         if not args.out.exists():
             write_preferences(args.out, fallback)

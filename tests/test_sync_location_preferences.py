@@ -10,6 +10,7 @@ class SyncLocationPreferencesTests(unittest.TestCase):
         payload = {
             "generated_at": "2026-08-09T18:00:00Z",
             "location_preferences": {
+                "radius_km": 60,
                 "approved_locations": {
                     "rehovot": {
                         "key": "rehovot",
@@ -33,6 +34,7 @@ class SyncLocationPreferencesTests(unittest.TestCase):
         self.assertEqual(len(approved), 1)
         self.assertEqual(approved[0]["key"], "rehovot")
         self.assertIn("רחובות", approved[0]["terms"])
+        self.assertEqual(normalized["location_preferences"]["radius_km"], 60)
 
 
 if __name__ == "__main__":

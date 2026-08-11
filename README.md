@@ -261,7 +261,7 @@ Dashboard capabilities:
 
 - Review the current tracker counts and Telegram/manual-alert totals.
 - Filter jobs by status, score, free text, and sort order.
-- Mark additional approved search cities. The shared dashboard stores these in `location_preferences.approved_locations`.
+- Mark additional approved search cities, regions, and radius from Sderot. The shared dashboard stores these in `location_preferences.approved_locations` and `location_preferences.radius_km`.
 - Open the original job URL from the selected row.
 - Run a submission-engine check for the selected job.
 - Save follow-up notes back into `outputs/job_applications.csv`.
@@ -503,7 +503,7 @@ The automation logic follows these rules:
 The Codex heartbeat automation is configured outside this repository, under the local Codex settings directory. The current intended schedule is:
 
 - Sunday through Thursday only.
-- Every 360 minutes while active.
+- Every 720 minutes while active.
 - Timezone: `Asia/Jerusalem`.
 
 The local automation config path used in the original workspace was:

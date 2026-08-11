@@ -60,6 +60,19 @@ class LocationPolicyTests(unittest.TestCase):
         self.assertEqual(payload["home"]["key"], "sderot")
         self.assertIn("map_points", payload)
         self.assertIn("ניר עם", [item["label"] for item in payload["nearby_options"]])
+        self.assertIn("דרום", [item["label"] for item in payload["region_options"]])
+        self.assertIn(60, payload["radius_options_km"])
+
+    def test_dashboard_approved_region_becomes_in_scope(self) -> None:
+        assessment = assess_location("תל אביב", approved_location_terms=("תל אביב", "מרכז", "tel aviv"))
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+
+    def test_radius_can_make_known_nearby_city_in_scope(self) -> None:
+        assessment = assess_location("רחובות", approved_location_terms=(), radius_km=60)
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+        self.assertIn("רדיוס", assessment.reason)
 
 
 if __name__ == "__main__":
