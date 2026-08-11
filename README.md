@@ -277,7 +277,7 @@ Current live config:
 
 ```json
 {
-  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fc867-6804-72eb-9e23-078e5bd539c0",
+  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fef77-25db-7834-aa32-c48f4b824c74",
   "transport": "jsonblob"
 }
 ```
