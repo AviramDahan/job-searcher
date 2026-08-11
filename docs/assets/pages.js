@@ -1227,6 +1227,7 @@ function renderLocationMap(policy = {}, interactionsDisabled = false) {
   const radius = selectedRadiusKm();
   const radiusCount = radius ? points.filter((point) => isPointWithinRadius(point, policy)).length : 0;
   const nearbyCount = (policy.nearby_options || []).length;
+  const localityCount = Number(policy.israel_localities_count || (policy.israel_localities || []).length || 0);
   const regionOptions = Array.isArray(policy.region_options) ? policy.region_options : [];
   const radiusOptions = Array.isArray(policy.radius_options_km) ? policy.radius_options_km : [25, 40, 60, 80, 100, 150];
   const disabled = interactionsDisabled ? " disabled" : "";
@@ -1283,6 +1284,7 @@ function renderLocationMap(policy = {}, interactionsDisabled = false) {
               : ""
           }
           <span><strong>${escapeHtml(nearbyCount)}</strong><small>יישובים סביב שדרות</small></span>
+          <span><strong>${escapeHtml(localityCount)}</strong><small>יישובים במאגר</small></span>
         </div>
       </aside>
     </section>

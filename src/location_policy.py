@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from functools import lru_cache
 from math import asin
 from math import cos
 from math import radians
@@ -30,6 +31,7 @@ class LocationAssessment:
 
 
 DEFAULT_LOCATION_PREFERENCES_PATH = Path("outputs/location_preferences.json")
+ISRAEL_LOCALITIES_PATH = Path("data/public/israel_localities.json")
 LOCATION_PREFERENCES_ENV = "JOB_SEARCH_LOCATION_PREFERENCES"
 HOME_LOCATION = {"key": "sderot", "label": "שדרות", "lat": 31.525, "lng": 34.596}
 
@@ -256,7 +258,7 @@ LOCATION_OPTION_ALIASES = {
     for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS, *REGION_LOCATION_OPTIONS)
 }
 
-LOCATION_OPTIONS_WITH_COORDS = tuple(
+MANUAL_LOCATION_OPTIONS_WITH_COORDS = tuple(
     option
     for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS)
     if "lat" in option and "lng" in option
@@ -381,6 +383,78 @@ def unique_terms(terms: Iterable[str]) -> tuple[str, ...]:
     return tuple(result)
 
 
+def manual_location_labels() -> set[str]:
+    return {
+        lower_text(str(option.get("label", "")))
+        for option in (*DEFAULT_APPROVED_LOCATION_OPTIONS, *USER_APPROVABLE_LOCATION_OPTIONS, *NEARBY_LOCATION_OPTIONS)
+    }
+
+
+def valid_lat_lng(option: dict[str, Any]) -> bool:
+    try:
+        lat = float(option["lat"])
+        lng = float(option["lng"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    return 29.4 <= lat <= 33.4 and 34.2 <= lng <= 36.0
+
+
+@lru_cache(maxsize=1)
+def load_israel_localities_dataset(path_text: str = str(ISRAEL_LOCALITIES_PATH)) -> dict[str, Any]:
+    path = Path(path_text)
+    if not path.exists():
+        return {"source": {}, "localities": []}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return {"source": {}, "localities": []}
+    if not isinstance(payload, dict):
+        return {"source": {}, "localities": []}
+    localities = payload.get("localities")
+    if not isinstance(localities, list):
+        payload["localities"] = []
+    return payload
+
+
+def load_israel_localities() -> tuple[dict[str, Any], ...]:
+    payload = load_israel_localities_dataset()
+    localities: list[dict[str, Any]] = []
+    for item in payload.get("localities", []):
+        if not isinstance(item, dict) or not valid_lat_lng(item):
+            continue
+        key = clean_text(item.get("key", ""))
+        label = clean_text(item.get("label", ""))
+        terms = item.get("terms", ())
+        if not isinstance(terms, list):
+            terms = ()
+        if not key or not label:
+            continue
+        localities.append(
+            {
+                **item,
+                "key": key,
+                "label": label,
+                "terms": unique_terms((label, key, *terms)),
+                "lat": float(item["lat"]),
+                "lng": float(item["lng"]),
+                "kind": item.get("kind") or "locality",
+            }
+        )
+    return tuple(localities)
+
+
+def israel_locality_options(exclude_manual: bool = True) -> tuple[dict[str, Any], ...]:
+    localities = load_israel_localities()
+    if not exclude_manual:
+        return localities
+    manual_labels = manual_location_labels()
+    return tuple(option for option in localities if lower_text(str(option.get("label", ""))) not in manual_labels)
+
+
+def location_options_with_coords() -> tuple[dict[str, Any], ...]:
+    return (*MANUAL_LOCATION_OPTIONS_WITH_COORDS, *israel_locality_options(exclude_manual=True))
+
+
 def parse_bool(value: Any) -> bool:
     if isinstance(value, bool):
         return value
@@ -459,7 +533,7 @@ def radius_location_matches(text: str, radius_km: int) -> tuple[dict[str, Any], 
     home_lat = float(HOME_LOCATION["lat"])
     home_lng = float(HOME_LOCATION["lng"])
     matches: list[tuple[dict[str, Any], float]] = []
-    for option in LOCATION_OPTIONS_WITH_COORDS:
+    for option in location_options_with_coords():
         matched = matching_terms(text, option.get("terms", ()))
         if not matched:
             continue
@@ -478,6 +552,9 @@ def option_payload(option: dict[str, Any], locked: bool = False) -> dict[str, An
         "terms": list(option["terms"]),
         "kind": option.get("kind", "city"),
     }
+    for field in ("code", "source", "district", "subdistrict", "municipality", "english", "transcription", "population"):
+        if option.get(field) not in (None, ""):
+            payload[field] = option[field]
     if locked:
         payload["locked"] = True
     if "lat" in option and "lng" in option:
@@ -497,6 +574,10 @@ def location_policy_payload() -> dict[str, Any]:
     user_approvable = [option_payload(option) for option in USER_APPROVABLE_LOCATION_OPTIONS]
     nearby_options = [option_payload(option) for option in NEARBY_LOCATION_OPTIONS]
     region_options = [option_payload(option) for option in REGION_LOCATION_OPTIONS]
+    israel_localities = [option_payload(option) for option in israel_locality_options(exclude_manual=True)]
+    source = load_israel_localities_dataset().get("source", {})
+    if not isinstance(source, dict):
+        source = {}
     return {
         "home": HOME_LOCATION,
         "map": {
@@ -524,11 +605,14 @@ def location_policy_payload() -> dict[str, Any]:
         "user_approvable": user_approvable,
         "nearby_options": nearby_options,
         "region_options": region_options,
+        "israel_localities_count": len(israel_localities),
+        "israel_localities_source": source,
         "radius_options_km": [25, 40, 60, 80, 100, 150],
         "map_points": [
             *[dict(item, policy_group="default_approved") for item in default_approved],
             *[dict(item, policy_group="user_approvable") for item in user_approvable],
             *[dict(item, policy_group="nearby_options") for item in nearby_options],
+            *[dict(item, policy_group="israel_localities") for item in israel_localities],
         ],
     }
 

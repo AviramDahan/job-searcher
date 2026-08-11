@@ -50,6 +50,11 @@ class ExportPagesDashboardTests(unittest.TestCase):
             self.assertIn("ניר עם", [item["label"] for item in payload["location_policy"]["nearby_options"]])
             self.assertTrue(payload["location_policy"]["map_points"])
             self.assertIn("מרכז", [item["label"] for item in payload["location_policy"]["region_options"]])
+            self.assertGreaterEqual(payload["location_policy"]["israel_localities_count"], 1000)
+            self.assertEqual(
+                payload["location_policy"]["israel_localities_source"]["resource_id"],
+                "d47a54ff-87f0-44b3-b33a-f284c0c38e5a",
+            )
             for region in payload["location_policy"]["region_options"]:
                 self.assertIn("map_area", region)
                 self.assertGreaterEqual(len(region["map_area"]["polygon"]), 3)

@@ -65,6 +65,10 @@ class LocationPolicyTests(unittest.TestCase):
             self.assertIn("map_area", region)
             self.assertGreaterEqual(len(region["map_area"]["polygon"]), 3)
         self.assertIn(60, payload["radius_options_km"])
+        self.assertGreaterEqual(payload["israel_localities_count"], 1000)
+        self.assertGreaterEqual(len(payload["map_points"]), payload["israel_localities_count"])
+        self.assertEqual(payload["israel_localities_source"]["resource_id"], "d47a54ff-87f0-44b3-b33a-f284c0c38e5a")
+        self.assertIn("שחר", [item["label"] for item in payload["map_points"]])
 
     def test_dashboard_approved_region_becomes_in_scope(self) -> None:
         assessment = assess_location("תל אביב", approved_location_terms=("תל אביב", "מרכז", "tel aviv"))
@@ -76,6 +80,17 @@ class LocationPolicyTests(unittest.TestCase):
 
         self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
         self.assertIn("רדיוס", assessment.reason)
+
+    def test_radius_can_use_cbs_localities_not_in_manual_list(self) -> None:
+        assessment = assess_location("שחר", approved_location_terms=(), radius_km=40)
+
+        self.assertEqual(assessment.decision, LocationDecision.IN_SCOPE)
+        self.assertIn("רדיוס", assessment.reason)
+
+    def test_radius_does_not_approve_far_cbs_locality(self) -> None:
+        assessment = assess_location("חיפה", approved_location_terms=(), radius_km=40)
+
+        self.assertEqual(assessment.decision, LocationDecision.OUT_OF_SCOPE)
 
 
 if __name__ == "__main__":
