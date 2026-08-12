@@ -147,6 +147,12 @@ h3 {
   color: #1b5d92;
 }
 
+.state-pill.sync-alerts {
+  border-color: #efd09d;
+  background: #fff5df;
+  color: var(--amber);
+}
+
 .state-pill.sync-error {
   border-color: #efd09d;
   background: #fff5df;

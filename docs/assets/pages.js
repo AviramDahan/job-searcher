@@ -39,6 +39,7 @@ const SYNC_TIMEOUT_MS = 12000;
 const SYNC_UNAVAILABLE_MESSAGE = "הסנכרון לא זמין. אנא רענן או בדוק מצב סנכרון.";
 const SYNC_LOADING_MESSAGE = "הסנכרון עדיין נטען. אנא המתן רגע לפני ביצוע פעולה.";
 const SYNC_SAVING_MESSAGE = "הסנכרון בפעולה. אנא המתן לסיום העדכון.";
+const SYNC_ALERTS_ONLY_MESSAGE = "אחסון מרכזי לא זמין כרגע. הסימון יישמר בדפדפן ותישלח התראת Telegram.";
 
 const state = {
   data: null,
@@ -57,6 +58,8 @@ const state = {
     saving: false,
     lastError: "",
     lastSyncedAt: "",
+    storageStatus: "",
+    storageWarning: "",
   },
 };
 
@@ -217,6 +220,15 @@ function syncTransport() {
   return String(state.sync.config.transport || "jsonp").trim().toLowerCase();
 }
 
+function updateSyncStorageStatus(payload = {}) {
+  state.sync.storageStatus = String(payload?.storage_status || "").trim();
+  state.sync.storageWarning = String(payload?.storage_warning || "").trim();
+}
+
+function syncAlertsOnly() {
+  return state.sync.storageStatus === "alerts_only";
+}
+
 async function loadSyncConfig() {
   try {
     const response = await fetch(SYNC_CONFIG_PATH, { cache: "no-store" });
@@ -231,10 +243,14 @@ async function loadSyncConfig() {
     state.sync.config = config && typeof config === "object" ? config : {};
     state.sync.enabled = !isPlaceholderEndpoint(syncEndpoint());
     state.sync.lastError = state.sync.enabled ? "" : "sync_not_configured";
+    state.sync.storageStatus = "";
+    state.sync.storageWarning = "";
   } catch {
     state.sync.config = {};
     state.sync.enabled = false;
     state.sync.lastError = "sync_config_unavailable";
+    state.sync.storageStatus = "";
+    state.sync.storageWarning = "";
   }
 }
 
@@ -488,6 +504,57 @@ function mergeRemoteState(remoteSubmissions, remoteRejections, remoteLocationPre
   saveManualSubmissions();
 }
 
+function applyAlertsOnlyLocationPreference(option, approved) {
+  const cityKey = String(option.key || slugifyCity(option.label)).trim();
+  if (!cityKey) {
+    return;
+  }
+  if (approved) {
+    state.locationPreferences.approvedLocations[cityKey] = normalizeLocationPreferenceEntry({
+      key: cityKey,
+      label: String(option.label || cityKey).trim(),
+      terms: optionTerms({ ...option, key: cityKey, label: option.label || cityKey }),
+      approved: true,
+      updatedAt: timestampNow(),
+      source: "alerts_only",
+    });
+  } else {
+    delete state.locationPreferences.approvedLocations[cityKey];
+  }
+  saveManualSubmissions();
+}
+
+function applyAlertsOnlyManualAction(action, key, submittedAt = "", note = "") {
+  if (!key) {
+    return;
+  }
+  if (action === "markManualSubmitted") {
+    state.manualSubmissions[key] = {
+      submittedAt: submittedAt || timestampNow(),
+      updatedAt: timestampNow(),
+      note: String(note || "").trim(),
+      source: "alerts_only",
+    };
+    delete state.manualRejections[key];
+  }
+  if (action === "clearManualSubmitted") {
+    delete state.manualSubmissions[key];
+  }
+  if (action === "markManualRejected") {
+    state.manualRejections[key] = {
+      rejectedAt: submittedAt || timestampNow(),
+      updatedAt: timestampNow(),
+      note: String(note || MANUAL_REJECTION_REASON).trim(),
+      source: "alerts_only",
+    };
+    delete state.manualSubmissions[key];
+  }
+  if (action === "clearManualRejected") {
+    delete state.manualRejections[key];
+  }
+  saveManualSubmissions();
+}
+
 async function loadRemoteManualSubmissions() {
   if (!state.sync.enabled) {
     state.sync.lastError = state.sync.lastError || "sync_not_configured";
@@ -501,7 +568,10 @@ async function loadRemoteManualSubmissions() {
     if (!payload || payload.ok === false) {
       throw new Error(payload?.error || "sync_error");
     }
-    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    updateSyncStorageStatus(payload);
+    if (!syncAlertsOnly()) {
+      mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    }
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
   } catch (error) {
@@ -687,10 +757,23 @@ async function pushLocationPreference(option, approved) {
       throw new Error(payload?.error || "sync_error");
     }
 
-    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    updateSyncStorageStatus(payload);
+    if (syncAlertsOnly()) {
+      applyAlertsOnlyLocationPreference({ ...option, key: cityKey, label: cityLabel }, approved);
+    } else {
+      mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    }
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
-    showToast(approved ? "העיר נוספה למדיניות החיפוש" : "העיר הוסרה ממדיניות החיפוש");
+    showToast(
+      syncAlertsOnly()
+        ? approved
+          ? "העיר נוספה בדפדפן. אחסון מרכזי לא זמין כרגע."
+          : "העיר הוסרה בדפדפן. אחסון מרכזי לא זמין כרגע."
+        : approved
+        ? "העיר נוספה למדיניות החיפוש"
+        : "העיר הוסרה ממדיניות החיפוש"
+    );
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
     showToast(SYNC_UNAVAILABLE_MESSAGE);
@@ -729,10 +812,24 @@ async function pushLocationRadius(radiusKm) {
       throw new Error(payload?.error || "sync_error");
     }
 
-    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    updateSyncStorageStatus(payload);
+    if (syncAlertsOnly()) {
+      state.locationPreferences.radiusKm = radius;
+      saveManualSubmissions();
+    } else {
+      mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    }
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
-    showToast(radius ? `רדיוס החיפוש עודכן ל-${radius} ק״מ` : "רדיוס החיפוש בוטל");
+    showToast(
+      syncAlertsOnly()
+        ? radius
+          ? `רדיוס החיפוש נשמר בדפדפן ל-${radius} ק״מ`
+          : "רדיוס החיפוש בוטל בדפדפן"
+        : radius
+        ? `רדיוס החיפוש עודכן ל-${radius} ק״מ`
+        : "רדיוס החיפוש בוטל"
+    );
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
     showToast(SYNC_UNAVAILABLE_MESSAGE);
@@ -781,15 +878,27 @@ async function pushManualAction(action, key, submittedAt = "", note = "") {
       throw new Error(payload?.error || "sync_error");
     }
 
-    mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    updateSyncStorageStatus(payload);
+    if (syncAlertsOnly()) {
+      applyAlertsOnlyManualAction(action, key, submittedAt, note);
+    } else {
+      mergeRemoteState(payload.manual_submissions || {}, payload.manual_rejections || {}, payload.location_preferences || {});
+    }
     state.sync.loaded = true;
     state.sync.lastSyncedAt = timestampNow();
-    const successMessages = {
-      markManualSubmitted: "ההגשה הידנית נשמרה במעקב המרכזי",
-      clearManualSubmitted: "הסימון הידני הוסר מהמעקב המרכזי",
-      markManualRejected: "הפסילה הידנית נשמרה במעקב המרכזי",
-      clearManualRejected: "הפסילה הידנית הוסרה מהמעקב המרכזי",
-    };
+    const successMessages = syncAlertsOnly()
+      ? {
+          markManualSubmitted: "הסימון נשמר בדפדפן ונשלחה התראת Telegram",
+          clearManualSubmitted: "הסימון הידני הוסר מהדפדפן",
+          markManualRejected: "הפסילה הידנית נשמרה בדפדפן",
+          clearManualRejected: "הפסילה הידנית הוסרה מהדפדפן",
+        }
+      : {
+          markManualSubmitted: "ההגשה הידנית נשמרה במעקב המרכזי",
+          clearManualSubmitted: "הסימון הידני הוסר מהמעקב המרכזי",
+          markManualRejected: "הפסילה הידנית נשמרה במעקב המרכזי",
+          clearManualRejected: "הפסילה הידנית הוסרה מהמעקב המרכזי",
+        };
     showToast(successMessages[action] || "העדכון נשמר במעקב המרכזי");
   } catch (error) {
     state.sync.lastError = error.message || "sync_error";
@@ -807,7 +916,7 @@ async function markManualSubmitted(key) {
   }
   const submittedAt = timestampNow();
   const note = state.manualSubmissions[key]?.note || "";
-  showToast(`שולח סימון הגשה ידנית לסנכרון: ${submittedAt}`);
+  showToast(syncAlertsOnly() ? `שומר סימון הגשה ידנית בדפדפן: ${submittedAt}` : `שולח סימון הגשה ידנית לסנכרון: ${submittedAt}`);
   await pushManualAction("markManualSubmitted", key, submittedAt, note);
 }
 
@@ -816,7 +925,7 @@ async function clearManualSubmitted(key) {
     return;
   }
 
-  showToast("מסיר את הסימון מהמעקב המרכזי");
+  showToast(syncAlertsOnly() ? "מסיר את הסימון מהדפדפן" : "מסיר את הסימון מהמעקב המרכזי");
   await pushManualAction("clearManualSubmitted", key);
 }
 
@@ -826,7 +935,7 @@ async function markManualRejected(key) {
   }
   const rejectedAt = timestampNow();
   const note = MANUAL_REJECTION_REASON;
-  showToast(`שולח פסילה ידנית לסנכרון: ${rejectedAt}`);
+  showToast(syncAlertsOnly() ? `שומר פסילה ידנית בדפדפן: ${rejectedAt}` : `שולח פסילה ידנית לסנכרון: ${rejectedAt}`);
   await pushManualAction("markManualRejected", key, rejectedAt, note);
 }
 
@@ -835,7 +944,7 @@ async function clearManualRejected(key) {
     return;
   }
 
-  showToast("מסיר את הפסילה הידנית מהמעקב המרכזי");
+  showToast(syncAlertsOnly() ? "מסיר את הפסילה הידנית מהדפדפן" : "מסיר את הפסילה הידנית מהמעקב המרכזי");
   await pushManualAction("clearManualRejected", key);
 }
 
@@ -1561,6 +1670,12 @@ function manualSourceText(source) {
   if (source === "remote") {
     return "נשמר במעקב המרכזי.";
   }
+  if (source === "alerts_only") {
+    return "נשמר בדפדפן ונשלחה התראת Telegram; אחסון מרכזי לא זמין כרגע.";
+  }
+  if (source === "local") {
+    return "נשמר בדפדפן המקומי.";
+  }
   if (state.sync.enabled) {
     return "ממתין לאישור סנכרון.";
   }
@@ -1708,6 +1823,9 @@ function renderChrome() {
     if (state.sync.saving || !state.sync.loaded) {
       label = state.sync.saving ? "מסנכרן" : "בודק סנכרון";
       variant = "syncing";
+    } else if (syncAlertsOnly()) {
+      label = "התראות בלבד";
+      variant = "sync-alerts";
     } else {
       label = "מסונכרן לענן";
       variant = "synced";
@@ -1715,7 +1833,7 @@ function renderChrome() {
   }
   els.syncStatus.textContent = label;
   els.syncStatus.className = `state-pill ${variant}`;
-  els.syncStatus.title = syncWriteBlockMessage() || "הסנכרון זמין.";
+  els.syncStatus.title = syncAlertsOnly() ? SYNC_ALERTS_ONLY_MESSAGE : syncWriteBlockMessage() || "הסנכרון זמין.";
 }
 
 function render() {

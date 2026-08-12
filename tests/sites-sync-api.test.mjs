@@ -193,4 +193,44 @@ const radiusLocation = await handleSyncAction(
 assert.equal(radiusLocation.ok, true);
 assert.equal(radiusLocation.location_preferences.radius_km, 60);
 
+const persistentFetch = globalThis.fetch;
+globalThis.fetch = async (url, options = {}) => {
+  calls.push({ url: String(url), options });
+  if (String(url).startsWith("https://api.telegram.org/")) {
+    return new Response(JSON.stringify({ ok: true, result: { message_id: 456 } }), { status: 200 });
+  }
+  return new Response(JSON.stringify({ error: "gone" }), { status: 404 });
+};
+
+try {
+  const fallbackList = await handleSyncAction({ action: "listUpdates" }, env);
+  assert.equal(fallbackList.ok, true);
+  assert.equal(fallbackList.storage_status, "alerts_only");
+  assert.deepEqual(fallbackList.manual_submissions, {});
+
+  const fallbackMark = await handleSyncAction(
+    {
+      action: "markManualSubmitted",
+      event_id: "fallback-event-1",
+      job_key: "fallback-job-1",
+      company: "Acme",
+      title: "Buyer",
+      location: "Sderot",
+      link: "https://example.test/fallback",
+      score: "90",
+      manual_submitted_at: "2026-08-12 14:00",
+      requirements: "Excel, suppliers",
+      fit: "Procurement experience",
+    },
+    env
+  );
+  assert.equal(fallbackMark.ok, true);
+  assert.equal(fallbackMark.storage_status, "alerts_only");
+  assert.equal(fallbackMark.telegram.sent, true);
+  assert.equal(fallbackMark.manual_submissions["fallback-job-1"].submittedAt, "2026-08-12 14:00");
+  assert.equal(fallbackMark.manual_submissions["fallback-job-1"].source, "alerts_only");
+} finally {
+  globalThis.fetch = persistentFetch;
+}
+
 console.log(JSON.stringify({ ok: true }));
