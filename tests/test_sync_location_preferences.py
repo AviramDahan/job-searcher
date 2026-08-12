@@ -67,6 +67,10 @@ class SyncLocationPreferencesTests(unittest.TestCase):
         with self.assertRaises(SyncEndpointError):
             require_healthy_payload({"ok": False, "error": "sync_storage_disabled"})
 
+    def test_alerts_only_payload_is_not_treated_as_durable_preferences(self) -> None:
+        with self.assertRaises(SyncEndpointError):
+            require_healthy_payload({"ok": True, "storage_status": "alerts_only", "storage_warning": "jsonblob_read_404"})
+
 
 if __name__ == "__main__":
     unittest.main()

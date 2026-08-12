@@ -97,6 +97,9 @@ def require_healthy_payload(payload: dict[str, Any]) -> None:
     if payload.get("ok") is False:
         error = clean(payload.get("error")) or "sync_endpoint_unhealthy"
         raise SyncEndpointError(error)
+    if clean(payload.get("storage_status")) == "alerts_only":
+        warning = clean(payload.get("storage_warning")) or "sync_storage_alerts_only"
+        raise SyncEndpointError(warning)
 
 
 def endpoint_from_dashboard_config(path: Path) -> str:
