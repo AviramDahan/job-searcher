@@ -72,6 +72,9 @@ LOGIN_TERMS = (
     "account state",
     "site session",
     "application path",
+    "login required",
+    "requires login",
+    "login before",
 )
 
 LOGIN_HUMAN_TERMS = (

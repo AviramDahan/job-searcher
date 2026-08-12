@@ -97,6 +97,14 @@ def _generic_policy_blocker_signal(signals: tuple[FailureKind, ...]) -> FailureK
     return None
 
 
+def _generic_policy_signal_is_resolved(signal: FailureKind | None, fact_assessment) -> bool:
+    if signal is None:
+        return False
+    if signal == FailureKind.UNVERIFIED_SYSTEM_SKILL:
+        return bool(fact_assessment.resolved) and not fact_assessment.blockers
+    return False
+
+
 def _has_resolved_fact(fact_assessment, code: str) -> bool:
     return any(issue.code == code for issue in fact_assessment.resolved)
 
@@ -137,13 +145,13 @@ def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KO
     for row in rows:
         if not is_action_required_status(row.get(STATUS, "")):
             continue
-        context_reason = " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, "")] if part)
+        stop_reason = row.get(STOP_REASON, "")
         fact_assessment = assess_candidate_facts(_fact_context(row), profile=profile)
         if fact_assessment.has_disqualifying_blocker:
             continue
 
         route = route_submission_failure(
-            reason=context_reason,
+            reason=stop_reason,
             link=row.get(LINK, ""),
             title=row.get(TITLE, ""),
             company=row.get(COMPANY, ""),
@@ -172,6 +180,8 @@ def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KO
 
         candidate_blocker = fact_assessment.first_blocker
         generic_policy_signal = _generic_policy_blocker_signal(route.failure.signals)
+        if _generic_policy_signal_is_resolved(generic_policy_signal, fact_assessment):
+            generic_policy_signal = None
         policy_signal = candidate_blocker.kind if candidate_blocker else generic_policy_signal
         if candidate_blocker or generic_policy_signal:
             mode = RetryMode.POLICY_REQUIRED

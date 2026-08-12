@@ -242,6 +242,37 @@ class RetryQueueTests(unittest.TestCase):
         self.assertEqual(items[0].mode, RetryMode.AUTO_RETRYABLE.value)
         self.assertEqual(items[0].failure_kind, "unverified_system_skill")
 
+    def test_verified_priority_does_not_turn_login_retry_into_policy_required(self) -> None:
+        source_row = row(
+            "JobMaster",
+            "Junior Budget Controller",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9837483",
+            "JobMaster requires login before this application can continue.",
+            "100",
+        )
+        source_row[REQUIREMENTS] = "Bachelor degree in economics. Strong Excel. Priority experience - advantage."
+
+        items = build_retry_items([source_row], profile=TEST_PROFILE)
+
+        self.assertEqual(items[0].mode, RetryMode.AUTO_RETRYABLE.value)
+        self.assertEqual(items[0].failure_kind, "login_or_account")
+        self.assertTrue(items[0].can_resend_now)
+        self.assertFalse(items[0].requires_human)
+
+    def test_new_scan_placeholder_is_not_retry_failure_because_of_requirements(self) -> None:
+        source_row = row(
+            "JobMaster",
+            "Junior Budget Controller",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9837483",
+            "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה.",
+            "100",
+        )
+        source_row[REQUIREMENTS] = "תואר ראשון בכלכלה. Excel ברמה גבוהה. ניסיון בתוכנת Priority - יתרון."
+
+        items = build_retry_items([source_row], profile=TEST_PROFILE)
+
+        self.assertEqual(items, [])
+
     def test_retry_alert_uses_fit_text_and_clean_hebrew(self) -> None:
         source_row = row(
             "DSV",
