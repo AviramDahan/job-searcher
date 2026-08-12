@@ -11,7 +11,7 @@ from pathlib import Path
 
 try:
     from .browser_session import build_session_config, save_evidence
-    from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_job_candidate_facts
     from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from .manual_submission_report import SITE_AUTOMATION_FAILURES
     from .send_job_status_alerts import build_message, send
@@ -19,7 +19,7 @@ try:
     from .submission_failures import AutomationAction, FailureKind
 except ImportError:
     from browser_session import build_session_config, save_evidence
-    from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_job_candidate_facts
     from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, job_key, load_rows
     from manual_submission_report import SITE_AUTOMATION_FAILURES
     from send_job_status_alerts import build_message, send
@@ -110,7 +110,7 @@ def _has_resolved_fact(fact_assessment, code: str) -> bool:
 
 
 def _fact_context(row: dict[str, str]) -> str:
-    return " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, ""), row.get(TITLE, "")] if part)
+    return " ".join(part for part in [row.get(REQUIREMENTS, ""), row.get(FIT, ""), row.get(TITLE, ""), row.get(LOCATION, "")] if part)
 
 
 def _retry_mode(site_signal: FailureKind | None, action: AutomationAction) -> RetryMode:
@@ -146,7 +146,7 @@ def build_retry_items(rows: list[dict[str, str]], profile: CandidateProfile = KO
         if not is_action_required_status(row.get(STATUS, "")):
             continue
         stop_reason = row.get(STOP_REASON, "")
-        fact_assessment = assess_candidate_facts(_fact_context(row), profile=profile)
+        fact_assessment = assess_job_candidate_facts(_fact_context(row), stop_reason, profile=profile)
         if fact_assessment.has_disqualifying_blocker:
             continue
 

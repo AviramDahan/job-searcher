@@ -179,7 +179,7 @@ Remove duplicate tracker rows using stable platform IDs:
 python .\src\job_records.py .\outputs\job_applications.csv --dedupe
 ```
 
-Run a live discovery scan and refresh existing action candidates:
+Run a live discovery scan and refresh existing action candidates. The scanner covers the job-board sources plus selected official sources such as Ben-Gurion University careers:
 
 ```powershell
 python -m src.discovery_scanner --csv .\outputs\job_applications.csv --summary .\outputs\job_search_summary.md --json .\outputs\discovery_scan_report.json --md .\outputs\discovery_scan_report.md --detail-limit 100 --timeout 12 --rescore-existing --refresh-existing-limit 120
@@ -279,6 +279,8 @@ The stable live architecture is:
 - Telegram secrets stay server-side in the Worker or Sites runtime.
 
 Do not use JSONBlob as the long-term production state store. It is useful for quick prototypes but can expire, disappear, or return 404/403. The OpenAI Sites `/api/sync` endpoint can report a clear degraded state, but it is not the production source of truth when storage is disabled.
+
+If the Sites endpoint reports `sync_storage_disabled`, update the Sites runtime variable `SYNC_STORAGE_DISABLED=false` and deploy a saved version so manual submitted/rejected markers and approved location preferences become writable again.
 
 Current GitHub Pages config should point to a deployed sync API:
 

@@ -12,24 +12,24 @@ from typing import Protocol
 
 try:
     from .browser_session import build_session_config, save_evidence
-    from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from .candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts, assess_job_candidate_facts
     from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from .jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from .location_policy import LocationDecision, assess_location
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
     from .site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
-    from .submission_failures import AutomationAction
+    from .submission_failures import AutomationAction, FailureKind
 except ImportError:
     from browser_session import build_session_config, save_evidence
-    from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from candidate_profile import CandidateProfile, KOREN_DAHAN_PROFILE, assess_candidate_facts, assess_job_candidate_facts
     from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from location_policy import LocationDecision, assess_location
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
     from site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
-    from submission_failures import AutomationAction
+    from submission_failures import AutomationAction, FailureKind
 
 
 class SubmissionDecision(str, Enum):
@@ -146,6 +146,10 @@ def _context(job: SubmissionJob) -> str:
     return " ".join(part for part in [job.title, job.company, job.location, job.requirements, job.fit, job.stop_reason] if part)
 
 
+def _candidate_fact_context(job: SubmissionJob) -> str:
+    return " ".join(part for part in [job.title, job.company, job.location, job.requirements, job.fit] if part)
+
+
 SALARY_CONTEXT_TERMS = (
     "ציפיות שכר",
     "צפיות שכר",
@@ -244,12 +248,51 @@ def _has_explicit_pending_approval(job: SubmissionJob) -> bool:
     return job.status == PENDING and reason.startswith(("נדרש אישור לפני הגשה", "Approval required by submission engine:"))
 
 
+UNSUPERSEDABLE_LIVE_FAILURES = {
+    FailureKind.CLOSED_JOB,
+    FailureKind.EXPERIENCE_AMBIGUITY,
+    FailureKind.LEGAL_DECLARATION,
+    FailureKind.MISSING_CANDIDATE_FACT,
+    FailureKind.WORK_MODEL_UNKNOWN,
+}
+
+
+UNSUPERSEDABLE_STOP_REASON_FAILURES = {
+    FailureKind.CLOSED_JOB,
+    FailureKind.EXPERIENCE_AMBIGUITY,
+    FailureKind.LEGAL_DECLARATION,
+    FailureKind.MISSING_CANDIDATE_FACT,
+    FailureKind.WORK_MODEL_UNKNOWN,
+}
+
+
+def _can_supersede_generated_pending_approval(job: SubmissionJob, assessment, location_assessment, live_route, historical_route) -> bool:
+    if not _has_explicit_pending_approval(job):
+        return False
+    if assessment.has_disqualifying_blocker or assessment.has_human_blocker:
+        return False
+    if location_assessment.decision != LocationDecision.IN_SCOPE:
+        return False
+
+    historical_signals = set(historical_route.failure.signals or (historical_route.failure.kind,))
+    if historical_signals & UNSUPERSEDABLE_STOP_REASON_FAILURES:
+        return False
+
+    live_signals = set(live_route.failure.signals or (live_route.failure.kind,))
+    return not bool(live_signals & UNSUPERSEDABLE_LIVE_FAILURES)
+
+
+def _plan_has_active_explicit_pending_approval(plan: SubmissionPlan) -> bool:
+    return _has_explicit_pending_approval(plan.job) and plan.reason == plan.job.stop_reason
+
+
 def _default_decision(
     job: SubmissionJob,
     route_action: AutomationAction,
     route_requires_human: bool,
     has_disqualifying_blocker: bool,
     blockers: list[str],
+    explicit_pending_approval: bool,
 ) -> SubmissionDecision:
     if job.status == SUBMITTED:
         return SubmissionDecision.ALREADY_SUBMITTED
@@ -257,7 +300,7 @@ def _default_decision(
         return SubmissionDecision.DO_NOT_APPLY
     if job.status == MANUAL_REQUIRED:
         return SubmissionDecision.HUMAN_GATE
-    if _has_explicit_pending_approval(job):
+    if explicit_pending_approval:
         return SubmissionDecision.POLICY_REQUIRED
     if job.score < 70:
         return SubmissionDecision.DO_NOT_APPLY
@@ -291,13 +334,19 @@ class BrowserPlanningAdapter:
 
     def plan(self, job: SubmissionJob, profile: CandidateProfile) -> SubmissionPlan:
         context = _context(job)
+        candidate_context = _candidate_fact_context(job)
         location_context = " ".join(part for part in [job.title, job.company, job.requirements, job.cover] if part)
         location_assessment = assess_location(job.location, location_context)
-        assessment = assess_candidate_facts(context, profile=profile)
+        assessment = assess_job_candidate_facts(candidate_context, job.stop_reason, profile=profile)
         verified_facts = [issue.reason for issue in assessment.resolved]
         blockers = [issue.reason for issue in assessment.blockers if getattr(issue, "code", "") != "work_model_unverified"]
         has_disqualifying_blocker = assessment.has_disqualifying_blocker
         route = route_submission_failure(reason=context, link=job.link, title=job.title, company=job.company)
+        live_route = route_submission_failure(reason=candidate_context, link=job.link, title=job.title, company=job.company)
+        explicit_pending_approval = _has_explicit_pending_approval(job)
+        if _can_supersede_generated_pending_approval(job, assessment, location_assessment, live_route, route):
+            route = live_route
+            explicit_pending_approval = False
         route_action = route.recommended_action
         route_requires_human = route.requires_human
         resolved_gate_kinds = {issue.kind for issue in assessment.resolved}
@@ -306,7 +355,14 @@ class BrowserPlanningAdapter:
             route_action = route.adapter.default_action if route.adapter else AutomationAction.RETRY_WITH_PERSISTENT_SESSION
             route_requires_human = False
         adapter_name = route.adapter.name if route.adapter else self.name
-        decision = _default_decision(job, route_action, route_requires_human, has_disqualifying_blocker, blockers)
+        decision = _default_decision(
+            job,
+            route_action,
+            route_requires_human,
+            has_disqualifying_blocker,
+            blockers,
+            explicit_pending_approval,
+        )
         if route.adapter is None and decision == SubmissionDecision.READY_FOR_AUTO:
             decision = SubmissionDecision.NOT_SUPPORTED
         if job.status not in {SUBMITTED, REJECTED} and job.score >= 70:
@@ -335,7 +391,7 @@ class BrowserPlanningAdapter:
         elif location_assessment.decision == LocationDecision.OUT_OF_SCOPE:
             reason = location_assessment.reason
             next_step = "Do not apply unless the live posting shows an approved target location or a confirmed hybrid model of up to two weekly office visits."
-        elif _has_explicit_pending_approval(job):
+        elif explicit_pending_approval:
             reason = job.stop_reason
             next_step = "Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         elif location_assessment.decision == LocationDecision.APPROVAL_REQUIRED and decision == SubmissionDecision.POLICY_REQUIRED:
@@ -453,7 +509,7 @@ class DrushimSubmissionAdapter(BrowserPlanningAdapter):
             return plan
         if plan.blockers:
             return plan
-        if _has_explicit_pending_approval(plan.job):
+        if _plan_has_active_explicit_pending_approval(plan):
             return _replace_plan(
                 plan,
                 decision=SubmissionDecision.POLICY_REQUIRED,
@@ -466,6 +522,7 @@ class DrushimSubmissionAdapter(BrowserPlanningAdapter):
             plan.decision in {SubmissionDecision.READY_FOR_AUTO.value, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value}
             or "marketing" in plan.reason.lower()
             or "third-party" in plan.reason.lower()
+            or "verified in the candidate profile" in plan.reason.lower()
             or "blocker does not match a known failure pattern" in plan.reason.lower()
             or "login" in plan.reason.lower()
             or "account state" in plan.reason.lower()

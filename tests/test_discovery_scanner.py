@@ -7,8 +7,22 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.discovery_scanner import DiscoveredJob, Source, discover, extract_drushim_body_detail, extract_drushim_filters, merge_detail, parse_drushim, parse_jobmaster, parse_jobnet, score_job
-from src.job_records import COMPANY, DATE, FIT, LINK, LOCATION, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, load_rows, write_rows
+from src.discovery_scanner import (
+    DiscoveredJob,
+    Source,
+    bgu_apply_url,
+    clean_text,
+    discover,
+    extract_drushim_body_detail,
+    extract_drushim_filters,
+    merge_detail,
+    parse_bgu,
+    parse_drushim,
+    parse_jobmaster,
+    parse_jobnet,
+    score_job,
+)
+from src.job_records import COMPANY, DATE, FIT, LINK, LOCATION, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows, write_rows
 
 
 JOBMASTER_HTML = """
@@ -43,6 +57,16 @@ DRUSHIM_HTML = """
   <div class="job-details-sub">קריית גת | 1-2 שנים | משרה מלאה | לפני 18 דקות</div>
   <div class="job-intro">איתור ספקים, ניהול משא ומתן והוצאת הזמנות.</div>
 </div>
+"""
+
+BGU_HTML = """
+<table>
+  <tr>
+    <td>2026 - 85</td>
+    <td><a onclick="window.open('https://bguhr.my.salesforce.com/sfc/p/D0000000pKPc/a/Py000002BNjJ/file')">קניינ/ית התקשרויות וחשבונות-מדור התקשרויות וחשבונות-מחלקת רכש והספקה-אגף הכספים</a></td>
+    <td><a onclick="if(typeof jsfcljs == 'function'){jsfcljs(document.getElementById('j_id0:formid'),'x,y,selectedItem,701Py00000XHZg0IAH','_blank');}return false">להגשת מועמדות לחצ/י כאן</a></td>
+  </tr>
+</table>
 """
 
 
@@ -85,6 +109,9 @@ JOBMASTER_DETAIL_HTML = """
 
 
 class DiscoveryScannerTests(unittest.TestCase):
+    def test_clean_text_removes_broken_question_runs(self) -> None:
+        self.assertEqual(clean_text("Buyer ???  Excel"), "Buyer Excel")
+
     def test_parse_jobmaster_card(self) -> None:
         jobs = parse_jobmaster(JOBMASTER_HTML, "https://www.jobmaster.co.il/jobs/?q=test")
 
@@ -106,6 +133,23 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(len(jobs), 1)
         self.assertEqual(jobs[0].company, "רימון שירותי השמה")
         self.assertEqual(jobs[0].location, "קריית גת")
+
+    def test_parse_bgu_official_jobs(self) -> None:
+        jobs = parse_bgu(BGU_HTML, "https://bguhr.my.salesforce-sites.com/Gius?mode=jobs")
+
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].source, "BGU Careers")
+        self.assertEqual(jobs[0].company, "אוניברסיטת בן-גוריון בנגב")
+        self.assertEqual(jobs[0].location, "באר שבע")
+        self.assertIn("קניינ/ית התקשרויות וחשבונות", jobs[0].title)
+        self.assertEqual(
+            jobs[0].link,
+            "https://www.tfaforms.com/4851745?tfa_4776808320092=701Py00000XHZg0&tfa_4776808320093=001D000001095iN&tfa_4776808320094=%D7%93%D7%A8%D7%95%D7%A9%D7%99%D7%9D",
+        )
+        self.assertEqual(job_key({LINK: jobs[0].link}), "bgu:701Py00000XHZg0")
+
+    def test_bgu_apply_url_trims_salesforce_checksum(self) -> None:
+        self.assertIn("tfa_4776808320092=701Py00000XHZg0", bgu_apply_url("701Py00000XHZg0IAH"))
 
     def test_drushim_detail_uses_jobposting_jsonld_not_footer_text(self) -> None:
         merged = merge_detail(

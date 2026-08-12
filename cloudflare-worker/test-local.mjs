@@ -175,6 +175,48 @@ if (!radius.ok || radius.location_preferences.radius_km !== 40) {
   throw new Error("location radius failed");
 }
 
+const telegramCalls = [];
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async (url, options = {}) => {
+  telegramCalls.push({ url: String(url), body: JSON.parse(options.body || "{}") });
+  return new Response(JSON.stringify({ ok: true, result: { message_id: 44 } }), {
+    status: 200,
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
+};
+try {
+  const hebrewTelegram = await readJson(
+    await new JobState({ storage: new MemoryStorage() }, { TELEGRAM_BOT_TOKEN: "token", TELEGRAM_CHAT_ID: "-1001" }).fetch(
+      new Request("https://api.test/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "markManualSubmitted",
+          event_id: "event-hebrew-1",
+          job_key: "job-hebrew-1",
+          company: "אסם נסטלה",
+          title: "קניינית רכש",
+          location: "שדרות",
+          link: "https://example.test/hebrew",
+          score: "91",
+          requirements: "תואר ראשון, רכש, ספקים, Excel",
+          fit: "ניסיון ברכש ועבודה מול ספקים",
+          manual_submitted_at: "2026-08-12 10:00",
+        }),
+      })
+    )
+  );
+  if (!hebrewTelegram.telegram.sent || telegramCalls.length !== 1) {
+    throw new Error("telegram send was not attempted");
+  }
+  const sentText = telegramCalls[0].body.text;
+  if (!sentText.includes("הוגשה ידנית") || /\?{3,}/.test(sentText)) {
+    throw new Error("telegram text encoding guard failed");
+  }
+} finally {
+  globalThis.fetch = originalFetch;
+}
+
 const list = await readJson(await worker.fetch(new Request("https://api.test/sync?action=listUpdates"), env));
 if (!list.ok || list.events.length !== 6 || list.location_preferences.radius_km !== 40) {
   throw new Error("list updates failed");

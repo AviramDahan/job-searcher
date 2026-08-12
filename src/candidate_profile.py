@@ -78,6 +78,43 @@ class CandidateFactAssessment:
         return None
 
 
+STOP_REASON_FACT_KINDS = {
+    FailureKind.LEGAL_DECLARATION,
+    FailureKind.MARKETING_CONSENT,
+    FailureKind.MISSING_CANDIDATE_FACT,
+    FailureKind.SALARY_REQUIRED,
+    FailureKind.SENSITIVE_FIELD,
+}
+
+
+def merge_candidate_fact_assessments(*assessments: CandidateFactAssessment) -> CandidateFactAssessment:
+    issues: list[CandidateFactIssue] = []
+    seen: set[tuple[str, FactIssueSeverity]] = set()
+    for assessment in assessments:
+        for issue in assessment.issues:
+            key = (issue.code, issue.severity)
+            if key in seen:
+                continue
+            seen.add(key)
+            issues.append(issue)
+    return CandidateFactAssessment(tuple(issues))
+
+
+def assess_job_candidate_facts(
+    source_text: str,
+    stop_reason: str = "",
+    profile: CandidateProfile = None,
+) -> CandidateFactAssessment:
+    active_profile = profile or KOREN_DAHAN_PROFILE
+    source_assessment = assess_candidate_facts(source_text, profile=active_profile)
+    if not stop_reason:
+        return source_assessment
+
+    stop_assessment = assess_candidate_facts(stop_reason, profile=active_profile)
+    stop_fact_issues = [issue for issue in stop_assessment.issues if issue.kind in STOP_REASON_FACT_KINDS]
+    return merge_candidate_fact_assessments(source_assessment, CandidateFactAssessment(tuple(stop_fact_issues)))
+
+
 def default_system_skills() -> tuple[SystemSkillFact, ...]:
     return (
         SystemSkillFact("SAP", ("sap",), False),
@@ -86,6 +123,7 @@ def default_system_skills() -> tuple[SystemSkillFact, ...]:
         SystemSkillFact("Priority", ("priority", "פריוריטי"), None),
         SystemSkillFact("Power BI", ("power bi", "מערכת bi"), None),
         SystemSkillFact("MS Project", ("ms project",), None),
+        SystemSkillFact("Gantt", ("gantt", "גאנט", "גאנטים"), None),
         SystemSkillFact("Nibit", ("nibit",), None),
         SystemSkillFact("חשבשבת", ("חשבשבת",), None),
         SystemSkillFact("Canva", ("canva",), None),
@@ -264,6 +302,16 @@ MARKETING_CONSENT_TERMS = (
     "third party consent",
 )
 
+PREVIOUS_APPLICATION_TERMS = (
+    "האם הגשת מועמדות בעבר",
+    "הגשת מועמדות בעבר",
+    "עבר מועמדות",
+    "מועמדות בעבר",
+    "applied before",
+    "previous application",
+    "previously applied",
+)
+
 OPTIONAL_MARKERS = (
     "יתרון",
     "יתרון בלבד",
@@ -299,6 +347,18 @@ REQUIRED_SKILL_CONTEXT_TERMS = (
     "knowledge",
     "proficiency",
     "skilled",
+)
+
+MISMATCHED_MANDATORY_DEGREE_RULES = (
+    (
+        "industrial_engineering_degree_required",
+        "Industrial Engineering and Management",
+        (
+            r"תואר(?:\s+ראשון)?\s+ב?הנדסת\s+תעש(?:י|יי)ה\s+וניהול\s*[-–:]?\s*(?:חובה|נדרש|נדרשת)",
+            r"(?:חובה|נדרש|נדרשת)\s*[-–:]?\s*תואר(?:\s+ראשון)?\s+ב?הנדסת\s+תעש(?:י|יי)ה\s+וניהול",
+            r"industrial engineering(?:\s+and\s+management)?\s+(?:degree\s+)?(?:required|mandatory)",
+        ),
+    ),
 )
 
 
@@ -339,6 +399,24 @@ def is_optional_fragment(fragment: str, aliases: tuple[str, ...]) -> bool:
     if has_required_skill_context(fragment, aliases):
         return False
     return any(marker in normalized for marker in OPTIONAL_MARKERS)
+
+
+def mandatory_degree_issues(text: str) -> list[CandidateFactIssue]:
+    normalized = normalize_text(text)
+    issues: list[CandidateFactIssue] = []
+    for code, label, patterns in MISMATCHED_MANDATORY_DEGREE_RULES:
+        if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in patterns):
+            issues.append(
+                CandidateFactIssue(
+                    kind=FailureKind.MISSING_CANDIDATE_FACT,
+                    code=code,
+                    label=label,
+                    severity=FactIssueSeverity.DO_NOT_APPLY,
+                    reason=f"{label} is listed as a mandatory degree, but the verified candidate profile has B.A. Economics and Management.",
+                    next_step="Do not submit unless the live posting clearly says this degree is only an advantage/preferred field.",
+                )
+            )
+    return issues
 
 
 def required_skill_issue(skill: SystemSkillFact, fragment: str) -> CandidateFactIssue | None:
@@ -544,6 +622,20 @@ def assess_candidate_facts(text: str, profile: CandidateProfile = KOREN_DAHAN_PR
                     next_step="Ask for explicit approval before continuing.",
                 )
             )
+
+    if has_any(text, PREVIOUS_APPLICATION_TERMS):
+        issues.append(
+            CandidateFactIssue(
+                kind=FailureKind.MISSING_CANDIDATE_FACT,
+                code="previous_application_unverified",
+                label="הגשת מועמדות בעבר",
+                severity=FactIssueSeverity.HUMAN_REQUIRED,
+                reason="The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile.",
+                next_step="Ask the operator whether the candidate submitted an application to this employer after the date shown on the form.",
+            )
+        )
+
+    issues.extend(mandatory_degree_issues(text))
 
     for skill in profile.system_skills:
         seen_codes: set[str] = set()

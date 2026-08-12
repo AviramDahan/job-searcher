@@ -98,6 +98,33 @@ class SubmissionFailureClassifierTests(unittest.TestCase):
         self.assertIn(FailureKind.SENSITIVE_FIELD, result.signals)
         self.assertIn(FailureKind.UNVERIFIED_SYSTEM_SKILL, result.signals)
 
+    def test_hebrew_minimum_three_years_is_experience_ambiguity(self) -> None:
+        result = classify_failure(
+            "דרישות: ניסיון של 3 שנים לפחות ברכש כולל מו״מ בארץ ובחו״ל.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9842627",
+        )
+
+        self.assertEqual(result.kind, FailureKind.EXPERIENCE_AMBIGUITY)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
+    def test_generated_experience_interpretation_reason_stays_human_gate(self) -> None:
+        result = classify_failure(
+            "Approval required by submission engine: The requirement depends on how the candidate's experience is interpreted.",
+            "https://www.drushim.co.il/job/38010396/c1da841d/",
+        )
+
+        self.assertEqual(result.kind, FailureKind.EXPERIENCE_AMBIGUITY)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
+    def test_up_to_three_years_is_not_blocked_as_experience_ambiguity(self) -> None:
+        result = classify_failure(
+            "משרה ג׳וניור לבעלי ניסיון עד 3 שנים ברכש, עבודה מול ספקים ו-Excel.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=1",
+        )
+
+        self.assertNotEqual(result.kind, FailureKind.EXPERIENCE_AMBIGUITY)
+        self.assertNotIn(FailureKind.EXPERIENCE_AMBIGUITY, result.signals)
+
     def test_unverified_source_question_is_missing_candidate_fact(self) -> None:
         result = classify_failure(
             "הטופס דורש בחירת מקור פרסום מתוך אפשרויות מוגבלות שלא ניתן לאמת, וכלי העלאת הקובץ נחסם.",
@@ -111,6 +138,24 @@ class SubmissionFailureClassifierTests(unittest.TestCase):
         result = classify_failure("The form requires national ID and relatives-at-company disclosure", "https://survey.gov.il/he/example")
         self.assertEqual(result.kind, FailureKind.SENSITIVE_FIELD)
         self.assertIn(FailureKind.SENSITIVE_FIELD, result.signals)
+
+    def test_previous_application_question_is_missing_candidate_fact(self) -> None:
+        result = classify_failure(
+            "טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
+            "https://www.tfaforms.com/4851745?tfa_4776808320092=701Py00000XHZg0",
+        )
+
+        self.assertEqual(result.kind, FailureKind.MISSING_CANDIDATE_FACT)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
+    def test_temporary_role_is_policy_gate(self) -> None:
+        result = classify_failure(
+            "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9840352",
+        )
+
+        self.assertEqual(result.kind, FailureKind.MISSING_CANDIDATE_FACT)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
 
 
 if __name__ == "__main__":

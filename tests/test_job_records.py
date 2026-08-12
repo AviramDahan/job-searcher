@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from src.job_records import COMPANY, LINK, PENDING, REJECTED, SCORE, STATUS, TITLE, deduplicate_rows, duplicate_keys, job_key
+from src.job_records import COMPANY, LINK, PENDING, REJECTED, SCORE, STATUS, TITLE, deduplicate_rows, duplicate_keys, job_key, load_rows, write_rows
 
 
 class JobRecordsTests(unittest.TestCase):
@@ -46,6 +48,28 @@ class JobRecordsTests(unittest.TestCase):
 
         self.assertEqual(len(deduped), 1)
         self.assertEqual(deduped[0][COMPANY], "Current")
+
+    def test_write_rows_removes_broken_question_runs(self) -> None:
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "jobs.csv"
+            write_rows(
+                path,
+                [
+                    {
+                        COMPANY: "Company ???",
+                        TITLE: "Buyer",
+                        LINK: "https://example.test",
+                        STATUS: PENDING,
+                        SCORE: "80",
+                    }
+                ],
+            )
+
+            text = path.read_text(encoding="utf-8-sig")
+            rows = load_rows(path)
+
+            self.assertNotIn("???", text)
+            self.assertEqual(rows[0][COMPANY], "Company")
 
 
 if __name__ == "__main__":

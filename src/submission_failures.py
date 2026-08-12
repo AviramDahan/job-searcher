@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from enum import Enum
 from urllib.parse import urlparse
@@ -174,9 +175,22 @@ MISSING_FACT_TERMS = (
     "מקור פרסום",
     "אפשרויות מוגבלות",
     "מידע חסר",
+    "האם הגשת מועמדות בעבר",
+    "הגשת מועמדות בעבר",
+    "עבר מועמדות",
+    "מועמדות בעבר",
+    "משרה זמנית",
+    "זמנית או קצרה",
+    "החלפה לחל",
+    "החלפה לחופשת לידה",
     "missing mandatory answer",
     "unverified answer",
     "unknown source",
+    "applied before",
+    "previous application",
+    "previously applied",
+    "temporary role",
+    "short-term",
 )
 
 SYSTEM_SKILL_TERMS = (
@@ -196,24 +210,29 @@ SYSTEM_SKILL_TERMS = (
 )
 
 EXPERIENCE_TERMS = (
-    "שנות ניסיון",
-    "שנים ניסיון",
     "דרישת חובה לניסיון",
+    "דרישת ניסיון",
+    "תלוי בפרשנות ניסיון",
+    "פרשנות ניסיון",
     "לא מופיע בקורות החיים",
     "לא מופיעה בקורות החיים",
     "לא מופיע במפורש",
     "לא מופיעה במפורש",
     "לא מופיע בקו\"ח",
     "לא מופיעה בקו\"ח",
-    "ניסיון בסביבה",
+    "ניסיון בסביבה תעשייתית",
+    "ניסיון בסביבת ייצור",
     "ניסיון תעשייתי",
     "סביבה תעשייתית",
     "עבודה תפעולית בשטח",
     "ככלכלן",
     "כשכלכלן",
-    "pmo",
     "3 שנות",
     "5 שנות",
+    "4 years",
+    "5 years",
+    "four years",
+    "five years",
     "industrial environment",
     "field operations",
     "operational field",
@@ -221,6 +240,29 @@ EXPERIENCE_TERMS = (
     "not explicit in resume",
     "not shown on cv",
     "not shown in resume",
+    "depends on how the candidate's experience is interpreted",
+    "experience is interpreted",
+    "experience mapping",
+)
+
+SAFE_EXPERIENCE_RANGE_PATTERNS = (
+    r"\b(?:up to|0\s*[-–]\s*3)\s*(?:years?|yrs?)\b",
+    r"(?:עד|0\s*[-–]\s*3)\s*3?\s*(?:שנים|שנות)",
+)
+
+REQUIRED_EXPERIENCE_PATTERNS = (
+    r"(?:לפחות|מינימום|מעל)\s*(?:3|4|5|שלוש|ארבע|חמש)\s*(?:שנים|שנות)",
+    r"(?:3|4|5)\s*\+\s*(?:שנים|שנות)",
+    r"(?:ניסיון|נסיון)\s+של\s+(?:3|4|5|שלוש|ארבע|חמש)\s*(?:שנים|שנות)",
+    r"(?:ניסיון|נסיון)[^.;\n]{0,120}[-–:]\s*(?:3|4|5|שלוש|ארבע|חמש)\s*(?:שנים|שנות)",
+    r"(?:3|4|5|שלוש|ארבע|חמש)\s*(?:שנים|שנות)\s+(?:לפחות|ניסיון|נסיון|חובה|בתפקיד|ברכש)",
+    r"(?:at least|minimum|min\.?|over)\s*(?:3|4|5)\s*(?:years?|yrs?)",
+    r"(?:3|4|5)\s*\+\s*(?:years?|yrs?)",
+    r"(?:experience|experienced)[^.;\n]{0,120}[-–:]\s*(?:3|4|5)\s*(?:years?|yrs?)",
+    r"(?:3|4|5)\s*(?:years?|yrs?)\s+(?:minimum|required|of experience|experience)",
+    r"(?:three|four|five)\s+(?:years?|yrs?)\s+(?:minimum|required|of experience|experience)",
+    r"(?:experience|experienced)\s+(?:as|in)\s+(?:an?\s+)?(?:economist|pmo|project controller)",
+    r"(?:ניסיון|נסיון)\s+(?:כ|בתפקיד)\s*(?:כלכלן|כלכלנית|pmo|PMO|project controller)",
 )
 
 CLOSED_JOB_TERMS = (
@@ -239,6 +281,22 @@ def _has_any(text: str, terms: tuple[str, ...]) -> bool:
     return any(term.lower() in text_lower for term in terms)
 
 
+def _has_regex(text: str, patterns: tuple[str, ...]) -> bool:
+    return any(re.search(pattern, text, flags=re.IGNORECASE) for pattern in patterns)
+
+
+def _without_safe_experience_ranges(text: str) -> str:
+    cleaned = text
+    for pattern in SAFE_EXPERIENCE_RANGE_PATTERNS:
+        cleaned = re.sub(pattern, " ", cleaned, flags=re.IGNORECASE)
+    return cleaned
+
+
+def _has_experience_ambiguity(text: str) -> bool:
+    candidate_text = _without_safe_experience_ranges(text)
+    return _has_any(candidate_text, EXPERIENCE_TERMS) or _has_regex(candidate_text, REQUIRED_EXPERIENCE_PATTERNS)
+
+
 def detect_failure_signals(reason: str, link: str = "", title: str = "", company: str = "") -> tuple[FailureKind, ...]:
     text = " ".join(part for part in [reason, link, title, company, urlparse(link).netloc] if part)
     signals: list[FailureKind] = []
@@ -255,11 +313,12 @@ def detect_failure_signals(reason: str, link: str = "", title: str = "", company
         (FailureKind.FORM_AUTOMATION_UNRELIABLE, FORM_UNRELIABLE_TERMS),
         (FailureKind.NO_DIRECT_FORM, NO_DIRECT_FORM_TERMS),
         (FailureKind.UNVERIFIED_SYSTEM_SKILL, SYSTEM_SKILL_TERMS),
-        (FailureKind.EXPERIENCE_AMBIGUITY, EXPERIENCE_TERMS),
     )
     for kind, terms in checks:
         if _has_any(text, terms):
             signals.append(kind)
+    if _has_experience_ambiguity(text):
+        signals.append(FailureKind.EXPERIENCE_AMBIGUITY)
     return tuple(signals)
 
 
@@ -388,7 +447,7 @@ def classify_failure(reason: str, link: str = "", title: str = "", company: str 
             signals=signals,
         )
 
-    if _has_any(text, EXPERIENCE_TERMS):
+    if _has_experience_ambiguity(text):
         return FailureClassification(
             FailureKind.EXPERIENCE_AMBIGUITY,
             AutomationAction.HUMAN_APPROVAL_REQUIRED,

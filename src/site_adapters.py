@@ -92,6 +92,16 @@ ADAPTERS = (
         default_action=AutomationAction.USE_COMPANY_SITE_FALLBACK,
         notes="Aggregator. Prefer finding the official company form.",
     ),
+    SiteAdapterProfile(
+        name="BGU Careers",
+        domains=("bguhr.my.salesforce-sites.com", "bguhr.my.salesforce.com", "tfaforms.com", "www.tfaforms.com"),
+        capabilities=(SiteCapability.DIRECT_FORM,),
+        default_action=AutomationAction.HUMAN_APPROVAL_REQUIRED,
+        notes=(
+            "Official Ben-Gurion University TFA forms can require a previous-application answer "
+            "and may include optional sensitive self-identification fields. Submit only after those gates are resolved."
+        ),
+    ),
 )
 
 

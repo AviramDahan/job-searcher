@@ -109,7 +109,7 @@ class ManualAlertDecisionTests(unittest.TestCase):
                 "Registration requires third-party marketing consent",
                 link="https://www.drushim.co.il/job/1",
             )
-            | {TITLE: "PMO"},
+            | {TITLE: "PMO", REQUIREMENTS: "The role requires 3 years of experience as PMO."},
             profile=TEST_PROFILE,
         )
 

@@ -41,6 +41,7 @@ SUBMITTED = "הוגש"
 PENDING = "נדרש אישור"
 MANUAL_REQUIRED = "נדרשת הגשה ידנית"
 REJECTED = "נפסל"
+BROKEN_QUESTION_RUN_RE = re.compile(r"\?{3,}")
 
 ACTION_REQUIRED_STATUSES = {PENDING, MANUAL_REQUIRED}
 SUITABLE_STATUSES = {SUBMITTED, PENDING, MANUAL_REQUIRED}
@@ -65,6 +66,8 @@ def job_key(row: dict[str, str]) -> str:
         return f"alljobs:{query['JobID'][0]}"
     if "positionid" in query and query["positionid"]:
         return f"jobnet:{query['positionid'][0]}"
+    if "tfaforms.com" in parsed.netloc.lower() and "tfa_4776808320092" in query and query["tfa_4776808320092"]:
+        return f"bgu:{query['tfa_4776808320092'][0]}"
 
     drushim_id = re.search(r"/job/(\d+)(?:/|$)", parsed.path)
     if drushim_id and "drushim.co.il" in parsed.netloc.lower():
@@ -103,12 +106,21 @@ def load_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def sanitize_field_value(value: object) -> str:
+    cleaned = BROKEN_QUESTION_RUN_RE.sub("", str(value or ""))
+    return re.sub(r"[ \t]{2,}", " ", cleaned).strip()
+
+
+def sanitize_row(row: dict[str, str]) -> dict[str, str]:
+    return {header: sanitize_field_value(row.get(header, "")) for header in HEADERS}
+
+
 def write_rows(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=HEADERS)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(sanitize_row(row) for row in rows)
 
 
 def upsert(rows: list[dict[str, str]], row: dict[str, str]) -> bool:

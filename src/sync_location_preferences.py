@@ -10,6 +10,11 @@ from urllib.request import Request, urlopen
 
 DEFAULT_SYNC_ENDPOINT = "https://job-searcher-live-dashboard.aviramsdahan.chatgpt.site/api/sync"
 DEFAULT_OUTPUT = Path("outputs/location_preferences.json")
+DEFAULT_DASHBOARD_CONFIG = Path("docs/assets/dashboard-config.json")
+
+
+class SyncEndpointError(RuntimeError):
+    pass
 
 
 def clean(value: Any) -> str:
@@ -88,6 +93,36 @@ def fetch_preferences(endpoint: str, timeout: int) -> dict[str, Any]:
         return json.loads(response.read().decode("utf-8-sig"))
 
 
+def require_healthy_payload(payload: dict[str, Any]) -> None:
+    if payload.get("ok") is False:
+        error = clean(payload.get("error")) or "sync_endpoint_unhealthy"
+        raise SyncEndpointError(error)
+
+
+def endpoint_from_dashboard_config(path: Path) -> str:
+    if not path.exists():
+        return ""
+    try:
+        config = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return ""
+    if not isinstance(config, dict):
+        return ""
+    endpoint = clean(config.get("updatesEndpoint") or config.get("endpoint"))
+    if not endpoint:
+        return ""
+    if endpoint.startswith("/"):
+        return "https://job-searcher-live-dashboard.aviramsdahan.chatgpt.site" + endpoint
+    return endpoint
+
+
+def resolve_endpoint(explicit_endpoint: str, dashboard_config: Path) -> str:
+    explicit = clean(explicit_endpoint)
+    if explicit:
+        return explicit
+    return endpoint_from_dashboard_config(dashboard_config) or DEFAULT_SYNC_ENDPOINT
+
+
 def write_preferences(path: Path, preferences: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(preferences, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -95,20 +130,23 @@ def write_preferences(path: Path, preferences: dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Sync dashboard-approved location preferences into a local policy file.")
-    parser.add_argument("--endpoint", default=DEFAULT_SYNC_ENDPOINT)
+    parser.add_argument("--endpoint", default="", help="Override the dashboard sync endpoint. Defaults to docs/assets/dashboard-config.json.")
+    parser.add_argument("--dashboard-config", type=Path, default=DEFAULT_DASHBOARD_CONFIG)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--timeout", type=int, default=20)
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args()
 
+    endpoint = resolve_endpoint(args.endpoint, args.dashboard_config)
     try:
-        payload = fetch_preferences(args.endpoint, args.timeout)
+        payload = fetch_preferences(endpoint, args.timeout)
+        require_healthy_payload(payload)
         preferences = normalize_location_preferences(payload)
         write_preferences(args.out, preferences)
         approved_count = len(preferences["location_preferences"]["approved_locations"])
-        print(json.dumps({"ok": True, "out": str(args.out), "approved_locations": approved_count}, ensure_ascii=False))
+        print(json.dumps({"ok": True, "endpoint": endpoint, "out": str(args.out), "approved_locations": approved_count}, ensure_ascii=False))
         return 0
-    except (OSError, URLError, TimeoutError, json.JSONDecodeError) as error:
+    except (OSError, URLError, TimeoutError, json.JSONDecodeError, SyncEndpointError) as error:
         if args.strict:
             raise
         fallback = {

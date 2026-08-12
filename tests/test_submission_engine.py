@@ -36,6 +36,8 @@ def profile() -> CandidateProfile:
             SystemSkillFact("SAP", ("sap",), False),
             SystemSkillFact("ERP", ("erp",), False),
             SystemSkillFact("MRP", ("mrp",), False),
+            SystemSkillFact("Priority", ("priority",), True),
+            SystemSkillFact("Gantt", ("gantt", "גאנט", "גאנטים"), None),
             SystemSkillFact("Canva", ("canva",), None),
             SystemSkillFact("ChatGPT", ("chatgpt", "chat gpt"), None),
         ),
@@ -90,6 +92,7 @@ class SubmissionEngineTests(unittest.TestCase):
             [
                 row(
                     **{
+                        REQUIREMENTS: "Procurement buyer role, 3 years of experience required.",
                         STOP_REASON: "Approval required by submission engine: requires 3 years of experience. Next: ask operator.",
                     }
                 )
@@ -101,6 +104,128 @@ class SubmissionEngineTests(unittest.TestCase):
         self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
         self.assertFalse(plans[0].can_attempt)
         self.assertTrue(plans[0].requires_human)
+
+    def test_hebrew_minimum_three_years_blocks_jobmaster_auto_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "דרישות: ניסיון של 3 שנים לפחות ברכש כולל מו״מ בארץ ובחו״ל.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertTrue(plans[0].requires_human)
+
+    def test_up_to_three_years_does_not_block_jobmaster_auto_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "משרה ג׳וניור לבעלי ניסיון עד 3 שנים ברכש, עבודה מול ספקים ו-Excel.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_AUTO.value)
+        self.assertTrue(plans[0].can_attempt)
+
+    def test_required_gantt_blocks_jobmaster_auto_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "ניסיון קודם בעבודה עם תקציבים וגאנטים - חובה.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+        self.assertTrue(plans[0].requires_human)
+
+    def test_mismatched_mandatory_degree_blocks_submission(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "תואר ראשון בהנדסת תעשייה וניהול - חובה.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.DO_NOT_APPLY.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_stale_generated_priority_approval_is_recomputed_from_live_requirements(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "Procurement, suppliers, quotes, Excel, Priority.",
+                        STOP_REASON: "Approval required by submission engine: Priority appears to be a required skill.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_AUTO.value)
+        self.assertTrue(plans[0].can_attempt)
+
+    def test_stale_generated_experience_gate_is_not_superseded_by_truncated_requirements(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        REQUIREMENTS: "Procurement, suppliers, quotes, Excel.",
+                        STOP_REASON: "Approval required by submission engine: the posting mentions a 3 years experience requirement.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_drushim_resolved_generated_profile_gate_moves_to_company_fallback(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://www.drushim.co.il/job/38034621/d2c98a28/",
+                        REQUIREMENTS: "Procurement, suppliers, quotes, Excel, Priority.",
+                        STOP_REASON: "Approval required by submission engine: Priority appears to be a required skill.",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].decision, SubmissionDecision.READY_FOR_COMPANY_FALLBACK.value)
+        self.assertTrue(plans[0].can_attempt)
 
     def test_far_location_policy_overrides_old_pending_approval_reason(self) -> None:
         plans = plan_jobs(
@@ -351,6 +476,25 @@ class SubmissionEngineTests(unittest.TestCase):
 
         self.assertEqual(plans[0].site, "Jobnet")
         self.assertEqual(plans[0].decision, SubmissionDecision.NOT_SUPPORTED.value)
+        self.assertFalse(plans[0].can_attempt)
+
+    def test_bgu_previous_application_question_blocks_auto_attempt(self) -> None:
+        plans = plan_jobs(
+            [
+                row(
+                    **{
+                        LINK: "https://www.tfaforms.com/4851745?tfa_4776808320092=701Py00000XHZg0&tfa_4776808320093=001D000001095iN",
+                        REQUIREMENTS: "טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
+                        STOP_REASON: "",
+                    }
+                )
+            ],
+            profile=profile(),
+            min_score=70,
+        )
+
+        self.assertEqual(plans[0].site, "BGU Careers")
+        self.assertEqual(plans[0].decision, SubmissionDecision.POLICY_REQUIRED.value)
         self.assertFalse(plans[0].can_attempt)
 
     def test_linkedin_captcha_gate_is_not_forced_to_company_fallback(self) -> None:

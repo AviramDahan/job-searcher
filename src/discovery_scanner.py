@@ -72,6 +72,10 @@ except ImportError:
 
 
 DEFAULT_TIMEOUT = 25
+BROKEN_QUESTION_RUN_RE = re.compile(r"\?{3,}")
+BGU_CAREERS_URL = "https://bguhr.my.salesforce-sites.com/Gius?mode=jobs"
+BGU_TFA_FORM_URL = "https://www.tfaforms.com/4851745"
+BGU_TFA_ACCOUNT_ID = "001D000001095iN"
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
@@ -310,11 +314,13 @@ def default_sources() -> list[Source]:
     sources = [Source("JobMaster", f"https://www.jobmaster.co.il/jobs/?q={quote(term)}", "jobmaster") for term in jobmaster_terms]
     sources.extend(Source("Drushim", f"https://www.drushim.co.il/jobs/search/{quote(term)}/", "drushim") for term in drushim_terms)
     sources.extend(Source("Jobnet", url, "jobnet") for url in jobnet_urls)
+    sources.append(Source("BGU Careers", BGU_CAREERS_URL, "bgu"))
     return sources
 
 
 def clean_text(value: str) -> str:
-    return re.sub(r"\s+", " ", unescape(value or "")).strip()
+    without_broken_runs = BROKEN_QUESTION_RUN_RE.sub("", unescape(value or ""))
+    return re.sub(r"\s+", " ", without_broken_runs).strip()
 
 
 def lower_text(value: str) -> str:
@@ -432,10 +438,61 @@ def parse_drushim(html: str, source_url: str) -> list[DiscoveredJob]:
     return jobs
 
 
+def bgu_apply_url(salesforce_id: str) -> str:
+    trimmed_id = (salesforce_id or "").strip()[:15]
+    return (
+        f"{BGU_TFA_FORM_URL}?tfa_4776808320092={trimmed_id}"
+        f"&tfa_4776808320093={BGU_TFA_ACCOUNT_ID}"
+        f"&tfa_4776808320094={quote('דרושים')}"
+    )
+
+
+def parse_bgu(html: str, source_url: str) -> list[DiscoveredJob]:
+    soup = BeautifulSoup(html, "lxml")
+    jobs: list[DiscoveredJob] = []
+    seen: set[str] = set()
+    for row in soup.select("tr"):
+        cells = row.select("td")
+        if len(cells) < 3:
+            continue
+        job_number = clean_text(cells[0].get_text(" ", strip=True))
+        if not re.search(r"\b\d{4}\s*-\s*\d+\b", job_number):
+            continue
+        title_anchor = cells[1].select_one("a")
+        apply_anchor = cells[2].select_one("a")
+        title = clean_text(title_anchor.get_text(" ", strip=True) if title_anchor else cells[1].get_text(" ", strip=True))
+        apply_onclick = apply_anchor.get("onclick", "") if apply_anchor else ""
+        id_match = re.search(r"selectedItem,([A-Za-z0-9]{15,18})", apply_onclick)
+        if not title or not id_match:
+            continue
+        link = bgu_apply_url(id_match.group(1))
+        if link in seen:
+            continue
+        seen.add(link)
+        description = clean_text(
+            f"מקור רשמי אוניברסיטת בן-גוריון; מספר משרה {job_number}; "
+            f"{title}. טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה."
+        )
+        jobs.append(
+            DiscoveredJob(
+                source="BGU Careers",
+                title=title,
+                company="אוניברסיטת בן-גוריון בנגב",
+                location="באר שבע",
+                link=link,
+                description=description,
+                requirements=description,
+                posted="אתר גיוס רשמי",
+            )
+        )
+    return jobs
+
+
 PARSERS = {
     "jobmaster": parse_jobmaster,
     "jobnet": parse_jobnet,
     "drushim": parse_drushim,
+    "bgu": parse_bgu,
 }
 
 
@@ -765,6 +822,8 @@ def source_from_link(link: str) -> str:
         return "Drushim"
     if "jobnet.co.il" in lowered:
         return "Jobnet"
+    if "bguhr.my.salesforce-sites.com" in lowered or "tfaforms.com" in lowered:
+        return "BGU Careers"
     return "Unsupported"
 
 
@@ -803,7 +862,7 @@ def scan_sources(sources: list[Source], detail_limit: int = 80, timeout: int = D
 
     detailed: list[DiscoveredJob] = []
     for index, job in enumerate(unique.values()):
-        if index >= detail_limit or job.source == "Jobnet":
+        if index >= detail_limit or job.source in {"Jobnet", "BGU Careers"}:
             detailed.append(job)
             continue
         try:

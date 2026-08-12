@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -10,7 +11,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 
-BROKEN_TEXT = "????"
+BROKEN_TEXT_PATTERN = re.compile(r"\?{3,}")
 
 
 @dataclass
@@ -38,7 +39,8 @@ def check_job_data(path: Path) -> Check:
         return Check("job_data", False, "invalid_json", {"path": str(path), "error": str(exc)})
     text = path.read_text(encoding="utf-8-sig", errors="replace")
     jobs = data.get("jobs", [])
-    ok = isinstance(jobs, list) and len(jobs) > 0 and BROKEN_TEXT not in text
+    has_broken = bool(BROKEN_TEXT_PATTERN.search(text))
+    ok = isinstance(jobs, list) and len(jobs) > 0 and not has_broken
     status = "ok" if ok else "invalid"
     return Check(
         "job_data",
@@ -48,7 +50,7 @@ def check_job_data(path: Path) -> Check:
             "path": str(path),
             "jobs": len(jobs) if isinstance(jobs, list) else 0,
             "generated_at": data.get("generated_at", ""),
-            "contains_replacement_question_runs": BROKEN_TEXT in text,
+            "contains_replacement_question_runs": has_broken,
         },
     )
 
@@ -62,12 +64,13 @@ def check_csv(path: Path) -> Check:
     except UnicodeDecodeError as exc:
         return Check("applications_csv", False, "encoding_error", {"path": str(path), "error": str(exc)})
     text = path.read_text(encoding="utf-8-sig", errors="replace")
-    ok = len(rows) > 0 and BROKEN_TEXT not in text
+    has_broken = bool(BROKEN_TEXT_PATTERN.search(text))
+    ok = len(rows) > 0 and not has_broken
     return Check(
         "applications_csv",
         ok,
         "ok" if ok else "invalid",
-        {"path": str(path), "rows": len(rows), "contains_replacement_question_runs": BROKEN_TEXT in text},
+        {"path": str(path), "rows": len(rows), "contains_replacement_question_runs": has_broken},
     )
 
 
@@ -99,7 +102,7 @@ def fetch_json(url: str, timeout: int = 20) -> tuple[int, dict | None, str]:
 
 def check_remote_json(url: str, name: str, require_ok: bool = True) -> Check:
     status_code, payload, body = fetch_json(url)
-    has_broken = BROKEN_TEXT in body
+    has_broken = bool(BROKEN_TEXT_PATTERN.search(body))
     response_ok = 200 <= status_code < 300 and payload is not None and not has_broken
     payload_ok = payload.get("ok") is not False if isinstance(payload, dict) else True
     ok = response_ok and (payload_ok if require_ok else True)

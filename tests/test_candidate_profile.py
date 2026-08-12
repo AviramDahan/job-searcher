@@ -21,6 +21,7 @@ TEST_PROFILE = CandidateProfile(
         SystemSkillFact("Priority", ("priority", "פריוריטי"), True),
         SystemSkillFact("Power BI", ("power bi", "מערכת bi"), None),
         SystemSkillFact("MS Project", ("ms project",), None),
+        SystemSkillFact("Gantt", ("gantt", "גאנט", "גאנטים"), None),
         SystemSkillFact("Nibit", ("nibit",), None),
         SystemSkillFact("חשבשבת", ("חשבשבת",), True),
     ),
@@ -58,6 +59,23 @@ class CandidateProfileTests(unittest.TestCase):
         assessment = assess_candidate_facts("ניסיון ERP חובה, Priority יתרון.", profile=TEST_PROFILE)
 
         self.assertEqual([issue.label for issue in assessment.blockers], ["ERP"])
+
+    def test_required_gantt_is_human_gate(self) -> None:
+        assessment = assess_candidate_facts("ניסיון קודם בעבודה עם תקציבים וגאנטים - חובה.", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_human_blocker)
+        self.assertEqual(assessment.first_blocker.label, "Gantt")
+
+    def test_required_industrial_engineering_degree_is_disqualifying(self) -> None:
+        assessment = assess_candidate_facts("תואר ראשון בהנדסת תעשייה וניהול - חובה.", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_disqualifying_blocker)
+        self.assertEqual(assessment.first_blocker.code, "industrial_engineering_degree_required")
+
+    def test_industrial_engineering_degree_advantage_does_not_block(self) -> None:
+        assessment = assess_candidate_facts("תואר- חובה (הנדסת תעשייה וניהול - יתרון).", profile=TEST_PROFILE)
+
+        self.assertFalse(assessment.blockers)
 
     def test_required_erp_mrp_are_not_hidden_by_priority_advantage(self) -> None:
         assessment = assess_candidate_facts(
@@ -103,6 +121,12 @@ class CandidateProfileTests(unittest.TestCase):
         self.assertFalse(assessment.blockers)
         self.assertEqual(assessment.resolved[0].code, "numeric_salary_approved")
         self.assertEqual(safe_form_answers(TEST_PROFILE)["approved_salary_expectation"], "13000")
+
+    def test_previous_application_question_requires_human_answer(self) -> None:
+        assessment = assess_candidate_facts("האם הגשת מועמדות בעבר אחרי 1/1/2013?", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_human_blocker)
+        self.assertEqual(assessment.first_blocker.code, "previous_application_unverified")
 
 
 if __name__ == "__main__":

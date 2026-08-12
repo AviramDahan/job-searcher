@@ -5,12 +5,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 try:
-    from .candidate_profile import FactIssueSeverity, assess_candidate_facts
+    from .candidate_profile import FactIssueSeverity, assess_job_candidate_facts
     from .job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, load_rows, score_int
     from .site_adapters import route_submission_failure
     from .submission_failures import AutomationAction, FailureKind
 except ImportError:
-    from candidate_profile import FactIssueSeverity, assess_candidate_facts
+    from candidate_profile import FactIssueSeverity, assess_job_candidate_facts
     from job_records import COMPANY, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, is_action_required_status, load_rows, score_int
     from site_adapters import route_submission_failure
     from submission_failures import AutomationAction, FailureKind
@@ -45,7 +45,7 @@ def has_resolved_fact(fact_assessment, code: str) -> bool:
 
 
 def fact_context(row: dict[str, str]) -> str:
-    return " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, ""), row.get(TITLE, "")] if part)
+    return " ".join(part for part in [row.get(REQUIREMENTS, ""), row.get(FIT, ""), row.get(TITLE, ""), row.get(LOCATION, "")] if part)
 
 
 def classify_pending_rows(rows: list[dict[str, str]]) -> list[dict[str, object]]:
@@ -60,7 +60,7 @@ def classify_pending_rows(rows: list[dict[str, str]]) -> list[dict[str, object]]
             company=row.get(COMPANY, ""),
         )
         signals = route.failure.signals or (route.failure.kind,)
-        fact_assessment = assess_candidate_facts(fact_context(row))
+        fact_assessment = assess_job_candidate_facts(fact_context(row), row.get(STOP_REASON, ""))
         candidate_blocker = fact_assessment.first_blocker
         marketing_consent_resolved = FailureKind.MARKETING_CONSENT in signals and has_resolved_fact(
             fact_assessment, "marketing_consent_approved"

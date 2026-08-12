@@ -8,13 +8,13 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 
 try:
-    from .candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from .candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_job_candidate_facts
     from .job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
     from .submission_failures import FailureKind
 except ImportError:
-    from candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_candidate_facts
+    from candidate_profile import CandidateProfile, FactIssueSeverity, KOREN_DAHAN_PROFILE, assess_job_candidate_facts
     from job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, SCORE, STATUS, STOP_REASON, TITLE, job_key, load_rows
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
@@ -59,11 +59,11 @@ def load_log(path: Path) -> dict[str, dict]:
 
 
 def fact_context(row: dict[str, str]) -> str:
-    return " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, ""), row.get(TITLE, "")] if part)
+    return " ".join(part for part in [row.get(REQUIREMENTS, ""), row.get(FIT, ""), row.get(TITLE, ""), row.get(LOCATION, "")] if part)
 
 
 def manual_alert_decision(row: dict[str, str], profile: CandidateProfile = KOREN_DAHAN_PROFILE) -> ManualAlertDecision:
-    assessment = assess_candidate_facts(fact_context(row), profile=profile)
+    assessment = assess_job_candidate_facts(fact_context(row), row.get(STOP_REASON, ""), profile=profile)
     candidate_blocker = assessment.first_blocker
     marketing_consent_resolved = any(issue.code == "marketing_consent_approved" for issue in assessment.resolved)
     if candidate_blocker and candidate_blocker.severity == FactIssueSeverity.DO_NOT_APPLY:

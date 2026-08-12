@@ -6,13 +6,13 @@ import sys
 from pathlib import Path
 
 try:
-    from .candidate_profile import KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from .job_records import COMPANY, LINK, MANUAL_REQUIRED, PENDING, REQUIREMENTS, STATUS, STOP_REASON, TITLE, load_rows, write_rows
+    from .candidate_profile import KOREN_DAHAN_PROFILE, assess_job_candidate_facts
+    from .job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, STATUS, STOP_REASON, TITLE, load_rows, write_rows
     from .site_adapters import route_submission_failure
     from .submission_failures import FailureKind
 except ImportError:
-    from candidate_profile import KOREN_DAHAN_PROFILE, assess_candidate_facts
-    from job_records import COMPANY, LINK, MANUAL_REQUIRED, PENDING, REQUIREMENTS, STATUS, STOP_REASON, TITLE, load_rows, write_rows
+    from candidate_profile import KOREN_DAHAN_PROFILE, assess_job_candidate_facts
+    from job_records import COMPANY, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REQUIREMENTS, STATUS, STOP_REASON, TITLE, load_rows, write_rows
     from site_adapters import route_submission_failure
     from submission_failures import FailureKind
 
@@ -33,14 +33,14 @@ def print_json(payload: dict) -> None:
 
 
 def fact_context(row: dict[str, str]) -> str:
-    return " ".join(part for part in [row.get(STOP_REASON, ""), row.get(REQUIREMENTS, ""), row.get(TITLE, "")] if part)
+    return " ".join(part for part in [row.get(REQUIREMENTS, ""), row.get(FIT, ""), row.get(TITLE, ""), row.get(LOCATION, "")] if part)
 
 
 def should_mark_manual_required(row: dict[str, str]) -> bool:
     if row.get(STATUS) != PENDING:
         return False
 
-    assessment = assess_candidate_facts(fact_context(row), profile=KOREN_DAHAN_PROFILE)
+    assessment = assess_job_candidate_facts(fact_context(row), row.get(STOP_REASON, ""), profile=KOREN_DAHAN_PROFILE)
     if assessment.has_disqualifying_blocker or assessment.first_blocker:
         return False
 
