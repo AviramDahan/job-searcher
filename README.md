@@ -272,31 +272,26 @@ Dashboard capabilities:
 
 ## Live Shared Dashboard MVP
 
-The live MVP uses GitHub Pages for the public dashboard, JSONBlob for shared manual-submission state, and an OpenAI Sites Worker API for server-side Telegram alerts. It works while the local computer is off because all shared state and notifications run remotely.
+The stable live architecture is:
 
-Current live config:
+- GitHub Pages serves the public read-only dashboard assets.
+- Cloudflare Worker + Durable Object stores shared dashboard updates: manual submissions, manual rejections, approved locations, radius, and event dedupe.
+- Telegram secrets stay server-side in the Worker or Sites runtime.
 
-```json
-{
-  "updatesEndpoint": "https://jsonblob.com/api/jsonBlob/019fef77-25db-7834-aa32-c48f4b824c74",
-  "transport": "jsonblob"
-}
-```
+Do not use JSONBlob as the long-term production state store. It is useful for quick prototypes but can expire, disappear, or return 404/403. The OpenAI Sites `/api/sync` endpoint can report a clear degraded state, but it is not the production source of truth when storage is disabled.
 
-This no-PIN/no-login mode is intentionally public-write. Anyone with the dashboard URL can mark or clear manual submissions. Do not store Telegram tokens, candidate contact details, or any secret in this JSONBlob state.
-
-For Telegram alerts, point `docs/assets/dashboard-config.json` to the deployed Sites API instead of directly to JSONBlob:
+Current GitHub Pages config should point to a deployed sync API:
 
 ```json
 {
-  "updatesEndpoint": "https://job-searcher-live-dashboard.aviramsdahan.chatgpt.site/api/sync",
+  "updatesEndpoint": "https://job-searcher-live-api.<your-subdomain>.workers.dev/sync",
   "transport": "cors"
 }
 ```
 
 ## Sites Dashboard With Telegram
 
-The repository contains a small OpenAI Sites Worker build. It serves the same static dashboard assets and exposes `/api/sync`, which proxies the shared JSONBlob state and sends Telegram alerts from server-side environment variables.
+The repository contains a small OpenAI Sites Worker build. It serves the same static dashboard assets and exposes `/api/sync`. When storage is configured, it can proxy shared state and send Telegram alerts from server-side environment variables. When storage is disabled or unavailable, it returns a structured `ok:false` response instead of a blank 503 so the dashboard can fail safely.
 
 Local validation:
 
@@ -310,11 +305,12 @@ Production runtime variables are stored in Sites, not Git:
 
 ```text
 JSONBLOB_ENDPOINT=<jsonblob state endpoint>
+SYNC_STORAGE_DISABLED=true|false
 TELEGRAM_BOT_TOKEN=<secret>
 TELEGRAM_CHAT_ID=<secret>
 ```
 
-In the Sites build, the generated `/assets/dashboard-config.json` points to `/api/sync`, so manual submissions trigger server-side Telegram alerts. In GitHub Pages, `docs/assets/dashboard-config.json` can point either directly to JSONBlob or to the deployed Sites `/api/sync` endpoint.
+In the Sites build, the generated `/assets/dashboard-config.json` points to `/api/sync`. In GitHub Pages, `docs/assets/dashboard-config.json` should point to the deployed Cloudflare Worker once it exists.
 
 Sync dashboard-approved cities before each discovery/submission cycle:
 
@@ -349,6 +345,17 @@ dist/server/sync-api.js
 
 The production-ready live MVP uses GitHub Pages for the dashboard and a Cloudflare Worker for shared state. This avoids putting any write token in the public frontend while keeping the dashboard fast and easy to share.
 
+The Worker supports:
+
+- `listUpdates`
+- `markManualSubmitted`
+- `clearManualSubmitted`
+- `markManualRejected`
+- `clearManualRejected`
+- `setLocationPreference`
+- `setLocationRadius`
+- `health`
+
 Deploy the Worker:
 
 ```powershell
@@ -382,6 +389,15 @@ Run local Worker checks:
 node .\cloudflare-worker\test-local.mjs
 wrangler deploy --dry-run --config .\cloudflare-worker\wrangler.jsonc
 ```
+
+Run full system health checks:
+
+```powershell
+python -m src.system_health_check --github-pages-json https://aviramdahan.github.io/job-searcher/assets/job-data.json
+python -m src.system_health_check --strict-sync
+```
+
+`--strict-sync` must pass before telling a candidate that manual dashboard changes are cloud-synced. Without it, the dashboard can still be read-only/shareable, but manual actions may be local-only or disabled depending on the frontend state.
 
 ## Google Sheets Sync MVP
 

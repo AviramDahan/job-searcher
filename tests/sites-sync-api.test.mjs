@@ -29,6 +29,12 @@ const env = {
   TELEGRAM_CHAT_ID: "-1001",
 };
 
+const health = await handleSyncAction({ action: "health" }, { ...env, SYNC_STORAGE_DISABLED: "true" });
+
+assert.equal(health.ok, true);
+assert.equal(health.service, "job-searcher-sites-sync");
+assert.equal(health.storage, "disabled");
+
 const disabledSync = await handleSyncAction({ action: "listUpdates" }, { ...env, SYNC_STORAGE_DISABLED: "true" });
 
 assert.equal(disabledSync.ok, false);

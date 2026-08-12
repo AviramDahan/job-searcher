@@ -99,4 +99,85 @@ if (!clear.ok || clear.manual_submissions["job-1"]) {
   throw new Error("clear failed");
 }
 
+const reject = await readJson(
+  await worker.fetch(
+    new Request("https://api.test/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "markManualRejected",
+        event_id: "event-3",
+        job_key: "job-2",
+        manual_rejected_at: "2026-08-02 03:00",
+      }),
+    }),
+    env
+  )
+);
+if (!reject.ok || reject.manual_rejections["job-2"].rejectedAt !== "2026-08-02 03:00") {
+  throw new Error("manual rejection failed");
+}
+
+const clearReject = await readJson(
+  await worker.fetch(
+    new Request("https://api.test/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "clearManualRejected",
+        event_id: "event-4",
+        job_key: "job-2",
+      }),
+    }),
+    env
+  )
+);
+if (!clearReject.ok || clearReject.manual_rejections["job-2"]) {
+  throw new Error("clear manual rejection failed");
+}
+
+const location = await readJson(
+  await worker.fetch(
+    new Request("https://api.test/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "setLocationPreference",
+        event_id: "event-5",
+        city_key: "city_ofakim",
+        city_label: "אופקים",
+        city_terms: "אופקים|ofakim",
+        approved: "true",
+      }),
+    }),
+    env
+  )
+);
+if (!location.ok || !location.location_preferences.approved_locations.city_ofakim) {
+  throw new Error("location preference failed");
+}
+
+const radius = await readJson(
+  await worker.fetch(
+    new Request("https://api.test/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "setLocationRadius",
+        event_id: "event-6",
+        radius_km: "40",
+      }),
+    }),
+    env
+  )
+);
+if (!radius.ok || radius.location_preferences.radius_km !== 40) {
+  throw new Error("location radius failed");
+}
+
+const list = await readJson(await worker.fetch(new Request("https://api.test/sync?action=listUpdates"), env));
+if (!list.ok || list.events.length !== 6 || list.location_preferences.radius_km !== 40) {
+  throw new Error("list updates failed");
+}
+
 console.log(JSON.stringify({ ok: true }));

@@ -122,7 +122,8 @@ export default {
       }
 
       if (request.method === "GET") {
-        return syncJsonResponse(() => handleSyncAction({ action: "listUpdates" }, env));
+        const params = Object.fromEntries(url.searchParams.entries());
+        return syncJsonResponse(() => handleSyncAction({ action: params.action || "listUpdates", ...params }, env));
       }
 
       if (request.method === "POST") {

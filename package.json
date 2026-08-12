@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build-sites-worker.mjs",
-    "test:api": "node tests/sites-sync-api.test.mjs"
+    "test:api": "node tests/sites-sync-api.test.mjs",
+    "test:worker": "node cloudflare-worker/test-local.mjs",
+    "health": "python -m src.system_health_check"
   }
 }
