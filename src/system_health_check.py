@@ -103,7 +103,7 @@ def check_remote_json(url: str, name: str, require_ok: bool = True) -> Check:
     response_ok = 200 <= status_code < 300 and payload is not None and not has_broken
     payload_ok = payload.get("ok") is not False if isinstance(payload, dict) else True
     ok = response_ok and (payload_ok if require_ok else True)
-    status = "ok" if ok else "degraded" if response_ok else "failed"
+    status = "ok" if response_ok and payload_ok else "degraded" if response_ok else "failed"
     return Check(
         name,
         ok,
@@ -163,9 +163,10 @@ def main() -> int:
 
     checks = build_checks(args)
     hard_failures = [check for check in checks if not check.ok and (args.strict_sync or not check.name.startswith("cloud_sync"))]
+    has_degraded = any(check.status != "ok" for check in checks)
     payload = {
         "ok": not hard_failures,
-        "status": "ok" if all(check.ok for check in checks) else "degraded" if not hard_failures else "failed",
+        "status": "failed" if hard_failures else "degraded" if has_degraded else "ok",
         "checks": [asdict(check) for check in checks],
     }
     try:
