@@ -29,6 +29,12 @@ const env = {
   TELEGRAM_CHAT_ID: "-1001",
 };
 
+const disabledSync = await handleSyncAction({ action: "listUpdates" }, { ...env, SYNC_STORAGE_DISABLED: "true" });
+
+assert.equal(disabledSync.ok, false);
+assert.equal(disabledSync.error, "sync_storage_disabled");
+assert.deepEqual(disabledSync.manual_submissions, {});
+
 const mark = await handleSyncAction(
   {
     action: "markManualSubmitted",
