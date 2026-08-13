@@ -56,7 +56,7 @@ class JobRecordsTests(unittest.TestCase):
                 path,
                 [
                     {
-                        COMPANY: "Company ???",
+                        COMPANY: "Company ??",
                         TITLE: "Buyer",
                         LINK: "https://example.test",
                         STATUS: PENDING,
@@ -68,7 +68,7 @@ class JobRecordsTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8-sig")
             rows = load_rows(path)
 
-            self.assertNotIn("???", text)
+            self.assertNotIn("??", text)
             self.assertEqual(rows[0][COMPANY], "Company")
 
 

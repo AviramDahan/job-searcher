@@ -31,7 +31,7 @@ COMPANY_INFO_LABEL = "מידע כללי על החברה"
 BLOCKER_LABEL = "סיבת עצירה"
 RECOMMENDATION_LABEL = "המלצה"
 RETRY_RESULT_LABEL = "תוצאת ניסיון"
-BROKEN_TEXT_PATTERN = re.compile(r"\?{3,}")
+BROKEN_TEXT_PATTERN = re.compile(r"\?{2,}")
 ENCODING_FALLBACK_TEXT = "טקסט לא זמין בגלל בעיית קידוד במקור"
 
 

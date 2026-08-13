@@ -27,21 +27,21 @@ class TelegramSendTests(unittest.TestCase):
         message = send_job_status_alerts.build_message(
             {
                 "kind": "manual",
-                "company": "????? ????",
+                "company": "??",
                 "title": "קניינית רכש",
                 "score": "84",
                 "link": "https://example.com/job",
-                "matched_requirements": "?????, Excel, ???",
-                "company_info": "מיקום: ????",
-                "blocker": "????? ???? ?????",
-                "recommendation": "????? ?????",
+                "matched_requirements": "Excel, ??",
+                "company_info": "מיקום: ??",
+                "blocker": "??",
+                "recommendation": "??",
             }
         )
 
         self.assertIn("נדרשת הגשה עצמאית", message)
         self.assertIn("חברה לא זמינה בגלל בעיית קידוד במקור", message)
         self.assertIn("דרישות לא זמינות בגלל בעיית קידוד במקור", message)
-        self.assertNotIn("????", message)
+        self.assertNotIn("??", message)
 
     def test_send_blocks_prebuilt_corrupted_text_before_api_call(self) -> None:
         original_urlopen = send_job_status_alerts.urlopen
@@ -52,7 +52,7 @@ class TelegramSendTests(unittest.TestCase):
         try:
             send_job_status_alerts.urlopen = fake_urlopen
             with self.assertRaises(ValueError):
-                send_job_status_alerts.send("token", "-1001", "כותרת\n????")
+                send_job_status_alerts.send("token", "-1001", "כותרת\n??")
         finally:
             send_job_status_alerts.urlopen = original_urlopen
 

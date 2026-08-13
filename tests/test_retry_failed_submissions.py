@@ -290,7 +290,7 @@ class RetryQueueTests(unittest.TestCase):
         self.assertEqual(payload["kind"], "retry")
         self.assertIn("ניסיון הגשה חוזר", message)
         self.assertIn("תואר בכלכלה", message)
-        self.assertNotIn("????", message)
+        self.assertNotIn("??", message)
         self.assertNotIn("×", message)
 
     def test_human_gate_retry_alert_stays_manual(self) -> None:
@@ -330,7 +330,7 @@ class RetryQueueTests(unittest.TestCase):
 
         self.assertIn("נדרשת הגשה עצמאית", message)
         self.assertIn("תואר ראשון", message)
-        self.assertNotIn("????", message)
+        self.assertNotIn("??", message)
         self.assertNotIn("×", message)
 
 
