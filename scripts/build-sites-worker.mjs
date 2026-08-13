@@ -6,6 +6,7 @@ const serverDir = join(distDir, "server");
 const hostingTarget = join(distDir, ".openai", "hosting.json");
 const syncTarget = join(serverDir, "sync-api.js");
 const workerTarget = join(serverDir, "index.js");
+const liveSyncEndpoint = "https://job-searcher-live-api.aviramdahans.workers.dev/sync";
 
 function readText(path) {
   return readFileSync(path, "utf8");
@@ -54,7 +55,7 @@ const files = {
     cacheControl: "no-store",
     body: JSON.stringify(
       {
-        updatesEndpoint: "/api/sync",
+        updatesEndpoint: liveSyncEndpoint,
         transport: "cors",
       },
       null,

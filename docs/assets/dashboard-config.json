@@ -1,4 +1,4 @@
 {
-  "updatesEndpoint": "https://job-searcher-live-dashboard.aviramsdahan.chatgpt.site/api/sync",
+  "updatesEndpoint": "https://job-searcher-live-api.aviramdahans.workers.dev/sync",
   "transport": "cors"
 }
