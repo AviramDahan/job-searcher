@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-08-12 14:28",
+  "generated_at": "2026-08-13 13:09",
   "candidate": {
-    "full_name": "קורן דהן"
+    "full_name": "Koren Dahan"
   },
   "counts": {
-    "scanned": 9838,
-    "documented": 1011,
+    "scanned": 10280,
+    "documented": 1050,
     "submitted": 15,
-    "pending": 41,
-    "manual_required": 8,
-    "rejected": 947,
-    "suitable": 64
+    "pending": 42,
+    "manual_required": 9,
+    "rejected": 984,
+    "suitable": 66
   },
   "location_policy": {
     "home": {
@@ -28071,17 +28071,17 @@
   "insights": {
     "snapshot": {
       "submitted": 15,
-      "pending": 41,
-      "manual_required": 8,
-      "rejected": 947,
-      "high_score_actionable": 49,
+      "pending": 42,
+      "manual_required": 9,
+      "rejected": 984,
+      "high_score_actionable": 51,
       "safe_auto_submit_now": 0
     },
     "blocker_counts": [
       {
         "category": "low_score_or_hard_reject",
         "label": "התאמה נמוכה או חסם קשיח",
-        "count": 441,
+        "count": 465,
         "recommendation": "לא להשקיע בהגשה; עדיף להרחיב מקורות או קריטריונים מאושרים.",
         "sample_job": {
           "key": "nestle:1415084733",
@@ -28098,7 +28098,7 @@
       {
         "category": "secondary_location",
         "label": "מיקום רחוק לא רלוונטי",
-        "count": 208,
+        "count": 210,
         "recommendation": "לא להשקיע בהגשה למיקום זה אלא אם המודעה כוללת גם מיקום דרומי מאושר או עבודה מרחוק מלאה.",
         "sample_job": {
           "key": "jobnet:13311849",
@@ -28115,7 +28115,7 @@
       {
         "category": "system_skill_gap",
         "label": "מערכת/כלי שלא אומת",
-        "count": 145,
+        "count": 148,
         "recommendation": "לא להגיש אוטומטית כשהכלי הוא דרישת חובה; אפשר לבדוק ידנית אם הוא רק יתרון.",
         "sample_job": {
           "key": "drushim:37618692",
@@ -28126,13 +28126,13 @@
           "link": "https://www.drushim.co.il/job/37618692/77e3b630/",
           "status": "נדרש אישור",
           "category": "system_skill_gap",
-          "reason": "נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile."
+          "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         }
       },
       {
         "category": "unclear_location",
         "label": "מיקום לא מספיק ברור",
-        "count": 92,
+        "count": 94,
         "recommendation": "לפתוח את המשרה ולבדוק מיקום אמיתי לפני הגשה.",
         "sample_job": {
           "key": "drushim:38034621",
@@ -28149,7 +28149,7 @@
       {
         "category": "temporary_or_scope",
         "label": "זמני או מחוץ לליבת היעד",
-        "count": 61,
+        "count": 64,
         "recommendation": "להגיש רק אם התפקיד מתאים במיוחד ויש סיכוי ממשי להמשך.",
         "sample_job": {
           "key": "jobmaster:9840352",
@@ -28166,24 +28166,24 @@
       {
         "category": "experience_interpretation",
         "label": "פרשנות ניסיון",
-        "count": 18,
+        "count": 20,
         "recommendation": "להגיש רק אם אפשר להסביר בכנות שהניסיון התקציבי/רכש עומד בדרישת החובה.",
         "sample_job": {
-          "key": "jobmaster:9687307",
-          "score": 97,
-          "company": "מעבר למשרות נוספות הקריה למחקר גרעיני - נגב",
-          "title": "ראש תחום כלכלה ותקציבים לארגון ביטחוני מוביל",
-          "location": "באר שבע, דימונה, ירוחם, ערד",
-          "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9687307",
+          "key": "jobmaster:9843547",
+          "score": 98,
+          "company": "מעבר למשרות נוספות גפן השמות",
+          "title": "מנהל/ת פרויקטים (PMO) בחברה יצרנית בדרום",
+          "location": "אופקים, אשקלון, שדרות",
+          "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843547",
           "status": "נדרש אישור",
           "category": "experience_interpretation",
-          "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
+          "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
         }
       },
       {
         "category": "policy_or_missing_fact",
         "label": "מידע חסר או הצהרה",
-        "count": 14,
+        "count": 13,
         "recommendation": "לא לענות בשם קורן בלי אישור עובדתי מפורש.",
         "sample_job": {
           "key": "drushim:38008705",
@@ -28194,13 +28194,13 @@
           "link": "https://www.drushim.co.il/job/38008705/c97f7942/",
           "status": "נדרש אישור",
           "category": "policy_or_missing_fact",
-          "reason": "נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע."
+          "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
         }
       },
       {
         "category": "site_adapter_gap",
         "label": "חסר adapter בטוח לאתר",
-        "count": 9,
+        "count": 12,
         "recommendation": "להעדיף טופס חברה רשמי; אם אין, להשאיר להגשה ידנית עד שנבנה adapter מאומת לאתר.",
         "sample_job": {
           "key": "jobnet:13320618",
@@ -28234,7 +28234,7 @@
       {
         "category": "manual_form",
         "label": "טופס שאינו ניתן להשלמה אוטומטית",
-        "count": 3,
+        "count": 4,
         "recommendation": "להיכנס לקישור, להעלות את קובץ ה-CV המאושר ולסמן בדשבורד שהוגש ידנית.",
         "sample_job": {
           "key": "manual:https://survey.gov.il/he/misrotashd|שירות התעסוקה אשדוד / בית הלוחם|רכז/ת רכש - מספר הזמנה 9053013|אשדוד",
@@ -28337,7 +28337,7 @@
             "link": "https://www.drushim.co.il/job/37859327/0ad09698/",
             "status": "נדרש אישור",
             "category": "unclear_location",
-            "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "drushim:37628097",
@@ -28348,7 +28348,7 @@
             "link": "https://www.drushim.co.il/job/37628097/73067afb/",
             "status": "נדרש אישור",
             "category": "unclear_location",
-            "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "drushim:37996393",
@@ -28359,7 +28359,7 @@
             "link": "https://www.drushim.co.il/job/37996393/4e8f48e9/",
             "status": "נדרש אישור",
             "category": "unclear_location",
-            "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "drushim:37624734",
@@ -28370,7 +28370,7 @@
             "link": "https://www.drushim.co.il/job/37624734/024aa9e6/",
             "status": "נדרש אישור",
             "category": "unclear_location",
-            "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           }
         ]
       },
@@ -28379,6 +28379,17 @@
         "impact": "5 משרות מובילות נעצרו בגלל דרישת ניסיון סביב 3 שנים או תיאור תפקיד כלכלי.",
         "recommendation": "לקבל מקורן ניסוח עובדתי שמבהיר אילו שנות ניסיון רכש/תקציבים אפשר להציג בביטחון.",
         "jobs": [
+          {
+            "key": "jobmaster:9843547",
+            "score": 98,
+            "company": "מעבר למשרות נוספות גפן השמות",
+            "title": "מנהל/ת פרויקטים (PMO) בחברה יצרנית בדרום",
+            "location": "אופקים, אשקלון, שדרות",
+            "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843547",
+            "status": "נדרש אישור",
+            "category": "experience_interpretation",
+            "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+          },
           {
             "key": "jobmaster:9687307",
             "score": 97,
@@ -28399,7 +28410,7 @@
             "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9842634",
             "status": "נדרש אישור",
             "category": "experience_interpretation",
-            "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "jobmaster:9842627",
@@ -28410,29 +28421,18 @@
             "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9842627",
             "status": "נדרש אישור",
             "category": "experience_interpretation",
-            "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
-          },
-          {
-            "key": "jobmaster:9837476",
-            "score": 87,
-            "company": "מעבר למשרות נוספות פח תעש אשקלון",
-            "title": "PMO פרויקטים בתחום המערכות האלקטרומכניות",
-            "location": "קריית גת",
-            "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9837476",
-            "status": "נדרש אישור",
-            "category": "experience_interpretation",
-            "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. MS Project appears to be a required skill, but it is not verified in the candidate profile."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "drushim:38048871",
-            "score": 87,
+            "score": 97,
             "company": "רימון שירותי השמה",
             "title": "קניין.ית רכש לחברה יצרנית בקרית גת",
             "location": "קריית גת",
             "link": "https://www.drushim.co.il/job/38048871/0191eb8b/",
             "status": "נדרש אישור",
             "category": "experience_interpretation",
-            "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           }
         ]
       },
@@ -28450,7 +28450,7 @@
             "link": "https://www.drushim.co.il/job/37618692/77e3b630/",
             "status": "נדרש אישור",
             "category": "system_skill_gap",
-            "reason": "נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           },
           {
             "key": "drushim:37996963",
@@ -28523,7 +28523,7 @@
             "link": "https://www.jobnet.co.il/jobs?positionid=13306773",
             "status": "נדרש אישור",
             "category": "site_adapter_gap",
-            "reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה."
+            "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
           },
           {
             "key": "jobnet:13303131",
@@ -28548,15 +28548,15 @@
             "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
           },
           {
-            "key": "jobnet:13352263",
+            "key": "jobnet:13153043",
             "score": 90,
-            "company": "PHR",
-            "title": "איש/ת רכש (טכני)",
-            "location": "- תל אביב, פתח תקווה, רמת גן וגבעתיים, בקעת אונו וגבעת שמואל, חולון ובת-ים, מודיעין, שוהם; - ירושלים, יהודה ושומרון, בית שמש; - אשדוד, קרית גת, באר שבע, דימונה, אשקלון, קרית מלאכי, ערד וים המלח; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה; - אילת והערבה; - חו\"ל",
-            "link": "https://www.jobnet.co.il/jobs?positionid=13352263",
+            "company": "אקספריס אקדמי",
+            "title": "אקדמאים מצטיינים לתפקיד Data & BI Analyst",
+            "location": "- תל אביב, פתח תקווה, רמת גן וגבעתיים, בקעת אונו וגבעת שמואל, חולון ובת-ים, מודיעין, שוהם; - חדרה וזכרון יעקב, נתניה ועמק חפר, רעננה, כפר סבא והוד השרון, ראש העין, הרצליה ורמת השרון; - ירושלים, יהודה ושומרון, בית שמש; - עפולה, נצרת ובית שאן, קריות ועמק זבולון, חיפה והכרמל; - אשדוד, קרית גת, באר שבע, אשקלון, קרית מלאכי; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה",
+            "link": "https://www.jobnet.co.il/jobs?positionid=13153043",
             "status": "נדרש אישור",
             "category": "site_adapter_gap",
-            "reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה."
+            "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
           }
         ]
       }
@@ -28564,31 +28564,31 @@
   },
   "conversion": {
     "counts": {
-      "total": 1011,
+      "total": 1050,
       "submitted": 15,
-      "pending": 41,
-      "manual_required": 8,
-      "rejected": 947,
-      "suitable": 64,
+      "pending": 42,
+      "manual_required": 9,
+      "rejected": 984,
+      "suitable": 66,
       "duplicate_keys": 0,
-      "scanned": 9838,
-      "documented_rate_from_scanned": 10.28,
-      "suitable_rate_from_documented": 6.33,
-      "submitted_rate_from_suitable": 23.44,
-      "submitted_rate_from_documented": 1.48
+      "scanned": 10280,
+      "documented_rate_from_scanned": 10.21,
+      "suitable_rate_from_documented": 6.29,
+      "submitted_rate_from_suitable": 22.73,
+      "submitted_rate_from_documented": 1.43
     },
     "submission_plan": {
-      "plans": 85,
+      "plans": 86,
       "runnable": 0,
       "decisions": {
-        "policy_required": 32,
+        "policy_required": 34,
         "not_supported": 8,
         "human_gate": 9,
-        "do_not_apply": 36
+        "do_not_apply": 35
       },
       "sites": {
         "Drushim": 21,
-        "JobMaster": 26,
+        "JobMaster": 27,
         "Jobnet": 19,
         "IAI Careers": 2,
         "Nestle Careers": 2,
@@ -28618,23 +28618,23 @@
     "source_quality": [
       {
         "source": "JobMaster",
-        "total": 339,
+        "total": 361,
         "submitted": 10,
-        "pending": 13,
+        "pending": 15,
         "manual_required": 0,
-        "rejected": 316,
-        "submission_rate": 2.95,
-        "actionable_rate": 3.83
+        "rejected": 336,
+        "submission_rate": 2.77,
+        "actionable_rate": 4.16
       },
       {
         "source": "Jobnet",
-        "total": 108,
+        "total": 112,
         "submitted": 3,
         "pending": 11,
         "manual_required": 0,
-        "rejected": 94,
-        "submission_rate": 2.78,
-        "actionable_rate": 10.19
+        "rejected": 98,
+        "submission_rate": 2.68,
+        "actionable_rate": 9.82
       },
       {
         "source": "Other/company",
@@ -28650,8 +28650,8 @@
         "source": "IAI official",
         "total": 5,
         "submitted": 0,
-        "pending": 1,
-        "manual_required": 1,
+        "pending": 0,
+        "manual_required": 2,
         "rejected": 3,
         "submission_rate": 0.0,
         "actionable_rate": 40.0
@@ -28678,13 +28678,13 @@
       },
       {
         "source": "Drushim",
-        "total": 454,
+        "total": 467,
         "submitted": 0,
         "pending": 12,
         "manual_required": 3,
-        "rejected": 439,
+        "rejected": 452,
         "submission_rate": 0.0,
-        "actionable_rate": 3.3
+        "actionable_rate": 3.21
       },
       {
         "source": "DSV official",
@@ -28710,17 +28710,17 @@
     "insights": {
       "snapshot": {
         "submitted": 15,
-        "pending": 41,
-        "manual_required": 8,
-        "rejected": 947,
-        "high_score_actionable": 49,
+        "pending": 42,
+        "manual_required": 9,
+        "rejected": 984,
+        "high_score_actionable": 51,
         "safe_auto_submit_now": 0
       },
       "blocker_counts": [
         {
           "category": "low_score_or_hard_reject",
           "label": "התאמה נמוכה או חסם קשיח",
-          "count": 441,
+          "count": 465,
           "recommendation": "לא להשקיע בהגשה; עדיף להרחיב מקורות או קריטריונים מאושרים.",
           "sample_job": {
             "key": "nestle:1415084733",
@@ -28737,7 +28737,7 @@
         {
           "category": "secondary_location",
           "label": "מיקום רחוק לא רלוונטי",
-          "count": 208,
+          "count": 210,
           "recommendation": "לא להשקיע בהגשה למיקום זה אלא אם המודעה כוללת גם מיקום דרומי מאושר או עבודה מרחוק מלאה.",
           "sample_job": {
             "key": "jobnet:13311849",
@@ -28754,7 +28754,7 @@
         {
           "category": "system_skill_gap",
           "label": "מערכת/כלי שלא אומת",
-          "count": 145,
+          "count": 148,
           "recommendation": "לא להגיש אוטומטית כשהכלי הוא דרישת חובה; אפשר לבדוק ידנית אם הוא רק יתרון.",
           "sample_job": {
             "key": "drushim:37618692",
@@ -28765,13 +28765,13 @@
             "link": "https://www.drushim.co.il/job/37618692/77e3b630/",
             "status": "נדרש אישור",
             "category": "system_skill_gap",
-            "reason": "נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           }
         },
         {
           "category": "unclear_location",
           "label": "מיקום לא מספיק ברור",
-          "count": 92,
+          "count": 94,
           "recommendation": "לפתוח את המשרה ולבדוק מיקום אמיתי לפני הגשה.",
           "sample_job": {
             "key": "drushim:38034621",
@@ -28788,7 +28788,7 @@
         {
           "category": "temporary_or_scope",
           "label": "זמני או מחוץ לליבת היעד",
-          "count": 61,
+          "count": 64,
           "recommendation": "להגיש רק אם התפקיד מתאים במיוחד ויש סיכוי ממשי להמשך.",
           "sample_job": {
             "key": "jobmaster:9840352",
@@ -28805,24 +28805,24 @@
         {
           "category": "experience_interpretation",
           "label": "פרשנות ניסיון",
-          "count": 18,
+          "count": 20,
           "recommendation": "להגיש רק אם אפשר להסביר בכנות שהניסיון התקציבי/רכש עומד בדרישת החובה.",
           "sample_job": {
-            "key": "jobmaster:9687307",
-            "score": 97,
-            "company": "מעבר למשרות נוספות הקריה למחקר גרעיני - נגב",
-            "title": "ראש תחום כלכלה ותקציבים לארגון ביטחוני מוביל",
-            "location": "באר שבע, דימונה, ירוחם, ערד",
-            "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9687307",
+            "key": "jobmaster:9843547",
+            "score": 98,
+            "company": "מעבר למשרות נוספות גפן השמות",
+            "title": "מנהל/ת פרויקטים (PMO) בחברה יצרנית בדרום",
+            "location": "אופקים, אשקלון, שדרות",
+            "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843547",
             "status": "נדרש אישור",
             "category": "experience_interpretation",
-            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
+            "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
           }
         },
         {
           "category": "policy_or_missing_fact",
           "label": "מידע חסר או הצהרה",
-          "count": 14,
+          "count": 13,
           "recommendation": "לא לענות בשם קורן בלי אישור עובדתי מפורש.",
           "sample_job": {
             "key": "drushim:38008705",
@@ -28833,13 +28833,13 @@
             "link": "https://www.drushim.co.il/job/38008705/c97f7942/",
             "status": "נדרש אישור",
             "category": "policy_or_missing_fact",
-            "reason": "נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע."
+            "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
           }
         },
         {
           "category": "site_adapter_gap",
           "label": "חסר adapter בטוח לאתר",
-          "count": 9,
+          "count": 12,
           "recommendation": "להעדיף טופס חברה רשמי; אם אין, להשאיר להגשה ידנית עד שנבנה adapter מאומת לאתר.",
           "sample_job": {
             "key": "jobnet:13320618",
@@ -28873,7 +28873,7 @@
         {
           "category": "manual_form",
           "label": "טופס שאינו ניתן להשלמה אוטומטית",
-          "count": 3,
+          "count": 4,
           "recommendation": "להיכנס לקישור, להעלות את קובץ ה-CV המאושר ולסמן בדשבורד שהוגש ידנית.",
           "sample_job": {
             "key": "manual:https://survey.gov.il/he/misrotashd|שירות התעסוקה אשדוד / בית הלוחם|רכז/ת רכש - מספר הזמנה 9053013|אשדוד",
@@ -28976,7 +28976,7 @@
               "link": "https://www.drushim.co.il/job/37859327/0ad09698/",
               "status": "נדרש אישור",
               "category": "unclear_location",
-              "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "drushim:37628097",
@@ -28987,7 +28987,7 @@
               "link": "https://www.drushim.co.il/job/37628097/73067afb/",
               "status": "נדרש אישור",
               "category": "unclear_location",
-              "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "drushim:37996393",
@@ -28998,7 +28998,7 @@
               "link": "https://www.drushim.co.il/job/37996393/4e8f48e9/",
               "status": "נדרש אישור",
               "category": "unclear_location",
-              "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "drushim:37624734",
@@ -29009,7 +29009,7 @@
               "link": "https://www.drushim.co.il/job/37624734/024aa9e6/",
               "status": "נדרש אישור",
               "category": "unclear_location",
-              "reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             }
           ]
         },
@@ -29018,6 +29018,17 @@
           "impact": "5 משרות מובילות נעצרו בגלל דרישת ניסיון סביב 3 שנים או תיאור תפקיד כלכלי.",
           "recommendation": "לקבל מקורן ניסוח עובדתי שמבהיר אילו שנות ניסיון רכש/תקציבים אפשר להציג בביטחון.",
           "jobs": [
+            {
+              "key": "jobmaster:9843547",
+              "score": 98,
+              "company": "מעבר למשרות נוספות גפן השמות",
+              "title": "מנהל/ת פרויקטים (PMO) בחברה יצרנית בדרום",
+              "location": "אופקים, אשקלון, שדרות",
+              "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843547",
+              "status": "נדרש אישור",
+              "category": "experience_interpretation",
+              "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+            },
             {
               "key": "jobmaster:9687307",
               "score": 97,
@@ -29038,7 +29049,7 @@
               "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9842634",
               "status": "נדרש אישור",
               "category": "experience_interpretation",
-              "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "jobmaster:9842627",
@@ -29049,29 +29060,18 @@
               "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9842627",
               "status": "נדרש אישור",
               "category": "experience_interpretation",
-              "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
-            },
-            {
-              "key": "jobmaster:9837476",
-              "score": 87,
-              "company": "מעבר למשרות נוספות פח תעש אשקלון",
-              "title": "PMO פרויקטים בתחום המערכות האלקטרומכניות",
-              "location": "קריית גת",
-              "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9837476",
-              "status": "נדרש אישור",
-              "category": "experience_interpretation",
-              "reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. MS Project appears to be a required skill, but it is not verified in the candidate profile."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "drushim:38048871",
-              "score": 87,
+              "score": 97,
               "company": "רימון שירותי השמה",
               "title": "קניין.ית רכש לחברה יצרנית בקרית גת",
               "location": "קריית גת",
               "link": "https://www.drushim.co.il/job/38048871/0191eb8b/",
               "status": "נדרש אישור",
               "category": "experience_interpretation",
-              "reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             }
           ]
         },
@@ -29089,7 +29089,7 @@
               "link": "https://www.drushim.co.il/job/37618692/77e3b630/",
               "status": "נדרש אישור",
               "category": "system_skill_gap",
-              "reason": "נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile."
+              "reason": "Approval required by submission engine: נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission."
             },
             {
               "key": "drushim:37996963",
@@ -29162,7 +29162,7 @@
               "link": "https://www.jobnet.co.il/jobs?positionid=13306773",
               "status": "נדרש אישור",
               "category": "site_adapter_gap",
-              "reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה."
+              "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
             },
             {
               "key": "jobnet:13303131",
@@ -29187,15 +29187,15 @@
               "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
             },
             {
-              "key": "jobnet:13352263",
+              "key": "jobnet:13153043",
               "score": 90,
-              "company": "PHR",
-              "title": "איש/ת רכש (טכני)",
-              "location": "- תל אביב, פתח תקווה, רמת גן וגבעתיים, בקעת אונו וגבעת שמואל, חולון ובת-ים, מודיעין, שוהם; - ירושלים, יהודה ושומרון, בית שמש; - אשדוד, קרית גת, באר שבע, דימונה, אשקלון, קרית מלאכי, ערד וים המלח; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה; - אילת והערבה; - חו\"ל",
-              "link": "https://www.jobnet.co.il/jobs?positionid=13352263",
+              "company": "אקספריס אקדמי",
+              "title": "אקדמאים מצטיינים לתפקיד Data & BI Analyst",
+              "location": "- תל אביב, פתח תקווה, רמת גן וגבעתיים, בקעת אונו וגבעת שמואל, חולון ובת-ים, מודיעין, שוהם; - חדרה וזכרון יעקב, נתניה ועמק חפר, רעננה, כפר סבא והוד השרון, ראש העין, הרצליה ורמת השרון; - ירושלים, יהודה ושומרון, בית שמש; - עפולה, נצרת ובית שאן, קריות ועמק זבולון, חיפה והכרמל; - אשדוד, קרית גת, באר שבע, אשקלון, קרית מלאכי; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה",
+              "link": "https://www.jobnet.co.il/jobs?positionid=13153043",
               "status": "נדרש אישור",
               "category": "site_adapter_gap",
-              "reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה."
+              "reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter."
             }
           ]
         }
@@ -29221,7 +29221,7 @@
       "requirements": "דרישות: תואר ראשון בסטטיסטיקה, כלכלה, הנדסת תעשייה וניהול או תחום רלוונטי אחר - חובה ניסיון של שנתיים לפחות בתפקיד אנליטי בסביבה עסקית או תעשייתית - חובה ניסיון מוכח בעבודה עם SQL, אקסל, power query, R ניסיון בשימוש בקליקסנס BI – יתרון",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשקלון, קרית גת, אשדוד.; דרישות תואמות: תואר, כלכלה, ניהול, אקסל, ספקים, ניתוח, דוחות",
       "status": "נדרש אישור",
-      "stop_reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה.",
+      "stop_reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
       "cv": ""
     },
     {
@@ -29319,7 +29319,35 @@
       "requirements": "תיאור משרה הובלה וריכוז של פרויקטים בהיבט היזמי, לרבות: תקציב, איכות, לו\"ז ואחריות על תהליכי עבודה בפרויקטים. אחריות על סנכרון בין כלל היחידות הפנים-ארגוניות מרגע רכישת הקרקע ועד למסירת הדירה. עבודה מול ממשקים רבים בין מחלקות המטה הכוללת ריכוז מידע וחומרים, ניתוח והצגת נתונים, הכנת מצגות וכדומה. דרישות התפקיד תואר אקדמי רלוונטי - הנדסת תעשייה וניהול, כלכלה, הנדסה אזרחית, תכנון. יכולת עבודה מול ריבוי ממשקים. יכולת מעקב ובקרה אחר תהליכים. תקשורת בינאישית טובה. יכולת עבודה עם מערכות טכנולוגיות (Office, MS Project וכדומה) נדרש ניסיון בתפקידים דומים (כגון PMO). היכרות עם ענף הבנייה והנדל\"ן - יתרון משמעותי. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: נתיבות.; דרישות תואמות: תואר, כלכלה, ניהול, office, תקציב, ניתוח",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9843547",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות גפן השמות",
+      "title": "מנהל/ת פרויקטים (PMO) בחברה יצרנית בדרום",
+      "location": "אופקים, אשקלון, שדרות",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843547",
+      "score": 98,
+      "requirements": "דרישות התפקיד  תואר ראשון בהנדסת תעשייה וניהול / הנדסה / מנהל עסקים או תחום רלוונטי.  ניסיון של 3 שנים לפחות בניהול פרויקטים בארגון תעשייתי או יצרני.  ניסיון בהובלת פרויקטים מורכבים ורב-ממשקיים.  יכולת ניהול והובלת תהליכים מקצה לקצה.  שליטה גבוהה ב-Excel וביישומי Office.  יכולת אנליטית גבוהה וחשיבה מערכתית.  כישורי תקשורת בינאישית מעולים ויכולת הנעת ממשקים.  עברית ברמה גבוהה, אנגלית ברמה טובה.  היכרות עם מערכות -Priority ו-Monday - יתרון  הכשרה פורמלית בניהול פרויקטים -יתרון כישורים אישיים  יוזמה ויכולת הובלה.  ראייה מערכתית לצד ירידה לפרטים.  יכולת עבודה תחת לחץ וניהול מספר משימות במקביל.  סדר, ארגון ותיעדוף משימות ברמה גבוהה.  אחריות אישית גבוהה ומחויבות לתוצאות.  יכולת עבודה עצמאית ובצוות.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: שדרות, אשקלון, אופקים.; דרישות תואמות: תואר, ניהול, excel, office, אנגלית, תקציב, ניתוח",
+      "status": "נדרש אישור",
+      "stop_reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38048871",
+      "date": "2026-08-11",
+      "company": "רימון שירותי השמה",
+      "title": "קניין.ית רכש לחברה יצרנית בקרית גת",
+      "location": "קריית גת",
+      "link": "https://www.drushim.co.il/job/38048871/0191eb8b/",
+      "score": 97,
+      "requirements": "תיאור משרה הוצאת הזמנות רכש עפ\"י דרישת המערכת יצירת תחרות בין הספקים השונים מציאת מקורות רכש חדשים ניהול משא ומתן עם ספקים בחו\"ל וקבלנים בארץ ממשקי עבודה עם כל המחלקות (תפ\"י, הנדסה, איכות וכו') הוצאת הזמנות לספקים ומעקב אחר ההזמנות עד הגעתם למחסני החברה תמחור מוצרים חדשים בשלב פיתוח וכן תמחור מוצרים קיימים מעקב וטיפול בחוסרי רכש עבודה מול ספקי חו\"ל לרבות טיפול ברישיונות יצוא עבור הספק דרישות התפקיד אנגלית ברמה גבוהה – כתיבה ניסוח ודיבור. ניסיון של 3 שנים לפחות ב רכש כולל מו\"מ בארץ ובחו\"ל. תואר ראשון לוגיסטיקה / תעשיה וניהול – יתרון. נדרש ניסיון ברכש של חומרי גלם וקבלני משנה. ניסיון בעבודה באקסל ופריוריטי. *המשרה פונה לנשים וגברים כאחד. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: קריית גת.; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, ספקים, מו\"מ, משא ומתן",
+      "status": "נדרש אישור",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29333,7 +29361,7 @@
       "requirements": "אנגלית ברמה גבוהה – כתיבה ניסוח ודיבור. ניסיון של 3 שנים לפחות ב רכש כולל מו\"מ בארץ ובחו\"ל. תואר ראשון לוגיסטיקה / תעשיה וניהול – יתרון. נדרש ניסיון ברכש של חומרי גלם וקבלני משנה. ניסיון בעבודה באקסל ופריוריטי. *המשרה פונה לנשים וגברים כאחד.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: שדרות, אשקלון, קריית גת.; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, ספקים, מו\"מ, משא ומתן",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29347,7 +29375,7 @@
       "requirements": "אנגלית ברמה גבוהה – כתיבה ניסוח ודיבור. ניסיון של 3 שנים לפחות ב רכש כולל מו\"מ בארץ ובחו\"ל. תואר ראשון לוגיסטיקה / תעשיה וניהול – יתרון. נדרש ניסיון ברכש של חומרי גלם וקבלני משנה. ניסיון במציאת מקורות רכש חדשים לפרטים ייחודיים – יתרון. ניסיון בעבודה באקסל ופריוריטי. נכונות לעבודה במשרה מלאה 8-17",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: קריית גת.; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, ספקים, מו\"מ, משא ומתן",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29393,6 +29421,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9844385",
+      "date": "2026-08-12",
+      "company": "מעבר למשרות נוספות עוגן הדרכות (י.א.ש) בע\"מ",
+      "title": "לחברת אנרגיה מובילה ליד באר שבע דרוש/ה PMO",
+      "location": "עומר",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844385",
+      "score": 95,
+      "requirements": "תואר- חובה (הנדסת תעשייה וניהול – יתרון ) ניסיון קודם בעבודה עם תקציבים וגאנטים – חובה אקסל רמה גבוהה מאוד- חובה ניסיון בפרויקטים בשטח/תשתית /בניין / עבודות עפר וכו’ – יתרון אנגלית ברמה גבוהה- חובה אסרטיביות, אמינות, \"ראש גדול\", אחריות, עמידה בתנאי לחץ",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, הזמנות, חשבוניות, תקציב",
+      "status": "נדרש אישור",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. Gantt appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
+      "cv": ""
+    },
+    {
       "key": "manual:https://www.cbccom.com/%D7%9E%D7%A9%D7%A8%D7%94|cbc israel / החברה המרכזית למשקאות|כלכלן/ית- נתיבות|נתיבות",
       "date": "2026-07-30",
       "company": "CBC ISRAEL / החברה המרכזית למשקאות",
@@ -29417,7 +29459,7 @@
       "requirements": "תיאור משרה דרוש/ה קניין/ית רכש לתחום האלקטרוניקה בחברת רד תקשורת תחומי אחריות : • ניהול שוטף של הזמנות רכש • ביצוע מו\"מ וניהול חוזים עם ספקים בארץ ובחו\"ל. • שיתוף פעולה עם מחלקות הנדסה, ייצור ולוגיסטיקה מיקום : רמת החייל , תל אביב היברידי – יום אחד בשבוע דרישות התפקיד • תואר ראשון בתחומים רלוונטיים (לוגיסטיקה, כלכלה, תעשיה וניהול). • הבנה טכנית של מוצרים ותהליכי ייצור – יתרון . • קורסים מקצועים בתחומי הרכש - יתרון. • ניסיון קודם בתפקיד קניין/ית/איש/אשת רכש בתחום האלקטרוניקה . • ניסיון במערכות רכש ממוכנות ומיומנות גבוהה ב- Excel • יכולת מעולה לניהול מו\"מ, אסרטיביות, יוזמה, ויכולת עבודה עצמאית. • אנגלית ברמה גבוהה * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.; דרישות תואמות: תואר, כלכלה, ניהול, excel, אנגלית, ספקים, מו\"מ",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29447,20 +29489,6 @@
       "status": "הוגש",
       "stop_reason": "הוגש בהצלחה דרך Jobnet; עמוד התגובה הציג \"קורות החיים נשלחו בהצלחה\".",
       "cv": "קורן דהן- קורות חיים.pdf"
-    },
-    {
-      "key": "jobmaster:9844385",
-      "date": "2026-08-12",
-      "company": "מעבר למשרות נוספות עוגן הדרכות (י.א.ש) בע\"מ",
-      "title": "לחברת אנרגיה מובילה ליד באר שבע דרוש/ה PMO",
-      "location": "עומר",
-      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844385",
-      "score": 93,
-      "requirements": "תואר- חובה (הנדסת תעשייה וניהול – יתרון ) ניסיון קודם בעבודה עם תקציבים וגאנטים – חובה אקסל רמה גבוהה מאוד- חובה ניסיון בפרויקטים בשטח/תשתית /בניין / עבודות עפר וכו’ – יתרון אנגלית ברמה גבוהה- חובה אסרטיביות, אמינות, \"ראש גדול\", אחריות, עמידה בתנאי לחץ",
-      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום בתוך רדיוס החיפוש משדרות: עומר (37 ק״מ מתוך 40 ק״מ).; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, הזמנות, חשבוניות, תקציב",
-      "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. Gantt appears to be a required skill, but it is not verified in the candidate profile.",
-      "cv": ""
     },
     {
       "key": "drushim:38010396",
@@ -29599,7 +29627,7 @@
       "requirements": "דרישות: ניסיון קודם בתפקיד רכש/ קניין - יתרון ניסיון בעבודה מול ספקים ניסיון קודם בספירת מלאי/ ניהול מחסן קטן - יתרון אישיות מסודרת מאורגנת ומדויקת העבודה בצמוד למנהל מערך הרכש והלוגיסטיקה במפעל",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.; דרישות תואמות: ניהול, ספקים, הזמנות",
       "status": "נדרש אישור",
-      "stop_reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה.",
+      "stop_reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
       "cv": ""
     },
     {
@@ -29613,7 +29641,7 @@
       "requirements": "דרישות: בוגר/ת תואר ראשון בממוצע ציונים 80+ ציון פסיכומטרי 650 ומעלה יכולת חשיבה לוגית ואנליטית גבוהה ורקע טכנולוגי בסיסי אין צורך בניסיון קודם – אנו נספק לכם את כל הכלים להצלחה. המשרה מיועדת לגברים ונשים כאחד. * אינו מתאים לסטודנטים/ות עם יתרת לימודים של יותר מסמסטר.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.; דרישות תואמות: תואר, ניתוח, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
       "status": "נדרש אישור",
-      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: Power BI appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
+      "stop_reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
       "cv": ""
     },
     {
@@ -29627,7 +29655,7 @@
       "requirements": "דרישות: בוגר/ת תואר ראשון בממוצע ציונים 80+ ציון פסיכומטרי 650 ומעלה יכולת חשיבה לוגית ואנליטית גבוהה ורקע טכנולוגי בסיסי אין צורך בניסיון קודם – אנו נספק לכם את כל הכלים להצלחה. המשרה מיועדת לגברים ונשים כאחד. * אינו מתאים לסטודנטים/ות עם יתרת לימודים של יותר מסמסטר.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.; דרישות תואמות: תואר, ניתוח, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: Power BI appears to be a required skill, but it is not verified in the candidate profile.",
+      "stop_reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
       "cv": ""
     },
     {
@@ -29641,7 +29669,7 @@
       "requirements": "דרישות: בוגר/ת תואר ראשון בממוצע ציונים 80+ ציון פסיכומטרי 650 ומעלה. יכולת חשיבה לוגית ואנליטית גבוהה ורקע טכנולוגי בסיסי. אין צורך בניסיון קודם – אנו נספק לכם את כל הכלים להצלחה. המשרה מיועדת לגברים ונשים כאחד. * לא מתאים לסטודנטים/ות עם יתרת לימודים של יותר מסמסטר.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.; דרישות תואמות: תואר, ניתוח, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: Power BI appears to be a required skill, but it is not verified in the candidate profile.",
+      "stop_reason": "Adapter gap by submission engine: Jobnet has a direct SendCv form, but the auto-submit adapter is not yet validated for mandatory questions, terms, email confirmation, and success evidence. Next: Send as manual handoff or inspect the SendCv form in a persistent browser before adding a safe Jobnet submit adapter.",
       "cv": ""
     },
     {
@@ -29683,7 +29711,7 @@
       "requirements": "• אחריות ואמינות • יחסי אנוש מצוינים ויכולת עבודה מול גורמים מגוונים • סדר והקפדה על פרטים • ראש גדול, יוזמה ויכולת הובלה עצמאית • שליטה טובה מאוד באנגלית (דיבור וכתיבה) • שליטה גבוהה בתוכנות משרדיות עדכניות Office, Canva, ChatGPT : • יתרון לבעלי רקע במחקר ולבעלות היכרות עם מערכת הבריאות",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: אופקים.; דרישות תואמות: ניהול, office, אנגלית, ספקים, תקציב",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: Canva appears to be a required skill, but it is not verified in the candidate profile. ChatGPT appears to be a required skill, but it is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: Canva appears to be a required skill, but it is not verified in the candidate profile. ChatGPT appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29725,7 +29753,7 @@
       "requirements": "ביצוע בקרה תקציבית בחברה הקבלנית, בחינה של תכנון מול ביצוע, אנליזה, לוחות זמנים, ניתוח נת...",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: נתיבות.; דרישות תואמות: תקציב, ניתוח",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29739,7 +29767,7 @@
       "requirements": "מקור רשמי אוניברסיטת בן-גוריון; מספר משרה 2026 - 12; כלכלנ/ית-מדור תקציב רגיל-אגף תכנון תקצוב וכלכלה. טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.; דרישות תואמות: כלכלה, תקציב",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29771,15 +29799,15 @@
       "cv": "koren_dahan_cv.pdf"
     },
     {
-      "key": "drushim:38048871",
-      "date": "2026-08-11",
-      "company": "רימון שירותי השמה",
-      "title": "קניין.ית רכש לחברה יצרנית בקרית גת",
-      "location": "קריית גת",
-      "link": "https://www.drushim.co.il/job/38048871/0191eb8b/",
+      "key": "jobmaster:9843544",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות גפן השמות",
+      "title": "כלכלן/ית | חברה גדולה ויציבה באזור באר שבע",
+      "location": "באר שבע",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9843544",
       "score": 87,
-      "requirements": "הוצאת הזמנות רכש עפ\"י דרישת המערכת יצירת תחרות בין הספקים השונים מציאת מקורות רכש חדשים...",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: קריית גת.; דרישות תואמות: ספקים, הזמנות",
+      "requirements": "תואר ראשון בכלכלה – חובה. ניסיון של כ-3 שנים ככלכלן/ית (גם שנתיים יישקלו למועמדים/ות מצטיינים/ות). ניסיון בבניית מודלים כלכליים, תמחור ובקרות רווחיות. שליטה גבוהה מאוד ב-Excel. חשיבה אנליטית, דיוק ויכולת עבודה בצוות. יתרון: תואר שני בכלכלה או מנהל עסקים. ניסיון בעבודה עם מערכות BI. היכרות עם מערכת Priority.",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: באר שבע.; דרישות תואמות: תואר, כלכלה, excel, תקציב, ניתוח, דוחות, priority",
       "status": "נדרש אישור",
       "stop_reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה.",
       "cv": ""
@@ -29795,7 +29823,7 @@
       "requirements": "דרישות התפקיד: • ניסיון של לפחות 3 שנים בתפקיד PMO, בקרת פרויקטים או תיאום פרויקטים – חובה. • ניסיון בפרויקטי הקמה, תשתיות, אלקטרומכניקה או תעשייה – יתרון משמעותי. • שליטה גבוהה ב-Excel ובמערכות Office – חובה. • ניסיון בעבודה עם MS Project או מערכת ניהול פרויקטים דומה – יתרון. • ניסיון בעבודה עם מערכת Priority – יתרון. • יכולת קריאת שרטוטים טכניים – יתרון. • יכולת עבודה עצמאית, סדר וארגון ברמה גבוהה. • יכולת עבודה מול ממשקים מרובים ובסביבה דינמית. • אנגלית ברמה טובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: קריית גת.; דרישות תואמות: ניהול, excel, office, אנגלית, ניתוח, דוחות, priority",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. MS Project appears to be a required skill, but it is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. MS Project appears to be a required skill, but it is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29809,7 +29837,7 @@
       "requirements": "תיאור משרה הפקת וניתוח דוחות סחר, מכירות ובקרה – ברמה יומית תכנון הזמנות עונתיות בניית תקציבים ותחזיות מלאי תוך מתן גדש על רווח גולמי הכנת דוחות רווח והפסד תיאום תהליכי סחר דרישות התפקיד תואר ראשון בכלכלה/ מנהל עסקים/ תעשיה וניהול - חובה ניסיון בתפקיד דומה – חובה ניסיון בעבודה בתחום הריטייל – יתרון משמעותי חשיבה אנליטית ויכולת עבודה עצמאית בממשקים מרובים ניסיון בהפקת דוחות מורכבים, ניתוח והסקת מסקנות שליטה ברמה גבוהה באקסל * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, כלכלה, ניהול, אקסל, הזמנות, תקציב, ניתוח",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29851,7 +29879,7 @@
       "requirements": "• תואר ראשון בכלכלה / מנהל עסקים / חשבונאות – חובה. • ניסיון קודם מחברות בקרה כלכלית או במחלקת כספים של משרד תכנון/הנדסה – יתרון משמעותי. ניסיון של 3 ומעלה שנים. • היכרות מעמיקה עם תעריפי תכנון ושיטות התקשרות במגזר הציבורי והפרטי. • שליטה מצוינת באקסל • ניסיון עבודה עם מערכות ERP • יכולת עבודה עצמאית, סדר וארגון ברמה גבוהה. המשרה מיועדת לנשים ולגברים כאחד.",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.; דרישות תואמות: תואר, כלכלה, ניהול, אקסל, הצעות מחיר, תקציב, ניתוח",
       "status": "נפסל",
-      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -29865,7 +29893,7 @@
       "requirements": "דרישות: דרישות התפקיד ניסיון קודם בתפקיד משלח/ת, דיספאצ'ר/ית או אחראי/ת חלוקה – חובה. ניסיון בתכנון מסלולי חלוקה – חובה. ניסיון בעבודה מול נהגים – יתרון. שליטה במערכות מחשב. יכולת עבודה בסביבה דינמית, סדר וארגון, אחריות ויחסי אנוש טובים",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: אשקלון, קרית גת, אשדוד.; דרישות תואמות: ניהול",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29879,7 +29907,7 @@
       "requirements": "ניסיון הזמנות רכש טכני למפעל – מיסבים, שמנים, עיבוד שבב, בוכנות, גלגלי שיניים, ציוד הידראולי, מכני ופנאוטמטי- 3 שנים . קבלת הצעות מחיר, ניהול משא ומתן , פתיחת הזמנות. ידע בציוד טכני, מכני, פנאומטי והידראולי – חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: שדרות, נתיבות, אשקלון.; דרישות תואמות: ניהול, הצעות מחיר, משא ומתן, הזמנות",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: יש דרישת ניסיון סביב 3 שנים, לכן נדרש אישור/בדיקה לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -29977,7 +30005,7 @@
       "requirements": "תואר ראשון כלכלה/מנע\"ס- חובה אנגלית מעולה!! ניסיון מוכח בחברות תעשייה עם עסקאות מורכבות ובהקפים כספיים גבוהים ניסיון עבודה מול ספקים בחו\"ל – יתרון משמעותי הכרות עם נושא שילוח ותנאי מכר – יתרון",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: קריית גת, באר שבע, אשדוד.; דרישות תואמות: תואר, כלכלה, ניהול, אנגלית, ספקים, מו\"מ, ניתוח",
       "status": "נפסל",
-      "stop_reason": "נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30047,7 +30075,7 @@
       "requirements": "מקור רשמי אוניברסיטת בן-גוריון; מספר משרה 2026 - 85; קניינ/ית התקשרויות וחשבונות-מדור התקשרויות וחשבונות-מחלקת רכש והספקה-אגף הכספים. טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30075,7 +30103,7 @@
       "requirements": "· תואר ראשון בכלכלה/משפטים/חשבונאות/ניהול/פכ\"ם ממוסד אקדמי מוכר. · ניסיון של שנתיים לפחות בכתיבה ובליווי מכרזים עבור גופים ציבוריים או ארגונים גדולים. · ניסוח של לפחות 5 מכרזים בתחומים שונים (שירותים, טובין, IT, אבטחה, ניקיון וכיו\"ב). · יכולת מוכחת בניסוח מסמכים מקצועיים והובלת תהליך רכש מקצה לקצה. · בקיאות בחוק חובת המכרזים, תקנות חובת המכרזים, הוראות התכ\"מ. · המשרה כוללת עבודה במשרדי הלקוחות בירושלים, לפחות יומיים בשבוע. · יכולת למידה ועבודה עצמאית, פרו-אקטיביות ותשומת לב לפרטים. · יחסי אנוש מצוינים ויכולת עבודה בצוות. *משרה מלאה במשרדי החברה בת\"א (יום עבודה מהבית+יום עבודה בירושלים)",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.; דרישות תואמות: תואר, כלכלה, ניהול, דוחות",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30131,7 +30159,7 @@
       "requirements": "תיאור משרה ניהול תהליכי רכש (Sourcing) מקצה לקצה – משלב הגדרת הצורך ועד חתימה וניהול חוזים. הובלת תהליכי בקשת הצעות מחיר (RFQ) וניהול משא ומתן מול ספקים. עבודה שוטפת מול ממשקים פנימיים להבנת צרכים וליווי פרויקטים. ניהול קשרי ספקים, מעקב אחר ביצועים וקידום שיתופי פעולה ארוכי טווח. זיהוי הזדמנויות לחיסכון בעלויות ושיפור תהליכי רכש. ניהול סיכונים, מעקב אחר עמידה ביעדי איכות, עלות ואספקה, והבטחת עמידה במדיניות החברה. דרישות התפקיד תואר ראשון בהנדסה או במנהל עסקים מבית ספר מוכר לעסקים. תואר שני ברכש - יתרון. רקע מקצועי בתחום ה-Sourcing / רכש אסטרטגי. ניסיון בניהול חוזים והבנה/מודעות להיבטים משפטיים. כישורים בין-אישיים גבוהים, יכולת עבודה בסביבה מטריציונית ובינלאומית, ומוכוונות להישגים ותוצאות. שליטה מלאה באנגלית. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, ניהול, אנגלית, ספקים, הצעות מחיר, משא ומתן",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30145,7 +30173,7 @@
       "requirements": "לקבוצת אליקים בן ארי בע\"מ, דרוש/ה בקר/ית תקציב לפרויקטים. התפקיד כולל אחריות על ניהול ובק...",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשדוד.; דרישות תואמות: ניהול, תקציב",
       "status": "נדרשת הגשה ידנית",
-      "stop_reason": "נדרשת הגשה ידנית: מקור Drushim דורש מעבר דרך company fallback; לא נמצא טופס קריירה רשמי פעיל באתר החברה (benari.co.il), ולכן יש להשלים ידנית דרך Drushim ולוודא שקורות החיים העדכניים צורפו.",
+      "stop_reason": "Manual submission required by submission engine: The source did not expose a reliable direct application form. Next: Search for the same role on the official company career page before sending a manual handoff.",
       "cv": "לא צורף - נדרשת השלמה ידנית"
     },
     {
@@ -30159,7 +30187,7 @@
       "requirements": "תיאור משרה ניהול תהליכי רכש (Sourcing) מקצה לקצה – משלב הגדרת הצורך ועד חתימה וניהול חוזים. הובלת תהליכי בקשת הצעות מחיר (RFQ) וניהול משא ומתן מול ספקים. עבודה שוטפת מול ממשקים פנימיים להבנת צרכים וליווי פרויקטים. ניהול קשרי ספקים, מעקב אחר ביצועים וקידום שיתופי פעולה ארוכי טווח. זיהוי הזדמנויות לחיסכון בעלויות ושיפור תהליכי רכש. ניהול סיכונים, מעקב אחר עמידה ביעדי איכות, עלות ואספקה, והבטחת עמידה במדיניות החברה. דרישות התפקיד תואר ראשון בהנדסה או במנהל עסקים מבית ספר מוכר לעסקים. תואר שני ברכש - יתרון. רקע מקצועי בתחום ה-Sourcing / רכש אסטרטגי. ניסיון בניהול חוזים והבנה/מודעות להיבטים משפטיים. כישורים בין-אישיים גבוהים, יכולת עבודה בסביבה מטריציונית ובינלאומית, ומוכוונות להישגים ותוצאות. שליטה מלאה באנגלית. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, ניהול, אנגלית, ספקים, הצעות מחיר, משא ומתן",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30243,7 +30271,7 @@
       "requirements": "דרישות: ניסיון של לפחות 3-4 שנים ברכש בחברות בניה או תשתיות– חובה. שליטה מלאה ביישומי Office – חובה. ניסיון בענף התשתיות והבנייה – חובה. יכולת ניהול מו\"מ והובלת תהליכים מסחריים. יכולת עבודה תחת לחץ. סדר , ארגון ויכולת בקרה גבוהה על תהליכים. ניסיון בעבודה עם מערכת Priority – חובה. אנגלית ברמה גבוהה – יתרון. יחסי אנוש מצוינים , אסרטיביות ויכולת הובלה של אנשים. משרה מלאה, פונה לשני המינים.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשקלון, קרית גת, אשדוד.; דרישות תואמות: ניהול, office, אנגלית, הצעות מחיר, מו\"מ, תקציב, ניתוח",
       "status": "נפסל",
-      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30257,21 +30285,7 @@
       "requirements": "דרישות: ניסיון של לפחות 3-4 שנים ברכש בחברות בניה או תשתיות– חובה. שליטה מלאה ביישומי Office – חובה. ניסיון בענף התשתיות והבנייה – חובה. יכולת ניהול מו\"מ והובלת תהליכים מסחריים. יכולת עבודה תחת לחץ. סדר , ארגון ויכולת בקרה גבוהה על תהליכים. ניסיון בעבודה עם מערכת Priority – חובה. אנגלית ברמה גבוהה – יתרון. יחסי אנוש מצוינים , אסרטיביות ויכולת הובלה של אנשים. משרה מלאה, פונה לשני המינים.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשקלון, קרית גת, אשדוד.; דרישות תואמות: ניהול, office, אנגלית, הצעות מחיר, מו\"מ, תקציב, ניתוח",
       "status": "נפסל",
-      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר.",
-      "cv": ""
-    },
-    {
-      "key": "jobmaster:9823780",
-      "date": "2026-08-04",
-      "company": "מעבר למשרות נוספות דגש פ.ק. בע\"מ",
-      "title": "דרוש/ה PMO – לחברה יצרנית בתחום הייטק",
-      "location": "יד בנימין",
-      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9823780",
-      "score": 78,
-      "requirements": "•תואר ראשון בהנדסה / תעשייה וניהול / מנהל עסקים או תחום רלוונטי – חובה. •ניסיון של 1-2 שנים בתפקיד PMO / ניהול פרויקטים – חובה. •ניסיון בעבודה בסביבה תעשייתית / תפעולית – יתרון משמעותי. •שליטה גבוהה באקסל, PowerPoint וכלי ניהול פרויקטים (MS Project / Monday / Jira וכד’). •יכולת אנליטית גבוהה, סדר וארגון, וראייה מערכתית. •יכולת עבודה מול ריבוי ממשקים והנעת תהליכים ללא סמכות ישירה. •אנגלית ברמה טובה מאוד. •יחסי אנוש מצוינים, עצמאות ויכולת עבודה בלחץ",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום בתוך רדיוס החיפוש משדרות: יד בנימין (37 ק״מ מתוך 40 ק״מ).; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, תקציב, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
-      "status": "נפסל",
-      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30299,7 +30313,7 @@
       "requirements": "*תואר ראשון בכלכלה / מנהל עסקים / תעשייה וניהול – חובה. *ניסיון של לפחות 3 שנים בתחום הבקרה התקציבית – חובה. *שליטה מלאה ב-Excel (כולל פונקציות מתקדמות) – חובה. *ניסיון בעבודה עם מערכות ERP – יתרון משמעותי. *יכולת אנליטית גבוהה וירידה לפרטים. *יכולת עבודה עצמאית ובצוות.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: באר שבע.; דרישות תואמות: תואר, כלכלה, ניהול, excel, ספקים, הזמנות, תקציב",
       "status": "נפסל",
-      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30341,7 +30355,7 @@
       "requirements": "תיאור משרה לחברה תעשייתית יצרנית דרוש/ה עוזר/ת רכש התפקיד כולל: תמיכה שוטפת בפעילות מחלקת רכש בחברה איתור וניהול ספקים ניהול משא ומתן מול ספקים על מנת להוזיל עלויות שיפור עלויות ותנאי רכישה עיתוד וניהול מלאי מציאת ספקים חלופיים תפעול חשבוניות מול מחלקת כספים קידומי אספקות דרישות התפקיד תואר ראשון בניהול לוגיסטיקה / מנהל עסקים-יתרון ניסיון ברכש מתחום העיבוד שבבי/ סמיקונדקטור/ אופנים – לפחות שנתיים הכרות עם מערכת Priority-יתרון ידע על תוכנות office אנגלית ברמה טובה מאוד * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, ניהול, office, אנגלית, ספקים, משא ומתן, חשבוניות",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30355,7 +30369,7 @@
       "requirements": "ניסיון של לפחות שנתיים בתפקיד קניין/ית רכש – חובה. ניסיון בעבודה מול ספקים בחו\"ל. ניסיון בעבודה עם מערכת Priority. תואר אקדמי רלוונטי. אנגלית ברמה טובה מאוד, כולל קריאה וכתיבה. יכולת עבודה עצמאית, סדר וארגון, דיוק, אחריות ויחסי אנוש מצוינים.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: קריית גת.; דרישות תואמות: תואר, ניהול, אנגלית, ספקים, הצעות מחיר, הזמנות, דוחות",
       "status": "נפסל",
-      "stop_reason": "MRP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30383,7 +30397,7 @@
       "requirements": "תיאור משרה לחברה תעשייתית יצרנית דרוש/ה עוזר/ת רכש התפקיד כולל: תמיכה שוטפת בפעילות מחלקת רכש בחברה איתור וניהול ספקים ניהול משא ומתן מול ספקים על מנת להוזיל עלויות שיפור עלויות ותנאי רכישה עיתוד וניהול מלאי מציאת ספקים חלופיים תפעול חשבוניות מול מחלקת כספים קידומי אספקות דרישות התפקיד תואר ראשון בניהול לוגיסטיקה / מנהל עסקים-יתרון ניסיון ברכש מתחום העיבוד שבבי/ סמיקונדקטור/ אופנים – לפחות שנתיים הכרות עם מערכת Priority-יתרון ידע על תוכנות office אנגלית ברמה טובה מאוד * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, ניהול, office, אנגלית, ספקים, משא ומתן, חשבוניות",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: המיקום לא מספיק ברור; נדרש אישור לפני הגשה. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30397,7 +30411,7 @@
       "requirements": "תיאור משרה אם צברת ניסיון בעולם הרכש ואת/ה מחפש/ת את התפקיד הבא שיאפשר לך להתפתח מקצועית, לעבוד בסביבה טכנולוגית מתקדמת ולהיות חלק מחברה מובילה – זו יכולה להיות ההזדמנות שחיפשת. לחברה יצרנית מובילה בתחום האלקטרוניקה באזור הדרום דרוש/ה קניין/ית רכש להשתלבות בצוות מקצועי, בתפקיד מגוון ובעל השפעה על פעילות הייצור והשרשרת התפעולית. במסגרת התפקיד: ניהול תהליכי רכש של רכיבים, ציוד וחומרי גלם. עבודה שוטפת מול ספקים בארץ ובחו\"ל, כולל ניהול הזמנות, קבלת הצעות מחיר ומעקב אחר אספקות. עבודה עם מערכת Priority והרצת דוחות MRP. ממשקי עבודה שוטפים עם מחלקות הייצור, התפ\"י והפיתוח. השתלבות בתפקיד המשלב אחריות, עצמאות ולמידה מקצועית. דרישות התפקיד ניסיון של לפחות שנתיים בתפקיד קניין/ית רכש – חובה. ניסיון בעבודה מול ספקים בחו\"ל. ניסיון בעבודה עם מערכת Priority. תואר אקדמי רלוונטי. אנגלית ברמה טובה מאוד, כולל קריאה וכתיבה. יכולת עבודה עצמאית, סדר וארגון, דיוק, אחריות ויחסי אנוש מצוינים. * משרה זו פונה לנשים",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: קריית גת.; דרישות תואמות: תואר, ניהול, אנגלית, ספקים, הצעות מחיר, הזמנות, דוחות",
       "status": "נפסל",
-      "stop_reason": "MRP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30438,9 +30452,9 @@
       "score": 76,
       "requirements": "השכלה בכלכלה/מנהל עסקים/חשבונאות/תעשייה וניהול חובה; שנתיים לפחות כאיש/אשת תכנון ובקרה או כלכלן/ית חובה; שנתיים לפחות בתמחור והכנת הצעות מחיר ללקוחות חובה.",
       "fit": "השכלה רלוונטית, ניסיון בבקרה תקציבית, ניתוח פערים, תקציבים, דוחות, הצגת נתונים ועבודה מול ממשקים; קיימת התאמה חלקית לתמחור דרך ניסיון בהצעות מחיר ברכש.",
-      "status": "נדרש אישור",
-      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: קיימת דרישת חובה לשנתיים בתמחור והכנת הצעות מחיר ללקוחות החברה, שאינה מופיעה במפורש בקורות החיים. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
-      "cv": ""
+      "status": "נדרשת הגשה ידנית",
+      "stop_reason": "Manual submission required by submission engine: The blocker does not match a known failure pattern. Next: Inspect the page and add a new classifier rule if this repeats.",
+      "cv": "לא צורף - נדרשת השלמה ידנית"
     },
     {
       "key": "jobmaster:9695051",
@@ -30453,7 +30467,7 @@
       "requirements": "- ניסיון בתפקיד קניין/ית רכש בתחום הבנייה. - הכרות מעמיקה עם חומרי בניין וציוד לבנייה. - יכולת ניהול משא ומתן. - שליטה מלאה בתוכנות OFFICE, במיוחד באקסל (טבלאות, ניתוח נתונים וכו’). - ניסיון בעבודה עם מערכת SAP או פריוריטי – יתרון. - כושר ארגון, יכולת עבודה עצמאית ויכולת עבודה תחת לחץ.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: באר שבע.; דרישות תואמות: ניהול, אקסל, office, ספקים, משא ומתן, תקציב, ניתוח",
       "status": "נפסל",
-      "stop_reason": "SAP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30495,7 +30509,7 @@
       "requirements": "מקור רשמי אוניברסיטת בן-גוריון; מספר משרה 2026 - 95; ספרנ/ית רכש כתבי עת ומאגרי מידע-מדור שירותים טכניים- ספרייה- רקטור. טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: באר שבע.",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30509,7 +30523,7 @@
       "requirements": "מקור רשמי אוניברסיטת בן-גוריון; מספר משרה 2026 - 225; תקציבנ/ית-מדור ניהול תקציבי מחקר ישראל-הרשות למחקר ופיתוח-סגן נשיא ודיקן למו\"פ. טופס ההגשה הרשמי דורש תשובה לשאלה האם הגשת מועמדות בעבר אחרי 1/1/2013 לפני שליחה.",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: באר שבע.; דרישות תואמות: ניהול, תקציב",
       "status": "נדרש אישור",
-      "stop_reason": "נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile.",
+      "stop_reason": "Approval required by submission engine: נדרש אישור לפני הגשה: The official form asks whether the candidate previously applied, and this answer is not verified in the candidate profile. Next: Ask the operator for approval or the missing policy-sensitive answer before attempting submission.",
       "cv": ""
     },
     {
@@ -30523,7 +30537,7 @@
       "requirements": "תיאור משרה חברה העוסקת בעולם התעופה מחפשת איש/אשת לוגיסטיקה מנוסה, מקצועי, וטכנולוגי לניהול המערך האפסנאי והתמיכה הלוגיסטית במחוז דרום. • ניהול שוטף של המחסנים פיזית ובמערכות המידע. • אחריות מלאה על תהליכי Kitting (הכנה, ניפוק וסנכרון קיטים ייעודיים) למניעת עיכובים לוגיסטיים. • ביצוע ביקורת קבלה לרכיבים, חלפים וחומרים נכנסים, כולל בדיקת תיעוד תעופתי/איכותי. • תמיכה ברכש מקומי: פתיחה וניהול של הזמנות רכש מול ספקים מקומיים בתוך מערכת המידע. • ניהול ובקרת מלאי בזמן אמת, הפקת דוחות ומניעת חוסרים. דרישות התפקיד • ניסיון מוכח של 3 שנים לפחות בניהול מחסן/אפסנאות בסביבה תעשייתית מורכבת או תעופתית (יוצאי מערך הלוגיסטיקה של חיל האוויר / חברות תעופה – יתרון משמעותי). • שליטה ברמה גבוהה מאוד במערכת Priority (הקמת פריטים, תנועות מלאי, דרישות והזמנות רכש, הפקת דוחות) - חובה • הבנה של תהליכי איכות ואישור חומרים (ניסיון בביקורת קבלה תעופתית – יתרון משמעותי) • ניסיון עבודה מול ספקים, הבנת תהליכי שרשרת אס",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.; דרישות תואמות: ניהול, אנגלית, ספקים, הזמנות, דוחות, priority",
       "status": "נפסל",
-      "stop_reason": "נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30551,7 +30565,7 @@
       "requirements": "דרישות: • מה עלייך להביא/ דרישות: 1. ניסיון קודם במחסן / לוגיסטיקה- חובה • 2. ידע בעבודה עם מחשב ומערכת ERP פריוריטי בפרט- יתרון משמעותי • 3. יכולת ניהול וארגון גבוהה • 4. אחריות, יכולת עבודה בצוות. • 5. יכולת עבודה בסביבה דינמית תחת לחץ",
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: אשקלון, אשדוד, קרית מלאכי.; דרישות תואמות: ניהול, ספקים, הזמנות",
       "status": "נפסל",
-      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -30818,6 +30832,20 @@
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשדוד.; דרישות תואמות: תואר, כלכלה, ניהול, excel, תקציב, ניתוח, דוחות",
       "status": "נפסל",
       "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38050885",
+      "date": "2026-08-11",
+      "company": "מתנ\"ס גבעת שמואל",
+      "title": "קניין/ית ואחראי/ת רכש",
+      "location": "גבעת שמואל",
+      "link": "https://www.drushim.co.il/job/38050885/d891b6ae/",
+      "score": 66,
+      "requirements": "תיאור משרה למתנ\"ס גבעת שמואל דרוש/ה קניין/ית ואחראי/ת רכש היקף משרה: 50%–75% | מיקום: גבעת שמואל מחפשים איש/אשת מקצוע עם אוריינטציה מסחרית ויכולות ארגון גבוהות להובלת תחום הרכש, המכרזים והמלאי במתנ\"ס. עיקרי התפקיד: ניהול וריכוז תהליכי הרכש, איתור ספקים וניהול מו\"מ. פעול מכרזי רכש וניהול ממשקים. מעקב, בקרה תקציבית ולוגיסטית. ניהול ובקרת מלאי (אינוונטר). דרישות התפקיד ניסיון: שנתיים ומעלה ברכש, מלאי ועבודה מול ספקים – חובה. מחשב: שליטה מלאה ב-Office (דגש על Excel) ויכולת למידת מערכות חדשות. כישורים: הבנה עסקית/פיננסית, ניסיון בניהול תקציב, סדר וריבוי משימות. יתרונות: תואר אקדמי (כלכלה/מנהל עסקים/לוגיסטיקה/תעשייה וניהול) והיכרות עם המגזר הציבורי (חוק חובת המכרזים). * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: תואר, כלכלה, ניהול, excel, office, ספקים, מו\"מ",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'גבעת שמואל' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -31157,17 +31185,31 @@
       "cv": ""
     },
     {
-      "key": "jobmaster:9844151",
-      "date": "2026-08-12",
-      "company": "מעבר למשרות נוספות נטפים",
-      "title": "דרוש/ה מנהל/ת פרויקטים למחלקת שיחול הנדסית בנטפים",
-      "location": "חצרים, מגל",
-      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844151",
+      "key": "jobmaster:9831899",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות תובל פרסונל",
+      "title": "דרוש/ה פקיד/ת רכש וניהול מלאי למחסן הפצה באזור השפלה",
+      "location": "בני ראם",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9831899",
       "score": 63,
-      "requirements": "Project Management knowledge and experience University Degree - preferred Excellent communication and interpersonal skills. SAP and projects management systems knowledge Ability to create and implement global processes. A team player. Fast learner and independent. English – Must, Other languages – Advantage",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום בתוך רדיוס החיפוש משדרות: חצרים (34 ק״מ מתוך 40 ק״מ).; דרישות תואמות: excel",
+      "requirements": "ראש גדול,אחריות ,רצינות, אנגלית ברמה טובה, איכפתיות, יסודיות, חריצות. יתרון ניסיון בתכנת Sap Business ONE. חובה ניסיון בתפקיד זהה לפחות 3 שנים. שליטה בסיסית באקסל.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; מיקום באזורי היעד: אשדוד.; דרישות תואמות: ניהול, אקסל, אנגלית, ספקים, הזמנות, חשבוניות",
       "status": "נפסל",
       "stop_reason": "SAP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9844860",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות פריץ קומפניס ישראל טי בע\"מ",
+      "title": "קדם/ת רכש בתחום החלפים | חברה מובילה בתחום הלוגיסטיקה | אור יהודה",
+      "location": "אור יהודה",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844860",
+      "score": 63,
+      "requirements": "מה אנחנו מחפשים? ✔ ניסיון של כשנתיים בתפעול רכש – יתרון. ✔ הבנה טכנית/תעשייתית בתחום החלפים – יתרון משמעותי. ✔ שליטה מצוינת ב-Office ובפרט Excel – חובה. ✔ ניסיון במערכת Priority – יתרון משמעותי. ✔ אנגלית ברמה טובה – יתרון. הכישורים שיביאו אותך להצלחה ⭐ יוזמה, אחריות ויכולת פתרון בעיות. ⭐ תקשורת בינאישית גבוהה ויכולת עבודה מול ממשקים מרובים. ⭐ סדר, ארגון וירידה לפרטים. ⭐ יכולת עבודה תחת לחץ וניהול זמן אפקטיבי. ⭐ חשיבה אנליטית וראייה תהליכית. 📍 מיקום: אור יהודה.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: ניהול, excel, office, אנגלית, ספקים, הזמנות, priority",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'אור יהודה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -31266,6 +31308,20 @@
       "fit": "יש התאמה לרכש, ספקים, הצעות מחיר, משא ומתן והסכמים.",
       "status": "נפסל",
       "stop_reason": "נפסל: Priority וניסיון רכש קבלני/בנייה אינם מופיעים בפרופיל, והניידות לשפלה אינה ודאית.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9846488",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות גפן השמות",
+      "title": "לחברה תעשייתית מובילה דרוש.ה מנהל/ת מחלקה כלכלית, גזברות וביטוח",
+      "location": "אשדוד",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9846488",
+      "score": 62,
+      "requirements": "תואר ראשון בכלכלה / חשבונאות / מנהל עסקים ניסיון של 4+ שנים ככלכלן/ית בכיר/ה או מנהל/ת כלכלי/ת בחברה תעשייתית ניסיון בבקרה תקציבית, ניתוחים עסקיים וניהול פיננסי שליטה גבוהה ב-Excel וב-Power BI אנגלית ברמה גבוהה",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: אשדוד.; דרישות תואמות: תואר, כלכלה, ניהול, excel, אנגלית, תקציב, ניתוח",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר.",
       "cv": ""
     },
     {
@@ -31745,6 +31801,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:37860790",
+      "date": "2026-08-09",
+      "company": "קבוצת שטראוס",
+      "title": "מזכיר.ת יחידת רכש (משרה זמנית)",
+      "location": "מספר מקומות",
+      "link": "https://www.drushim.co.il/job/37860790/0a5d0824/",
+      "score": 60,
+      "requirements": "תיאור משרה - ניהול ותיאום יומנים מורכבים של מנהלי יחידת הרכש הייצורי - הפקת הזמנות רכש ותובלה ועבודה שוטפת מול ספקים - טיפול ומעקב אחר תהליכי יבוא, דיווחים למכס ותצהירי יבואן - ניהול, בקרה ותיוק מסמכים במערכות ממוחשבות, כולל מסמכי איכות - תמיכה אדמיניסטרטיבית ותפעולית ביחידה, כולל הפקת כנסים ואירועי רווחה דרישות התפקיד -השכלה רלוונטית – חובה -ניסיון קודם בתפקידי אדמיניסטרציה וניהול יומנים מורכבים -שליטה מלאה ביישומי Office, בדגש על PowerPoint -היכרות עם SAP – יתרון משמעותי -אנגלית ברמה גבוהה -סדר, ארגון, דיוק ויכולת עבודה מול מגוון ממשקים * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: ניהול, office, אנגלית, ספקים, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "נפסל בסריקה אוטומטית: ציון התאמה 60/100 מתחת לסף 70.",
+      "cv": ""
+    },
+    {
       "key": "jobnet:13260418",
       "date": "2026-08-04",
       "company": "קבוצת פילת",
@@ -32064,6 +32134,20 @@
       "fit": "יש חפיפה חלקית לרכש, ספקים, מו\"מ ו-Excel.",
       "status": "נפסל",
       "stop_reason": "נפסל: דרישת חובה ל-5 שנות ניסיון ורכש אלקטרוניקה מוכח מעבר לפרופיל שנמסר.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9847296",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות URSA GROUP",
+      "title": "קניין\\ת רכש למפעל בקיסריה",
+      "location": "אור עקיבא, קיסריה",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9847296",
+      "score": 57,
+      "requirements": "ניסיון של לפחות שנתיים בתחום הרכש – חובה ניסיון בעבודה מול ספקים מחו\"ל – חובה ידע והיכרות בתחום היבוא – חובה ניסיון ב-Priority – יתרון היכרות טובה עם תחום הרכש, הסכמים ומשא ומתן אנגלית ברמה גבוהה – כתיבה ודיבור שליטה טובה מאוד ב-Excel יכולת ניהול משא ומתן וניתוח נתונים",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, אנגלית, ספקים, משא ומתן, הזמנות, ניתוח",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'אור עקיבא, קיסריה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -32487,6 +32571,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9792426",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות ג’וב אין איתור מיון והשמת כח אדם בע\"מ",
+      "title": "איש/ת רכש ולוגיסטיקה למפעל לעיבוד שבבי בקדימה",
+      "location": "קדימה צורן",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9792426",
+      "score": 55,
+      "requirements": "דרישות התפקיד: • חובה ניסיון קודם בתחום הרכש או התפ\"י במפעל יצרני. • ניסיון בעבודה מול ספקים וקבלני משנה. • שליטה מלאה ביישומי Office בדגש על Excel • ניסיון בעבודה עם מערכת ERP . • יכולת עבודה עצמאית, סדר וארגון ברמה גבוהה. • תודעת שירות גבוהה ויכולת עבודה מול לקוחות. • יכולת ניהול מספר משימות במקביל ועמידה בלוחות זמנים.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.; דרישות תואמות: ניהול, excel, office, ספקים, הצעות מחיר, משא ומתן, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "cv": ""
+    },
+    {
       "key": "jobmaster:9837486",
       "date": "2026-08-11",
       "company": "מעבר למשרות נוספות חלי ואזנה פתרונות גיוס והשמה בע\"מ",
@@ -32624,6 +32722,34 @@
       "fit": "יש התאמה כללית לרכש, הצעות מחיר ומו\"מ, אך חסר ניסיון טכני-מכני ייעודי.",
       "status": "נפסל",
       "stop_reason": "עודכן לאחר פתיחת המודעה: נפסל בגלל דרישת חובה ל-3 שנות רכש טכני וידע מכני/פנאומטי/הידראולי שאינם מופיעים בקורות החיים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38083280",
+      "date": "2026-08-13",
+      "company": "iDigital",
+      "title": "לחברת iDigital דרוש/ה קניין/ית למחלקת הסחר",
+      "location": "פתח תקווה",
+      "link": "https://www.drushim.co.il/job/38083280/a9a13a55/",
+      "score": 54,
+      "requirements": "תיאור משרה חברת iDigital , המשווקת הרשמית של Apple בישראל, דרוש/ה קניין/ית למחלקת הסחר. תחומי אחריות: ניהול קשר שוטף ועבודה מול ספקים מקומיים ובינלאומיים. ניהול הזמנות רכש ומעקב אחר תהליכי הרכש. ניהול מגוון המוצרים ברשת, לרבות איתור ובחינה של מוצרים וקטגוריות חדשות. ניתוח שוטף של הפעילות המסחרית והפקת תובנות לצורך קבלת החלטות. ניהול ועדכון פלנוגרמות בסניפי הרשת. הכנת חומרים מקצועיים והעברת הדרכות בנוגע למוצרים חדשים וקיימים. עבודה שוטפת וממשקים עם מנהלי הסניפים, המחלקה העסקית, מחלקת השיווק, מרלו״ג ומחלקת הכספים. דרישות התפקיד ניסיון קודם בתפקיד קניינות ו/או רכש – יתרון משמעותי. אנגלית ברמה גבוהה, קריאה, כתיבה ויכולת ניהול שיחה שוטפת – חובה. שליטה גבוהה ב-Excel – חובה. יכולות אנליטיות גבוהות, סדר וארגון, דיוק ויכולת ירידה לפרטים. יכולת ניהול מספר משימות במקביל ועבודה בסביבה דינמית ותחת לחץ. היכרות וניסיון בעבודה עם מערכת Priority – יתרון. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, אנגלית, ספקים, הזמנות, ניתוח, priority",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9846671",
+      "date": "2026-08-13",
+      "company": "חסוי / JobMaster",
+      "title": "לחברת הנדסה דרוש/ה קניין/ית רכש",
+      "location": "ראשון לציון, רמת גן",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9846671",
+      "score": 54,
+      "requirements": "ניסיון של לפחות שנתיים בתפקיד קניין/ית רכש בארגון גדול – חובה ניסיון ברכש בענף הבנייה - חובה ניסיון בעבודה עם מערכת פריוריטי – יתרון אנגלית ברמה טובה – יתרון",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: ניהול, אנגלית, ספקים, מו\"מ",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'ראשון לציון, רמת גן' רחוק משדרות ואינו רלוונטי לפי מדיניות המיקום המעודכנת (ראשון לציון).",
       "cv": ""
     },
     {
@@ -33145,20 +33271,6 @@
       "cv": ""
     },
     {
-      "key": "drushim:37860790",
-      "date": "2026-08-09",
-      "company": "קבוצת שטראוס",
-      "title": "מזכיר.ת יחידת רכש (משרה זמנית)",
-      "location": "מספר מקומות",
-      "link": "https://www.drushim.co.il/job/37860790/0a5d0824/",
-      "score": 51,
-      "requirements": "- ניהול ותיאום יומנים מורכבים של מנהלי יחידת הרכש הייצורי - הפקת הזמנות רכש ותובלה ועבודה...",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: ניהול, הזמנות",
-      "status": "נפסל",
-      "stop_reason": "נפסל בסריקה אוטומטית: ציון התאמה 51/100 מתחת לסף 70.",
-      "cv": ""
-    },
-    {
       "key": "jobmaster:9829021",
       "date": "2026-08-03",
       "company": "חסוי / JobMaster",
@@ -33198,6 +33310,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, אקסל, office, ספקים, הזמנות, priority",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'אור עקיבא, חדרה, נתניה, פרדס חנה כרכור, קיסריה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9847197",
+      "date": "2026-08-13",
+      "company": "חסוי / JobMaster",
+      "title": "דרוש/ה: קניין/ית רכש אסטרטגי/ת לחברה ממשלתית מובילה בדרום",
+      "location": "באר שבע, דימונה, ירוחם, ערד",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9847197",
+      "score": 50,
+      "requirements": "- תואר ראשון בכלכלה/ מנהל עסקים/ תעשייה וניהול - חובה - ניסיון של לפחות 3–5 שנים ברכש אסטרטגי / ניהול מכרזים / פיתוח ספקים. - אנגלית ברמה גבוהה (קריאה, כתיבה ודיבור). - היכרות עם תהליכי סורסינג, חוזים והתקשרויות מסחריות. - יכולת אנליטית גבוהה, כולל ניתוח נתונים והצגת מסקנות. - מיומנויות מו\"מ וניהול ספקים בארץ ובחו\"ל. - שליטה ביישומי Office ומערכות ERP. - חשיבה אסטרטגית וראייה מערכתית.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע.; דרישות תואמות: תואר, כלכלה, ניהול, office, אנגלית, ספקים, מו\"מ",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
       "cv": ""
     },
     {
@@ -33310,6 +33436,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום באזורי היעד: באר שבע, דרום.; דרישות תואמות: תואר, כלכלה, ניהול, office, אנגלית, ספקים, מו\"מ",
       "status": "נפסל",
       "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38071044",
+      "date": "2026-08-12",
+      "company": "DSIT",
+      "title": "משרת סטודנט: תיאום /קידום-רכש ייצור ואספקה",
+      "location": "גבעת שמואל",
+      "link": "https://www.drushim.co.il/job/38071044/01a0b4ac/",
+      "score": 49,
+      "requirements": "תיאור משרה אחריות על תכנון, תיאום, בקרה ומעקב שרשרת האספקה, תוך התמקדות בפתיחת צווארי בקבוק, פתרון בעיות, קיצור זמני אספק ושיפור היעילות. התפקיד כולל תכנון ופיקוח, מעקב ופתרון בעיות לאורך כל תהליך האספקה. תחומי אחריות תכנון הרכש והאספקות מספקים וקבלני משנה בהתאם לתוכניות העבודה, הזמנות הרכש ודרישות הלקוחות. תיאום בין מחלקות הרכש, הלוגיסטיקה, הייצור והאיכות לצורך הבטחת זרימה תקינה של חומרים ותהליכים. ניהול ומעקב אחר תוכניות הייצור. מעקב אחר הזמנות רכש, זיהוי חריגות ועיכובים, וקידום אספקות מול ספקים. טיפול בבעיות ועיכובים באספקות, הצפת סיכונים והצעת חלופות. תיאום משלוחים ואספקות מול ספקים ולקוחות. הכנת דוחות תקופתיים עבור פרויקטים שונים. עבודה שוטפת מול צוות המחסן להכנת קיטים ולהשלמת חוסרים. דרישות התפקיד יכולות אנליטיות גבוהות ויכולת פתרון בעיות בסביבה מוכוונת פרויקטים. כישורי תקשורת ויחסי אנוש מצוינים. יכולת עבודה תחת לחץ וניהול משימות מרובות במקביל. השכלה רלוונטית: סטודנט שנה ג' או שנה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: תואר, ניהול, ספקים, הזמנות, דוחות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'גבעת שמואל' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -33551,6 +33691,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9813865",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות איחוד הצלה",
+      "title": "לאיחוד הצלה דרוש/ה – רכז/ת רכש",
+      "location": "ירושלים",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9813865",
+      "score": 48,
+      "requirements": "עבודה מאתגרת הדורשת יצירתיות וראש גדול יכולת תפעול מספר רב של משימות במקביל נסיון ברכש/ אדמיניסטרציה – יתרון ידע בפריוריטי – יתרון",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, ספקים, הצעות מחיר, מו\"מ, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'ירושלים' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:37903103",
       "date": "2026-08-12",
       "company": "- חסוי -",
@@ -33747,6 +33901,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:38085674",
+      "date": "2026-08-13",
+      "company": "- חסוי -",
+      "title": "כלכלן/ית - מטה רשת קמעונאית | הרצליה",
+      "location": "מספר מקומות",
+      "link": "https://www.drushim.co.il/job/38085674/22a1fc99/",
+      "score": 46,
+      "requirements": "למטה רשת קמעונאית דרוש/ה כלכלן/ית לתפקיד מגוון הכולל עבודה עם נתונים מרובים, מערכות מידע, ...",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "status": "נפסל",
+      "stop_reason": "נפסל בסריקה אוטומטית: ציון התאמה 46/100 מתחת לסף 70.",
+      "cv": ""
+    },
+    {
       "key": "drushim:38072032",
       "date": "2026-08-12",
       "company": "חסוי",
@@ -33842,6 +34010,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, אנגלית, ספקים, הצעות מחיר, משא ומתן, הזמנות",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'ברקן' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:37709379",
+      "date": "2026-08-03",
+      "company": "מכבי שירותי בריאות מחוז דרום",
+      "title": "כלכלן.ית / רו\"ח – החלפה לחופשת לידה",
+      "location": "עומר",
+      "link": "https://www.drushim.co.il/job/37709379/f53e53fd/",
+      "score": 46,
+      "requirements": "במחוז דרום למנהלת המחוז דרוש.ה כלכלן.ית / רו\"ח – החלפה לחופשת לידה כלכלן.ית או רו\"...",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום באזורי היעד: דרום.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן.",
       "cv": ""
     },
     {
@@ -34293,20 +34475,6 @@
       "cv": ""
     },
     {
-      "key": "drushim:37709379",
-      "date": "2026-08-03",
-      "company": "מכבי שירותי בריאות מחוז דרום",
-      "title": "כלכלן.ית / רו\"ח – החלפה לחופשת לידה",
-      "location": "עומר",
-      "link": "https://www.drushim.co.il/job/37709379/f53e53fd/",
-      "score": 44,
-      "requirements": "במחוז דרום למנהלת המחוז דרוש.ה כלכלן.ית / רו\"ח – החלפה לחופשת לידה כלכלן.ית או רו\"...",
-      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; מיקום בתוך רדיוס החיפוש משדרות: עומר (37 ק״מ מתוך 40 ק״מ).",
-      "status": "נפסל",
-      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן.",
-      "cv": ""
-    },
-    {
       "key": "drushim:37979673",
       "date": "2026-08-03",
       "company": "- חסוי -",
@@ -34458,20 +34626,6 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, ספקים, מו\"מ",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'הרצליה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:38071044",
-      "date": "2026-08-12",
-      "company": "DSIT",
-      "title": "משרת סטודנט: תיאום /קידום-רכש ייצור ואספקה",
-      "location": "גבעת שמואל",
-      "link": "https://www.drushim.co.il/job/38071044/01a0b4ac/",
-      "score": 42,
-      "requirements": "אחריות על תכנון, תיאום, בקרה ומעקב שרשרת האספקה, תוך התמקדות בפתיחת צווארי בקבוק, פתרון בע...",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות",
-      "status": "נפסל",
-      "stop_reason": "נפסל: המיקום 'גבעת שמואל' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -34836,6 +34990,34 @@
       "fit": "יש חיבור חלקי לחשבוניות וספקים.",
       "status": "נפסל",
       "stop_reason": "נפסל: מיקום צריפין מחוץ לאזור, שכר מספרי, תפקיד אדמיניסטרטיבי/רכבים ולא ליבת רכש/כלכלה.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38080031",
+      "date": "2026-08-13",
+      "company": "קבוצת CivilEng",
+      "title": "לחברת ניהול ופיקוח דרוש מנהל פרויקטים",
+      "location": "מספר מקומות",
+      "link": "https://www.drushim.co.il/job/38080031/a5dc69a5/",
+      "score": 39,
+      "requirements": "לחברת ניהול ופיקוח דרוש מנהל פרויקט לעבודה על פרויקטים ציבוריים. הכנת חוזים, מעקב לוחות ז...",
+      "fit": "התאמה לשרשרת אספקה/PMO/התקשרויות; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: ניהול",
+      "status": "נפסל",
+      "stop_reason": "נפסל בסריקה אוטומטית: ציון התאמה 39/100 מתחת לסף 70.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9845195",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות עץ השדה השמה עם שורשים",
+      "title": "קניין/ית רכש תפעולי לרשת חנויות מצוינת בשרון - לווי עץ השדה השמה",
+      "location": "הוד השרון, כפר סבא, נתניה, פתח תקווה, רעננה",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9845195",
+      "score": 39,
+      "requirements": "ניסיון ברכש מקומי - מעל שנתיים יכולת ניהול מו\"מ יכולת עבודה בסביבה תחרותית רצון עז להצליח ** לווי אישי ומקצועי עי עץ השדה השמה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, מו\"מ",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'הוד השרון, כפר סבא, נתניה, פתח תקווה, רעננה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -35231,6 +35413,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:38073020",
+      "date": "2026-08-12",
+      "company": "- אלקטרה בע\"מ -",
+      "title": "קניין/ית רכש",
+      "location": "נתניה",
+      "link": "https://www.drushim.co.il/job/38073020/da30a38c/",
+      "score": 36,
+      "requirements": "קבוצת אלקטרה מגייסת קניין/ית רכש לאלקטרה תשתיות התפקיד כולל ניהול תהליכי רכש מקצה לקצה...",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'נתניה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:37973650",
       "date": "2026-08-12",
       "company": "מסד גרופ",
@@ -35256,20 +35452,6 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ספקים",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'קיסריה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:37834779",
-      "date": "2026-08-09",
-      "company": "אמרל בע\"מ",
-      "title": "קניין.ית רכש חשמל",
-      "location": "תל אביב",
-      "link": "https://www.drushim.co.il/job/37834779/858ebd80/",
-      "score": 36,
-      "requirements": "אנו מחפשים קניין/ית רכש מנוסה, בעל/ת ניסיון בניהול תהליכי רכש מקצה לקצה בסביבה פרויקטלית, ...",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול",
-      "status": "נפסל",
-      "stop_reason": "נפסל: המיקום 'תל אביב' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -35595,6 +35777,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:37751768",
+      "date": "2026-08-13",
+      "company": "השועלה",
+      "title": "קניין.ית רכש – IT וכללי - יום מהבית",
+      "location": "רעננה",
+      "link": "https://www.drushim.co.il/job/37751768/c7223a18/",
+      "score": 33,
+      "requirements": "חברה טכנולוגית מובילה מגייסת קניין.ית רכש מנוסה לצוות הרכש, לתפקיד משמעותי המשלב אחריות על...",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'רעננה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:38009921",
       "date": "2026-08-12",
       "company": "QualityAI",
@@ -35623,17 +35819,17 @@
       "cv": ""
     },
     {
-      "key": "drushim:38050885",
+      "key": "drushim:37934054",
       "date": "2026-08-11",
-      "company": "מתנ\"ס גבעת שמואל",
-      "title": "קניין/ית ואחראי/ת רכש",
-      "location": "גבעת שמואל",
-      "link": "https://www.drushim.co.il/job/38050885/d891b6ae/",
+      "company": "JOMBA HR",
+      "title": "קניין/ית רכש לחברה קמעונאית",
+      "location": "פתח תקווה",
+      "link": "https://www.drushim.co.il/job/37934054/471f8f90/",
       "score": 33,
-      "requirements": "למתנ\"ס גבעת שמואל דרוש/ה קניין/ית ואחראי/ת רכש היקף משרה: 50%–75% | מיקום: גבעת שמואל ...",
+      "requirements": "לחברת Jomba המתמחה בהשמת בכירים ואנשי מקצוע דרוש/ה קניין/ית לאחד מלקוחותינו - חברה קמעונא...",
       "fit": "התאמה לליבת רכש/קניינות/ספקים",
       "status": "נפסל",
-      "stop_reason": "נפסל: המיקום 'גבעת שמואל' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "stop_reason": "נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -35648,20 +35844,6 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'הוד השרון' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:38035229",
-      "date": "2026-08-09",
-      "company": "- אלקטרה בע\"מ -",
-      "title": "פקיד/ת רכש – החלפה לחל\"ד",
-      "location": "נען",
-      "link": "https://www.drushim.co.il/job/38035229/bd295781/",
-      "score": 33,
-      "requirements": "רוצים/ות להיות חלק מקבוצה עוצמתית? אנחנו מחפשים אותך כדי להיות חלק מההצלחה! קבוצת אלקטרה...",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים",
-      "status": "נפסל",
-      "stop_reason": "נפסל: המיקום 'נען' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -35756,7 +35938,7 @@
       "location": "חיפה",
       "link": "https://www.drushim.co.il/job/37946936/7ddefc37/",
       "score": 33,
-      "requirements": "- אחריות על חתימות חוזי טרייד אין ובדיקה של כל הניירת הרלוונטית - אחריות על חווי...",
+      "requirements": "תיאור משרה - אחריות על חתימות חוזי טרייד אין ובדיקה של כל הניירת הרלוונטית - אחריות על חווית לקוח קצבית, מגוונת ובהירה - עבודת שטח שכוללת ביקור בסניפים ברמה שבועית - סידור וארגון עבודה מול ממשקים רבים - הבנה טכנית ויכולת לקרוא ולתרגם בדיקות רכב דרישות התפקיד - ניסיון במכירות טלפוניות/פרונטאליות - מועמד/ת במאופיינ/ת בדרייב מכירתי - יכולת עבודה מול מחשב - נכונות לעבודה במשרה מלאה כולל ימי שישי freesbe מקדמת גיוון תעסוקתי ומזמינה מועמדים/ות מכל קבוצות החברה להגיש מועמדות * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
       "fit": "התאמה לליבת רכש/קניינות/ספקים",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'חיפה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
@@ -35889,6 +36071,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:38085123",
+      "date": "2026-08-13",
+      "company": "יוניליוור ישראל",
+      "title": "דרוש/ה סטודנט/ית לצוות כספים- איירפורט סיטי",
+      "location": "איירפורט סיטי",
+      "link": "https://www.drushim.co.il/job/38085123/cc643a12/",
+      "score": 32,
+      "requirements": "בקרה תקציבית וניתוח עלויות באופן שוטף סיוע בבניית תקציב שנתי ומעקב אחר יעדים כספיים הכנת...",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: תקציב, ניתוח",
+      "status": "נפסל",
+      "stop_reason": "נפסל: המיקום 'איירפורט סיטי' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:37953206",
       "date": "2026-08-09",
       "company": "הפניקס חברה לביטוח",
@@ -35956,6 +36152,20 @@
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: ניהול, ניתוח",
       "status": "נפסל",
       "stop_reason": "נפסל: המיקום 'ראש העין' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9823780",
+      "date": "2026-08-04",
+      "company": "מעבר למשרות נוספות דגש פ.ק. בע\"מ",
+      "title": "דרוש/ה PMO – לחברה יצרנית בתחום הייטק",
+      "location": "יד בנימין",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9823780",
+      "score": 32,
+      "requirements": "•תואר ראשון בהנדסה / תעשייה וניהול / מנהל עסקים או תחום רלוונטי – חובה. •ניסיון של 1-2 שנים בתפקיד PMO / ניהול פרויקטים – חובה. •ניסיון בעבודה בסביבה תעשייתית / תפעולית – יתרון משמעותי. •שליטה גבוהה באקסל, PowerPoint וכלי ניהול פרויקטים (MS Project / Monday / Jira וכד’). •יכולת אנליטית גבוהה, סדר וארגון, וראייה מערכתית. •יכולת עבודה מול ריבוי ממשקים והנעת תהליכים ללא סמכות ישירה. •אנגלית ברמה טובה מאוד. •יחסי אנוש מצוינים, עצמאות ויכולת עבודה בלחץ",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: תואר, ניהול, אקסל, אנגלית, תקציב, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
+      "status": "נפסל",
+      "stop_reason": "Rejected by submission engine: The tracker already marks this job as rejected. Next: Do not attempt this application unless the row is manually restored after a fresh review.",
       "cv": ""
     },
     {
@@ -36099,6 +36309,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9531499",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות ג’וב אין איתור מיון והשמת כח אדם בע\"מ",
+      "title": "ע. חשב / חשב לחברה בפ\"ת",
+      "location": "פתח תקווה",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9531499",
+      "score": 30,
+      "requirements": "חובה רואה חשבון מוסמך. חובה ניסיון של 1-3 שנים כעוזר/ת חשב או כלכלן/ית בארגון. הבנה חשבונאית וכלכלית. יתרון לניסיון בניתוח עלויות, תמחיר. שליטה ברמה גבוהה מאוד באקסל (Pivot ופנקציות מתקדמות). זמינות למשרה מלאה ממשרדי החברה בפ\"ת.",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; המשרה היברידית, אך לא מופיע שמספר ההגעות למשרד הוא עד פעמיים בשבוע.; דרישות תואמות: אקסל, תקציב, ניתוח, דוחות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן.",
+      "cv": ""
+    },
+    {
       "key": "jobmaster:9844855",
       "date": "2026-08-11",
       "company": "מעבר למשרות נוספות פריץ קומפניס ישראל טי בע\"מ",
@@ -36236,6 +36460,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: תואר, ניהול, excel, office, אנגלית, הזמנות, ניתוח",
       "status": "נפסל",
       "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'דבירה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:37935593",
+      "date": "2026-08-13",
+      "company": "גרנדקול",
+      "title": "אחראי/ת רכש ותפעול 12K",
+      "location": "פתח תקווה",
+      "link": "https://www.drushim.co.il/job/37935593/aa335913/",
+      "score": 29,
+      "requirements": "תיאור משרה לרשת ספיר דן, מקבוצת החברות דנלוג ודנשר, דרוש/ה אחראי/ת רכש ותפעול. התפקיד כולל אחריות על תהליכי הרכש, ניהול המלאי והתפעול השוטף של שרשרת האספקה, תוך עבודה מול ספקים, מחסן ומערך המכירות, במטרה להבטיח זמינות מוצרים, יעילות תפעולית ושירות מיטבי ללקוחות החברה. תחומי אחריות: • טיפול בהזמנות רכש מספקים בארץ ובחו\"ל. • הכנת תחזיות רכש ובקרת מלאי. • ניהול קשר שוטף מול ספקי החברה משלב הזמנת הרכש ועד קליטת הסחורה ואישור החשבוניות. • ניהול ועדכון מחירוני ספקים. • פתיחת מוצרים חדשים במערכות החברה. • הגדרה, טיפול ובקרה על גורמי אריזה ונתוני מוצר. • בקרה על רמות מלאי, מלאי איטי, מלאי מתיישן ותוקפי מוצרים. • ניתוח נתוני מלאי והמלצה על פעולות לשיפור היעילות התפעולית. • פיקוח ובקרה על פעילות המרכז הלוגיסטי והחיובים החודשיים. • בקרה על תהליכי הפצת הסחורה ללקוחות. • טיפול בבעיות אספקה מול לקוחות וספקים. • אחריות על תהליך קבלת סחורה וטיפול בפגומי ספק. • ניהול מגוון הפריטים של החברה. • אחריות על ת",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, office, ספקים, הזמנות, חשבוניות, ניתוח",
+      "status": "נפסל",
+      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -36883,6 +37121,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:37817527",
+      "date": "2026-08-03",
+      "company": "- חסוי -",
+      "title": "מנהל/ת רכש (Procurement Manager) לחברה הנדסית",
+      "location": "מספר מקומות",
+      "link": "https://www.drushim.co.il/job/37817527/32c8f9c6/",
+      "score": 25,
+      "requirements": "הזדמנות להצטרף לחברה מובילה בתחום התשתיות והפרויקטים, לתפקיד מרכזי הכולל אחריות מלאה על ני...",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש.",
+      "cv": ""
+    },
+    {
       "key": "drushim:37959951",
       "date": "2026-08-03",
       "company": "- חסוי -",
@@ -36922,6 +37174,34 @@
       "fit": "יש התאמה חלקית לתחום הרכש ול-Office.",
       "status": "נפסל",
       "stop_reason": "נפסל: דרישת חובה להיות סטודנט/ית עם לפחות שנתיים עד סיום הלימודים אינה תואמת את המידע שנמסר, כי התואר הושלם ב-2023.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9791089",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות Novolog",
+      "title": "אחראי.ת רכש ואדמיניסטרציה",
+      "location": "הרצליה",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9791089",
+      "score": 24,
+      "requirements": "ניסיון קודם בתפקיד אדמיניסטרטיבי – חובה. ניסיון בתחום הרכש – יתרון משמעותי. שליטה טובה ביישומי Office, בדגש על Excel – יתרון. יכולת גבוהה לעבודה עצמאית, סדר, ארגון וירידה לפרטים. תודעת שירות גבוהה ויחסי אנוש מצוינים. יכולת התנהלות מול מספר גורמים ומשימות במקביל",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: ניהול, excel, office, ספקים, הצעות מחיר, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'הרצליה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9846593",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות מנרב הנדסה ובנין",
+      "title": "בקר /ית תקציבי /ת לחברת בנייה מובילה",
+      "location": "תל אביב יפו",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9846593",
+      "score": 24,
+      "requirements": "-בוגר.ת הנדסת תעשייה וניהול/מנה\"ע/כלכלה - חובה. -ניסיון של 4 שנים לפחות בבקרה תקציבית - חובה. -ניסיון מחברה קבלנית - יתרון משמעותי. -נסיון בבקרה על פרויקטי תשתיות - יתרון -אקסל ברמה גבוהה - חובה. -ניסיון בעבודה על מערכת פריוריטי - יתרון משמעותי. -יכולת ניתוח נתונים. -ראש גדול ויסודיות.",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: כלכלה, ניהול, אקסל, תקציב, ניתוח, דוחות; ניסיון נדרש מתאים לפרופיל ג'וניור/עד 3 שנים",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. נפסל: המיקום 'תל אביב יפו' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -37023,6 +37303,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9844369",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות ORS משאבי אנוש",
+      "title": "לחברה מצליחה באירפורט סיטי דרוש.ה פקיד.ת רכש -תנאים מצויינים !",
+      "location": "איירפורט סיטי",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844369",
+      "score": 23,
+      "requirements": "דרישות התפקיד: ניסיון של 4 שנים ומעלה בתחום הרכש - חובה שליטה מלאה ב-PRIORITY ניסיון עם מערכת ה CITRIX - יתרון שליטה מלאה ב - Excel כולל שימוש ב-Pivot ו‑VLOOKUP שליטה מלאה באנגלית (כתיבה/ דיבור/ קריאה) - ברמה גבוהה אחריות, סדר, דיוק ויכולת עבודה עצמאית \"ראש גדול\" ויכולת עבודה בצוות ניסיון ברכש של רכיבים אלקטרוניים/ אלקטרומכאניים/ חברה דומה/ קבלני משנה בתחום - יתרון ניסיון בתמחור רכיבים וניתוח עלויות - יתרון",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: excel, אנגלית, ספקים, ניתוח, דוחות, priority",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. נפסל: המיקום 'איירפורט סיטי' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:38021017",
       "date": "2026-08-09",
       "company": "קימרון טכנולוגיות",
@@ -37093,6 +37387,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:37834779",
+      "date": "2026-08-09",
+      "company": "אמרל בע''מ",
+      "title": "קניין.ית רכש חשמל",
+      "location": "תל אביב",
+      "link": "https://www.drushim.co.il/job/37834779/858ebd80/",
+      "score": 22,
+      "requirements": "תיאור משרה אנו מחפשים קניין/ית רכש מנוסה, בעל/ת ניסיון בניהול תהליכי רכש מקצה לקצה בסביבה פרויקטלית, עם יכולת להוביל תהליכים מורכבים מול ספקים ולנהל ממשקים מרובים. תחומי אחריות •ניהול תהליכי רכש מקצה לקצה – איתור ספקים, קבלת והשוואת הצעות מחיר, ניהול משא ומתן והתקשרויות. •ניהול הזמנות, מעקב אחר אספקות, אישור חשבוניות ובקרה על עמידה בלוחות זמנים. •עבודה שוטפת מול ממשקים פנים-ארגוניים וספקים בארץ ובחו\"ל. •עבודה במערכת ERP – יתרון לבעלי ניסיון במערכת Priority. •ניתוח נתונים והפקת דוחות באמצעות Excel. דרישות התפקיד •תואר ראשון או הנדסאי/ת תעשייה וניהול או תחום רלוונטי. •לפחות 3 שנות ניסיון כקניין/ית רכש בסביבה פרויקטלית. •ניסיון בניהול משא ומתן מסחרי ועבודה מול ספקים. •אנגלית ברמה גבוהה (דיבור, קריאה וכתיבה). •שליטה מצוינת ב-Excel. •ניסיון בעבודה עם מערכת ERP – יתרון, בדגש על Priority. •ניסיון בתחום החשמל, האלקטרוניקה או האנרגיה המתחדשת (בדגש על אנרגיה ירוקה) – יתרון משמעותי. אם אתם בעלי חשי",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: תואר, ניהול, excel, אנגלית, ספקים, הצעות מחיר, משא ומתן",
+      "status": "נפסל",
+      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'תל אביב' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "manual:https://il.indeed.com/q-icl-l-%D7%91%D7%90%D7%A8-%D7%A9%D7%91%D7%A2%2C-%D7%9E%D7%97%D7%95%D7%96-%D7%94%D7%93%D7%A8%D7%95%D7%9D-%D7%9E%D7%A9%D7%A8%D7%95%D7%AA.html|icl group|סטודנט/ית לכלכלה|באר שבע",
       "date": "2026-07-30",
       "company": "ICL Group",
@@ -37104,6 +37412,20 @@
       "fit": "התוכן הכלכלי רלוונטי, אך קורן סיימה את התואר ב-2023 לפי המידע שנמסר.",
       "status": "נפסל",
       "stop_reason": "נפסל: דרישת חובה לסטודנט/ית פעיל/ה עם שנתיים יתרת לימודים אינה תואמת את הפרופיל.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9847246",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות מנפאואר",
+      "title": "קניין/ית רכש רכיבים אלקטרוניים",
+      "location": "ירושלים",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9847246",
+      "score": 21,
+      "requirements": "- תואר ראשון רלוונטי - ניסיון של 5-7 שנים לפחות בתחום הרכש - ניסיון מוכח בעבודה מול יצרני משנה וספקים גלובליים - ניסיון בתחום הרכש של רכיבים אלקטרוניים ושרשרת אספקה טכנולוגית- יתרון - יכולות גבוהות בניהול משא ומתן והובלת תהליכי חיסכון בעלויות - אנגלית ברמה גבוהה - היכרות עם תקני איכות בתחום המכשור הרפואי- יתרון",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: תואר, ניהול, אנגלית, ספקים, משא ומתן",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. נפסל: המיקום 'ירושלים' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -37289,6 +37611,20 @@
       "cv": "לא צורף"
     },
     {
+      "key": "jobmaster:9847317",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות Insite-HR",
+      "title": "מנהל/ת בקרה תקציבית לחברה קבלנית",
+      "location": "אור יהודה, כרמיאל, נשר, פתח תקווה, תל אביב יפו",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9847317",
+      "score": 19,
+      "requirements": "תואר ראשון בכלכלה/חשבונאות/הנדסה אזרחית/מנהל עסקים – חובה ניסיון של 3 שנים בתפקיד דומה בחברת בניה – חובה הכרות עם עלויות חומרי גלם ושירותים לתחומי הביצוע היכרות עם מערכות ERP וכלים מתקדמים אחרים – עדיפות להיכרות עם מערכת פריוריטי חשיבה אנליטית, ירידה לפרטים, עצמאות ויכול עבודה עם ריבוי ממשקים. יכול עמידה בלחץ ועמידה בלוחות זמנים ניהול צוות",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: תואר, כלכלה, ניהול, ספקים, תקציב, ניתוח, דוחות",
+      "status": "נפסל",
+      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'אור יהודה, כרמיאל, נשר, פתח תקווה, תל אביב יפו' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "drushim:37987729",
       "date": "2026-08-09",
       "company": "AM Projects",
@@ -37398,20 +37734,6 @@
       "fit": "מיקום באזורי היעד: קרית גת, קרית מלאכי.; דרישות תואמות: ניהול, אנגלית, priority",
       "status": "נפסל",
       "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:37934054",
-      "date": "2026-08-11",
-      "company": "JOMBA HR",
-      "title": "קניין/ית רכש לחברה קמעונאית",
-      "location": "פתח תקווה",
-      "link": "https://www.drushim.co.il/job/37934054/471f8f90/",
-      "score": 18,
-      "requirements": "תיאור משרה לחברת Jomba המתמחה בהשמת בכירים ואנשי מקצוע דרוש/ה קניין/ית לאחד מלקוחותינו - חברה קמעונאית באזור המרכז ניהול קטגוריות מוצרים מקצה לקצה (בדגש על כלי עבודה ומוצרי חשמל). איתור ספקים חדשים בארץ, ניהול משא ומתן מסחרי ושיפור תנאי סחר קיימים (לוחות זמנים, אשראי, מחירים). מעקב אחר מלאים, ניתוח דוחות מכר והוצאת הזמנות רכש שוטפות. בקרה על שרשרת האספקה, עמידה בזמנים ופתרון בעיות מול ספקים. התעדכנות שוטפת במגמות שוק, השקות של מוצרים חדשים ומחירי מתחרים דרישות התפקיד ניסיון קודם מוכח כקניין/ית (רכש מסחרי/קמעונאי) – חובה. ניסיון ברכש ומומחיות בתחומי מוצרי חשמל וכלי עבודה – יתרון משמעותי ביותר! יכולת ניהול משא ומתן ברמה גבוהה ואסרטיביות לצד יחסי אנוש מעולים. הבנה מסחרית חזקה, יכולת אנליטית ועבודה עם מספרים/דוחות מלאי ומכר. שליטה מלאה בתוכנות אופיס (בדגש על Excel) והיכרות עם מערכות ERP יכולת עבודה עצמאית כחלק מצוות קטן ודינמי. * משרה זו פונה לנשים וגברים כאחד. דרישות חובה",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, ספקים, משא ומתן, הזמנות, ניתוח, דוחות",
-      "status": "נפסל",
-      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -37527,6 +37849,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9844655",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות א.ר.ד. השמה חכמה",
+      "title": "קניינ/ית רכש",
+      "location": "פרדס חנה כרכור",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844655",
+      "score": 17,
+      "requirements": "ניסיון כקניין/ת רכש בחברה תעשייתית, הכרות עם מערכת ERP, קריאת שרטוטים טכניים, יכולת ניהול מו\"מ.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, ספקים, מו\"מ, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'פרדס חנה כרכור' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "jobmaster:9842758",
       "date": "2026-08-12",
       "company": "חסוי / JobMaster",
@@ -37538,6 +37874,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: office, אנגלית, הצעות מחיר, הזמנות",
       "status": "נפסל",
       "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9844151",
+      "date": "2026-08-12",
+      "company": "מעבר למשרות נוספות נטפים",
+      "title": "דרוש/ה מנהל/ת פרויקטים למחלקת שיחול הנדסית בנטפים",
+      "location": "חצרים, מגל",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844151",
+      "score": 17,
+      "requirements": "Project Management knowledge and experience University Degree - preferred Excellent communication and interpersonal skills. SAP and projects management systems knowledge Ability to create and implement global processes. A team player. Fast learner and independent. English – Must, Other languages – Advantage",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: excel",
+      "status": "נפסל",
+      "stop_reason": "SAP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'חצרים, מגל' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -37566,6 +37916,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, אנגלית, ספקים, הזמנות",
       "status": "נפסל",
       "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9841346",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות תובל פרסונל",
+      "title": "מזכיר/ת מנכ\"ל",
+      "location": "אשדוד",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9841346",
+      "score": 16,
+      "requirements": "כושר ביטוי גבוה שליטה מלאה באופיס יכולת עבודה עצמאית יחסי אנוש מצוינים, סדר וארגון",
+      "fit": "מיקום באזורי היעד: אשדוד.; דרישות תואמות: ניהול, דוחות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
       "cv": ""
     },
     {
@@ -38031,6 +38395,20 @@
       "cv": ""
     },
     {
+      "key": "jobmaster:9840105",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות G-Ness",
+      "title": "ראש/ת צוות טכנאי PC ורכש ציוד מחשוב",
+      "location": "ירושלים",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9840105",
+      "score": 14,
+      "requirements": "דרישות: ניסיון קודם בניהול צוות טכנאי PC / Help Desk / Desktop Support. ניסיון בניהול רכש, מלאי וציוד מחשוב. ניסיון בעבודה עם מערכות לניהול קריאות שירות ומערכות ERP/ניהול מלאי – יתרון. יכולת הובלת תהליכים, בניית נהלים ושיפור תהליכי עבודה. יכולת עבודה מול ממשקים רבים, שירותיות גבוהה ויחסי אנוש מצוינים. יכולת עבודה בסביבה דינמית, תעדוף משימות וקבלת החלטות. מה חשוב לנו? ✔ ניסיון ניהולי והובלת צוותים. ✔ ראייה מערכתית וחשיבה תהליכית. ✔ אחריות, יוזמה ועצמאות. ✔ שירותיות ותקשורת בין-אישית מצוינת. ✔ יכולת עבודה תחת לחץ ובריבוי משימות.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, ספקים, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'ירושלים' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "jobmaster:9773131",
       "date": "2026-08-12",
       "company": "חסוי / JobMaster",
@@ -38189,13 +38567,13 @@
       "date": "2026-08-03",
       "company": "מעבר למשרות נוספות שיכון ובינוי - סולל בונה תשתיות בע\"מ",
       "title": "לחברת סולל בונה דרוש/ה חשב/ת תקציב ובקרה",
-      "location": "איר פורט סיטי",
+      "location": "איירפורט סיטי",
       "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9597506",
       "score": 13,
       "requirements": "רו\"ח - חובה לפחות שנתיים ניסיון בתפקיד חשב ציבוריות - חובה יכולת התנסחות בכתיבה ובעל פה מעולה יכולת בניית מודלים כלכליים ותחזיות באקסל מוכנות לעבודה בסביבה דינמית ומאתגרת",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: ניהול, אקסל, תקציב, ניתוח, דוחות",
       "status": "נפסל",
-      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'איר פורט סיטי' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: המיקום 'איירפורט סיטי' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -38507,20 +38885,6 @@
       "cv": ""
     },
     {
-      "key": "drushim:38033500",
-      "date": "2026-08-09",
-      "company": "אפקון בקרה",
-      "title": "מנהל/ת פרויקטים לתחום בקרה תעשייתית",
-      "location": "פתח תקווה",
-      "link": "https://www.drushim.co.il/job/38033500/5669c70b/",
-      "score": 10,
-      "requirements": "לקבוצת אפקון הציבורית דרוש/ה דרוש/ה איש/ת בקרה לאזור דרום ומרכז. במסגרת התפקיד השתלבות בפ...",
-      "fit": "מיקום באזורי היעד: דרום.",
-      "status": "נפסל",
-      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
-      "cv": ""
-    },
-    {
       "key": "drushim:37770977",
       "date": "2026-08-09",
       "company": "מקסימה הפרדת אויר",
@@ -38658,6 +39022,20 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: אקסל, אנגלית, ספקים, מו\"מ",
       "status": "נפסל",
       "stop_reason": "MRP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'עפולה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9816194",
+      "date": "2026-08-13",
+      "company": "חסוי / JobMaster",
+      "title": "דרוש/ה בקר/ית תקציב עם ניסיון מעולם הבניה",
+      "location": "בני ברק, גבעתיים, הרצליה, פתח תקווה, רמת גן, תל אביב יפו",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9816194",
+      "score": 8,
+      "requirements": "תואר ראשון בתעשיה וניהול/הנדסה אזרחית - חובה ניסיון מחברת בנייה למגורים - כ3-4 שנים -חובה ניסיון ושליטה בתוכנת PRIORITY / MS Project - חובה. שליטה מלאה ביישומי אופיס כולל אקסל ברמת נוסחאות. רישיון נהיגה בתוקף - חובה. העבודה במשרה מלאה, במטה החברה בפ\"ת, וכולל סיורים באתרי החברה באזור המרכז. ימים א’-ה’ בין השעות 8:00-17:00. ✨ השתלבות בחברה מובילה עם פרויקטים איכותיים וסביבת עבודה מקצועית.",
+      "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; דרישות תואמות: תואר, ניהול, אקסל, תקציב, ניתוח, priority",
+      "status": "נפסל",
+      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. נפסל: המיקום 'בני ברק, גבעתיים, הרצליה, פתח תקווה, רמת גן, תל אביב יפו' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -39823,6 +40201,174 @@
       "cv": ""
     },
     {
+      "key": "drushim:38047237",
+      "date": "2026-08-13",
+      "company": "- אלקטרה בע\"מ -",
+      "title": "אחראי/ת בקרת מסמכים Document Control",
+      "location": "מנרה",
+      "link": "https://www.drushim.co.il/job/38047237/19cc775a/",
+      "score": 0,
+      "requirements": "ההצלחה שלך בפרויקט הבא שלנו היא הצלחה של כולנו – הצטרף לקבוצה עם עוצמה והיה חלק מהעתיד שלנ...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'מנרה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38017464",
+      "date": "2026-08-13",
+      "company": "שיש ממסי",
+      "title": "דרוש/ה מנהל/ת רכש וייבוא מנוסה לענף הבנייה",
+      "location": "תל אביב",
+      "link": "https://www.drushim.co.il/job/38017464/0b5770bf/",
+      "score": 0,
+      "requirements": "תיאור משרה לחברה מובילה בתחומה, העוסקת בייבוא ושיווק של מוצרי אבן ושיש לענף הבנייה, דרוש/ה מנהל/ת רכש וייבוא מנוסה ומקצועי/ת להובלת תהליכי הרכש של החברה. אם יש לך יכולת ניהול משא ומתן חדה, היכרות מעמיקה עם עולם הייבוא ורצון להשתלב בחברה יציבה ומובילה – אנחנו רוצים אותך איתנו! משרה מלאה בימים א'-ה' ממשרדי החברה בתל אביב תנאים מצויינים וגמישות למתאימ/ה ! אווירה משפחתית ונעימה במשרד ! בנסגרת התפקיד - *ניהול ייבוא מקצה לקצה: טיפול מלא בתהליכי הייבוא, עבודה מול רשויות המכס והנמלים, והנפקת מסמכים לשחרור מטענים. *ניהול ספקים גלובלי: עבודה שוטפת מול מגוון רחב של ספקים בארץ ובחו\"ל. *מסחר ומשא ומתן: ניהול מו\"מ מסחרי, אופטימיזציה של תהליכים והוזלת עלויות הרכש. *בקרה ושרשרת אספקה: מעקב קפדני אחר לוחות זמנים של הזמנות ואספקות עד הגעתן לחברה. *עבודת ממשקים: סנכרון ושיתוף פעולה שוטף מול כל הממשקים הפנים-ארגוניים בחברה. דרישות התפקיד *ניסיון חובה: ניסיון קודם מוכח בתחום הרכש והייבוא. *מערכות מידע: שליטה",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: ניהול, אנגלית, ספקים, מו\"מ, משא ומתן, הזמנות, priority",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש. נפסל: המיקום 'תל אביב' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38086377",
+      "date": "2026-08-13",
+      "company": "סטורי",
+      "title": "מנהל.ת גיוס וחוויית עובד",
+      "location": "תל אביב",
+      "link": "https://www.drushim.co.il/job/38086377/a77ca825/",
+      "score": 0,
+      "requirements": "חי.ה בשביל לגייס אנשים טובים? אם גיוס הוא המקצוע שלך ולא רק העבודה – אנחנו מחפשים מנהל.ת ...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'תל אביב' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38085826",
+      "date": "2026-08-13",
+      "company": "אפקון בקרה",
+      "title": "מנהל/ת פרויקטים בכיר לתחום מערכות בקרת מבנה",
+      "location": "פתח תקווה",
+      "link": "https://www.drushim.co.il/job/38085826/535129c9/",
+      "score": 0,
+      "requirements": "לקבוצת אפקון, לחטיבת הבקרה ודרוש/ה מנהל/ת פרויקטים בכיר לתחום בקרת מבנה! התפקיד כולל אחרי...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:37731324",
+      "date": "2026-08-13",
+      "company": "cargo",
+      "title": "נציג/ת שירות ובקרה ב-WhatsApp",
+      "location": "חולון",
+      "link": "https://www.drushim.co.il/job/37731324/95931004/",
+      "score": 0,
+      "requirements": "חברת הלוגיסטיקה Cargo ממשיכה לצמוח – בואו להיות הפנים (וההודעות) שלנו! חברת Cargo, מחברות...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "SAP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'חולון' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38033709",
+      "date": "2026-08-13",
+      "company": "- חסוי -",
+      "title": "עובד/ת חדר בקרה בכפר סבא",
+      "location": "כפר סבא",
+      "link": "https://www.drushim.co.il/job/38033709/47c6c59e/",
+      "score": 0,
+      "requirements": "לחברת סוסנה מובינג הממוקמת בכפר סבא דרוש עובד חדר בקרה תיאור המשרה: תפעול שוטף של חדר...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'כפר סבא' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38082102",
+      "date": "2026-08-13",
+      "company": "קבוצת דנאל",
+      "title": "רכז/ת גיוס | חיפה",
+      "location": "חיפה",
+      "link": "https://www.drushim.co.il/job/38082102/c3aa26aa/",
+      "score": 0,
+      "requirements": "מחפש/ת את הצעד הבא בקריירה? לקבוצת דנאל, מהקבוצות המובילות והיציבות בישראל בתחומי משאבי ה...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'חיפה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobmaster:9846596",
+      "date": "2026-08-13",
+      "company": "מעבר למשרות נוספות מנרב הנדסה ובנין",
+      "title": "מנרב אחזקות מגייסת PMO למחלקת כספים",
+      "location": "תל אביב יפו",
+      "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9846596",
+      "score": 0,
+      "requirements": "*רקע מקצועי/אקדמי כרואי/ות חשבון / כלכלן/ית / הנדסאי/ת תעשייה וניהול / מנהל /ת חשבונות מנוסה - חובה. * ניסיון של שנתיים לפחות והיכרות מעמיקה עם עולמות הכספים והרכש - חובה. * שליטה ברמה גבוהה מאוד ב-Excel ו-PowerPoint, והיכרות עם מערכות ERP. * יחסי אנוש מעולים, יכולת הנעה והובלת ממשקים ללא סמכות ניהולית ישירה, סדר וארגון ברמה גבוהה. המשרה מיועדת לנשים ולגברים כאחד.",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; דרישות תואמות: ניהול, excel, ניתוח",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'תל אביב יפו' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
+      "key": "jobnet:13357422",
+      "date": "2026-08-13",
+      "company": "חברה דיסקרטית",
+      "title": "מחסנאי חלפים מקצועי ליבואן רכב איכותי באשדוד! 13,000!",
+      "location": "- אשדוד, אשקלון; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה",
+      "link": "https://www.jobnet.co.il/jobs?positionid=13357422",
+      "score": 0,
+      "requirements": "דרישות: ניסיון כמחסנאי טכני חובה ניסיון עבודה בסביבה ממוחשבת המשרה מיועדת לנשים ולגברים כאחד",
+      "fit": "מיקום באזורי היעד: אשקלון, אשדוד.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
+      "cv": ""
+    },
+    {
+      "key": "jobnet:13356832",
+      "date": "2026-08-13",
+      "company": "תיגבור - מאגר כח אדם מקצועי זמני בע''מ",
+      "title": "מחפש /ת עבודה קרובה לבית? דרושים /ות לעולם הקמעונאות! מלקטים/ות בפריסה ארצית!",
+      "location": "- תל אביב, פתח תקווה, רמת גן וגבעתיים, בקעת אונו וגבעת שמואל, חולון ובת-ים, מודיעין, שוהם; - חדרה וזכרון יעקב, נתניה ועמק חפר, רעננה, כפר סבא והוד השרון, ראש העין, הרצליה ורמת השרון; - ירושלים, בית שמש; - גליל, טבריה והכנרת, עפולה, נצרת ובית שאן, עכו, נהריה והגליל המערבי, קריות ועמק זבולון, חיפה והכרמל, גולן; - אשדוד, קרית גת, באר שבע, אשקלון, קרית מלאכי; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה; - אילת והערבה",
+      "link": "https://www.jobnet.co.il/jobs?positionid=13356832",
+      "score": 0,
+      "requirements": "דרישות: זמינות לתחילת עבודה מיידית",
+      "fit": "מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
+      "cv": ""
+    },
+    {
+      "key": "jobnet:13357525",
+      "date": "2026-08-13",
+      "company": "RecruitX",
+      "title": "מנהל/ת חשבונות בכירה",
+      "location": "- רמת גן וגבעתיים; - אשדוד, קרית גת, באר שבע, דימונה, אשקלון, קרית מלאכי, ערד וים המלח; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה",
+      "link": "https://www.jobnet.co.il/jobs?positionid=13357525",
+      "score": 0,
+      "requirements": "דרישות: ניסיון קודם בהנהלת חשבונות עד מאזן – חובה. ניסיון בעבודה עם מערכת חשבשבת – חובה. שליטה טובה ביישומי Office – חובה. ראש גדול, אחריות ויכולת עבודה עצמאית. ניסיון בעבודה עם מערכת Priority – יתרון.",
+      "fit": "מיקום באזורי היעד: אשקלון, קרית גת, באר שבע.; דרישות תואמות: ניהול, office, דוחות, priority, חשבשבת",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
+      "cv": ""
+    },
+    {
+      "key": "jobnet:13228250",
+      "date": "2026-08-13",
+      "company": "TGW",
+      "title": "רכז/ת חשבונות ופרויקטים",
+      "location": "- חולון ובת-ים, מודיעין, שוהם; - אשדוד, קרית גת, אשקלון, קרית מלאכי; - ראשון לציון ונס- ציונה, רמלה לוד, רחובות, יבנה",
+      "link": "https://www.jobnet.co.il/jobs?positionid=13228250",
+      "score": 0,
+      "requirements": "דרישות: שליטה גבוהה מאוד באקסל – חובה. ניסיון קודם בתפקיד דומה בתחום התשתיות / הביצוע / האחזקה – יתרון. הכרות עם מערכת הפריוריטי– יתרון. סדר, ארגון ויכולת ירידה לפרטים. משרה מלאה, פונה לשני המינים.",
+      "fit": "מיקום באזורי היעד: אשקלון, קרית גת, אשדוד.; דרישות תואמות: אקסל",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
+      "cv": ""
+    },
+    {
       "key": "drushim:38067282",
       "date": "2026-08-12",
       "company": "HFD delivery",
@@ -40016,20 +40562,6 @@
       "fit": "המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
       "status": "נפסל",
       "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:38073020",
-      "date": "2026-08-12",
-      "company": "- אלקטרה בע\"מ -",
-      "title": "קניין/ית רכש",
-      "location": "נתניה",
-      "link": "https://www.drushim.co.il/job/38073020/da30a38c/",
-      "score": 0,
-      "requirements": "תיאור משרה קבוצת אלקטרה מגייסת קניין/ית רכש לאלקטרה תשתיות התפקיד כולל ניהול תהליכי רכש מקצה לקצה לפרויקטי תשתיות מהגדולים והמובילים בישראל. במסגרת התפקיד: ניהול רכש מקצועי ופרויקטלי בהיקפים של עשרות מיליוני שקלים בשנה. קריאה וניתוח מפרטים טכניים, כתבי כמויות ותוכניות. איתור ספקים בארץ ובחו\"ל, ניהול מו\"מ מסחרי והובלת תהליכי התקשרות בעברית ובאנגלית. ביצוע השוואות מחירים, ניתוח רכש היסטורי ובניית מחירי מטרה. ניהול הסכמי מסגרת והקמת מחירונים לרכש שוטף. מעקב אחר הזמנות, אספקות ולוחות זמנים (Expediting). עבודה שוטפת מול מנהלי פרויקטים, מהנדסים, מתכננים, אנשי ביצוע וספקים. משרה מלאה, ימים א'-ה', 08:00-17:00 | משרדי החברה בנתניה דרישות התפקיד ניסיון של לפחות 5 שנים כקניין/ית רכש בתחומי התשתיות, הבינוי, האלקטרו מכניקה או הבנייה החוזית – חובה ניסיון בניהול רכש לפרויקטים הנדסיים מורכבים – חובה ניסיון מוכח בניהול משא ומתן מסחרי עם ספקים בארץ ובחו\"ל אנגלית ברמה גבוהה – קריאה והבנת מפרטים טכניים וניה",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, office, אנגלית, ספקים, מו\"מ, משא ומתן",
-      "status": "נפסל",
-      "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'נתניה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -40288,7 +40820,7 @@
       "key": "drushim:37961281",
       "date": "2026-08-12",
       "company": "מוקד אמון סביון",
-      "title": "מפעילי/ות חדר בקרה בשכר גבוה!!",
+      "title": "מפעילי/ות חדר בקרה מבצעי בשכר גבוה",
       "location": "יהוד",
       "link": "https://www.drushim.co.il/job/37961281/71d85eaa/",
       "score": 0,
@@ -40985,6 +41517,20 @@
       "cv": ""
     },
     {
+      "key": "drushim:38033500",
+      "date": "2026-08-09",
+      "company": "אפקון בקרה",
+      "title": "איש/ת בקרה לתחום בקרה תעשייתית",
+      "location": "פתח תקווה",
+      "link": "https://www.drushim.co.il/job/38033500/5669c70b/",
+      "score": 0,
+      "requirements": "לחברת אפקון טכנולוגיות - החברה המובילה לתחומי אלקטרוניקה ומתח נמוך דרוש/ה דרוש/ה איש/ת בקר...",
+      "fit": "התאמה לא מספקת לפי הסריקה הראשונית.",
+      "status": "נפסל",
+      "stop_reason": "נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד. נפסל: המיקום 'פתח תקווה' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
+      "cv": ""
+    },
+    {
       "key": "jobmaster:9842722",
       "date": "2026-08-09",
       "company": "מעבר למשרות נוספות SPL - Software AG",
@@ -41030,7 +41576,7 @@
       "key": "drushim:37746562",
       "date": "2026-08-09",
       "company": "- חסוי -",
-      "title": "איש.ת צוות תפעול פיקוח ובקרה - שעות גמישות - ראשלצ",
+      "title": "איש.ת צוות תפעול פיקוח ובקרה - ראשלצ",
       "location": "ראשון לציון",
       "link": "https://www.drushim.co.il/job/37746562/fc84a834/",
       "score": 0,
@@ -41304,6 +41850,20 @@
       "fit": "המיקום לא מספיק ברור; נדרש אישור לפני הגשה.",
       "status": "נפסל",
       "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
+      "cv": ""
+    },
+    {
+      "key": "drushim:38035229",
+      "date": "2026-08-09",
+      "company": "- אלקטרה בע\"מ -",
+      "title": "פקיד/ת רכש – החלפה לחל\"ד",
+      "location": "נען",
+      "link": "https://www.drushim.co.il/job/38035229/bd295781/",
+      "score": 0,
+      "requirements": "תיאור משרה רוצים/ות להיות חלק מקבוצה עוצמתית? אנחנו מחפשים אותך כדי להיות חלק מההצלחה! קבוצת אלקטרה מגייסת פקיד/ת רכש לאלקטרה מעליות תיאור התפקיד: -טיפול שוטף בניהול דרישות רכש מול לקוחות הארגון -הפקת הזמנות רכש לספקים -עבודה מול ספקים בכל תחומי אחריות הרכש, כולל מעקב אחר אישורי אספקה וקידום הזמנות -קבלת הצעות מחיר, תמחור ספקים, איתור ספקים חדשים, השוואות מחירים וניהול משא ומתן -עבודה מול דרישות החומרים של המרלו\"ג, כלי עבודה, חומרי עזר ומחלקות ההנדסה -מתן שירות ומענה שוטף למחסנאים, טכנאים, מנהלי עבודה ומנהלי שירות *הזדמנות להשתלב בחברה מובילה ולהתפתח בתחומי רכש נוספים משרה מלאה א'-ה' | 07:30-16:45 מיקום: קיבוץ נען מה אנחנו מציעים: חברה גדולה ויציבה עם אפשרויות קידום עבודה מאתגרת ומעניינת מתנות בימי הולדת, חגים ואירועים מיוחדים לידיעתך, בהגשת המועמדות למשרה, קו\"ח והמידע האישי אודותייך יועברו לחברת אלקטרה בע\"מ, אשר תנהל אותם בהתאם ובכפוף למדיניות הפרטיות שלה הזמינה באתר הקריירה של קבוצת אל",
+      "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, אקסל, ספקים, הצעות מחיר, משא ומתן, הזמנות",
+      "status": "נפסל",
+      "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'נען' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
       "cv": ""
     },
     {
@@ -42004,20 +42564,6 @@
       "fit": "התאמה לליבת רכש/קניינות/ספקים; דרישות תואמות: ניהול, excel, office, אנגלית, ספקים, משא ומתן, הזמנות",
       "status": "נפסל",
       "stop_reason": "נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. SAP appears to be a required skill, and the candidate has confirmed she has no experience with it. נפסל: המיקום 'ראש העין' אינו באזורי החיפוש המאושרים ולא מופיע מודל היברידי מתאים.",
-      "cv": ""
-    },
-    {
-      "key": "drushim:37817527",
-      "date": "2026-08-03",
-      "company": "LesicoPP",
-      "title": "מנהל/ת רכש (Procurement Manager) לחברה הנדסית",
-      "location": "מספר מקומות",
-      "link": "https://www.drushim.co.il/job/37817527/32c8f9c6/",
-      "score": 0,
-      "requirements": "תיאור משרה הזדמנות להצטרף לחברה מובילה בתחום התשתיות והפרויקטים, לתפקיד מרכזי הכולל אחריות מלאה על ניהול שרשרת האספקה והובלת פעילות הרכש הארגונית מקצה לקצה. התפקיד משלב יכולות מסחריות, אנליטיות ותפעוליות, עם השפעה ישירה על ביצועי החברה והצלחת הפרויקטים. במסגרת התפקיד: • ניהול כולל של תהליכי הרכש – איתור ספקים, מו״מ וסגירת הסכמים • הובלת תהליכי התייעלות וחיסכון תוך שמירה על איכות ועמידה בדרישות הפרויקטים • ניהול והפקת הזמנות, מעקב אחר אספקות ולוחות זמנים • עבודה שוטפת מול מנהלי פרויקטים, כספים וממשקים פנים ארגוניים • ניהול ופיתוח מאגר ספקים וביצוע בקרות איכות • ניתוח נתונים והפקת תובנות עסקיות לשיפור תהליכים • ניהול ובקרה על מדדי ביצוע (KPIs) בתחום הרכש • עבודה מול קבלני משנה וספקים טכניים בפרויקטים מורכבים דרישות התפקיד • תואר ראשון רלוונטי – הנדסה תעשייה וניהול / הנדסה אזרחית / כלכלה / מנהל עסקים • ניסיון של לפחות 5 שנים בתפקידי רכש בארגון פרויקטאלי (תשתיות / בנייה / מערכות מורכבות) • נ",
-      "fit": "התאמה לליבת רכש/קניינות/ספקים; התאמה לכלכלה/תקציבים/בקרה/אנליזה; המיקום לא מספיק ברור; נדרש אישור לפני הגשה.; דרישות תואמות: תואר, כלכלה, ניהול, excel, ספקים, הזמנות, ניתוח",
-      "status": "נפסל",
-      "stop_reason": "נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש. נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. ERP appears to be a required skill, and the candidate has confirmed she has no experience with it.",
       "cv": ""
     },
     {
@@ -42743,7 +43289,7 @@
       "link": "https://www.jobnet.co.il/jobs?positionid=13283901",
       "score": 0,
       "requirements": "דרישות: • תעודת חשב/ת שכר מוסמך/ת של הלשכה לרו\"ח – חובה • ניסיון של לפחות 4 שנים (אחרונות) בעבודה עם מערכת חילן – חובה • שליטה גבוהה בExcel • ידע מעמיק בדיני עבודה וחוקי שכר • סדר, אחריות אישית ויכולת עבודה עצמאית • תודעת שירות גבוהה ויחסי אנוש מצוינים",
-      "fit": "מיקום באזורי היעד: אשקלון, אשדוד, יבנה.; דרישות תואמות: excel",
+      "fit": "מיקום באזורי היעד: אשקלון, אשדוד.; דרישות תואמות: excel",
       "status": "נפסל",
       "stop_reason": "נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן. נפסל: דרישת הניסיון גבוהה משמעותית מהפרופיל שהוגדר. נפסל: לא זוהתה התאמה מקצועית מספקת לתחומי היעד.",
       "cv": ""
