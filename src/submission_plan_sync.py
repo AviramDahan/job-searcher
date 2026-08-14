@@ -9,9 +9,11 @@ from pathlib import Path
 
 try:
     from .job_records import CV, LINK, MANUAL_REQUIRED, PENDING, REJECTED, STATUS, STOP_REASON, SUBMITTED, job_key, load_rows, write_rows
+    from .public_text import public_hebrew_text
     from .submission_engine import SubmissionDecision
 except ImportError:
     from job_records import CV, LINK, MANUAL_REQUIRED, PENDING, REJECTED, STATUS, STOP_REASON, SUBMITTED, job_key, load_rows, write_rows
+    from public_text import public_hebrew_text
     from submission_engine import SubmissionDecision
 
 
@@ -20,6 +22,8 @@ PROTECTED_REASON_MARKERS = (
     "Manual gate:",
     "Manual submission required:",
     "Official fallback checked",
+    "נדרשת הגשה ידנית:",
+    "נבדק fallback רשמי",
     "Rejected:",
     "הוגש ידנית",
     "הוגש בהצלחה",
@@ -61,10 +65,10 @@ def _clean_reason(plan: dict) -> str:
     reason = str(plan.get("reason", "") or "").strip()
     next_step = str(plan.get("next_step", "") or "").strip()
     if " Next:" in reason:
-        return reason
+        return public_hebrew_text(reason)
     if reason and next_step:
-        return f"{reason} Next: {next_step}"
-    return reason or next_step
+        return public_hebrew_text(f"{reason} Next: {next_step}")
+    return public_hebrew_text(reason or next_step)
 
 
 def _with_prefix(prefix: str, reason: str) -> str:
@@ -75,13 +79,13 @@ def _target_for_decision(plan: dict) -> tuple[str | None, str | None, str | None
     decision = str(plan.get("decision", "") or "")
     reason = _clean_reason(plan)
     if decision == SubmissionDecision.DO_NOT_APPLY.value:
-        return REJECTED, _with_prefix("Rejected by submission engine:", reason), ""
+        return REJECTED, _with_prefix("נפסל:", reason), ""
     if decision == SubmissionDecision.HUMAN_GATE.value:
-        return MANUAL_REQUIRED, _with_prefix("Manual submission required by submission engine:", reason), "לא צורף - נדרשת השלמה ידנית"
+        return MANUAL_REQUIRED, _with_prefix("נדרשת הגשה ידנית:", reason), "לא צורף - נדרשת השלמה ידנית"
     if decision == SubmissionDecision.POLICY_REQUIRED.value:
-        return PENDING, _with_prefix("Approval required by submission engine:", reason), None
+        return PENDING, _with_prefix("נדרש אישור לפני הגשה:", reason), None
     if decision == SubmissionDecision.NOT_SUPPORTED.value:
-        return PENDING, _with_prefix("Adapter gap by submission engine:", reason), None
+        return PENDING, _with_prefix("חסר adapter בטוח לאתר:", reason), None
     return None, None, None
 
 

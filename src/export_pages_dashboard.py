@@ -12,11 +12,13 @@ try:
     from .conversion_audit import build_audit, load_json_list
     from .job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
     from .location_policy import location_policy_payload
+    from .public_text import public_hebrew_text
 except ImportError:
     from action_insights import build_insights
     from conversion_audit import build_audit, load_json_list
     from job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, SUITABLE_STATUSES, TITLE, job_key, load_rows
     from location_policy import location_policy_payload
+    from public_text import public_hebrew_text
 
 
 DEFAULT_TIMEZONE = "Asia/Jerusalem"
@@ -47,16 +49,16 @@ def serialize_row(row: dict[str, str]) -> dict[str, str | int]:
     return {
         "key": job_key(row),
         "date": row.get(DATE, ""),
-        "company": row.get(COMPANY, ""),
-        "title": row.get(TITLE, ""),
-        "location": row.get(LOCATION, ""),
+        "company": public_hebrew_text(row.get(COMPANY, "")),
+        "title": public_hebrew_text(row.get(TITLE, "")),
+        "location": public_hebrew_text(row.get(LOCATION, "")),
         "link": row.get(LINK, ""),
         "score": score_value(row.get(SCORE, "")),
-        "requirements": row.get(REQUIREMENTS, ""),
-        "fit": row.get(FIT, ""),
+        "requirements": public_hebrew_text(row.get(REQUIREMENTS, "")),
+        "fit": public_hebrew_text(row.get(FIT, "")),
         "status": row.get(STATUS, ""),
-        "stop_reason": row.get(STOP_REASON, ""),
-        "cv": row.get(CV, ""),
+        "stop_reason": public_hebrew_text(row.get(STOP_REASON, "")),
+        "cv": public_hebrew_text(row.get(CV, "")),
     }
 
 

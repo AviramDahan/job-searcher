@@ -11,8 +11,10 @@ from urllib.request import Request, urlopen
 
 try:
     from .local_env import load_local_env
+    from .public_text import public_hebrew_text
 except ImportError:
     from local_env import load_local_env
+    from public_text import public_hebrew_text
 
 
 load_local_env()
@@ -47,7 +49,7 @@ def safe_text(value: object, fallback: str = ENCODING_FALLBACK_TEXT) -> str:
     text = str(value or "").strip()
     if has_broken_text(text):
         return fallback
-    return text
+    return public_hebrew_text(text)
 
 
 def build_message(item: dict) -> str:

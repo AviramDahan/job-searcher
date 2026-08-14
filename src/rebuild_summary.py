@@ -9,9 +9,15 @@ from zoneinfo import ZoneInfo
 try:
     from .action_insights import build_insights
     from .job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
+    from .public_text import public_hebrew_text
 except ImportError:
     from action_insights import build_insights
     from job_records import COMPANY, LINK, LOCATION, MANUAL_REQUIRED, SCORE, STATUS, STOP_REASON, SUBMITTED, PENDING, REJECTED, SUITABLE_STATUSES, TITLE, load_rows, score_int
+    from public_text import public_hebrew_text
+
+
+def display(value: object) -> str:
+    return public_hebrew_text(value)
 
 
 def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int, timezone: str) -> str:
@@ -36,7 +42,10 @@ def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int,
         "## חמש המשרות בעלות ההתאמה הגבוהה ביותר",
     ]
     for row in top:
-        lines.append(f"- {row[SCORE]}/100 - {row[COMPANY]} - [{row[TITLE]}]({row[LINK]}) - {row[LOCATION]} - {row[STATUS]}")
+        lines.append(
+            f"- {row[SCORE]}/100 - {display(row[COMPANY])} - [{display(row[TITLE])}]({row[LINK]}) - "
+            f"{display(row[LOCATION])} - {row[STATUS]}"
+        )
 
     insights = build_insights(rows)
     lines.extend(["", "## השלב הבא"])
@@ -53,8 +62,8 @@ def render(rows: list[dict[str, str]], scanned_count: int, telegram_alerts: int,
         status_rows.sort(key=score_int, reverse=True)
         for row in status_rows:
             lines.append(
-                f"- {row[SCORE]}/100 - {row[COMPANY]} - [{row[TITLE]}]({row[LINK]}) - "
-                f"{row[LOCATION]} - {row[STATUS]} - {row[STOP_REASON]}"
+                f"- {row[SCORE]}/100 - {display(row[COMPANY])} - [{display(row[TITLE])}]({row[LINK]}) - "
+                f"{display(row[LOCATION])} - {row[STATUS]} - {display(row[STOP_REASON])}"
             )
 
     return "\n".join(lines) + "\n"

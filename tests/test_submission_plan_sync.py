@@ -34,7 +34,7 @@ class SubmissionPlanSyncTests(unittest.TestCase):
 
         self.assertEqual(stats.marked_rejected, 1)
         self.assertEqual(rows[0][STATUS], REJECTED)
-        self.assertIn("Rejected by submission engine", rows[0][STOP_REASON])
+        self.assertIn("נפסל", rows[0][STOP_REASON])
 
     def test_human_gate_marks_pending_row_manual_required(self) -> None:
         rows = [row()]
@@ -43,7 +43,7 @@ class SubmissionPlanSyncTests(unittest.TestCase):
 
         self.assertEqual(stats.marked_manual_required, 1)
         self.assertEqual(rows[0][STATUS], MANUAL_REQUIRED)
-        self.assertIn("Manual submission required", rows[0][STOP_REASON])
+        self.assertIn("נדרשת הגשה ידנית", rows[0][STOP_REASON])
 
     def test_policy_required_keeps_pending_but_updates_reason(self) -> None:
         rows = [row()]
@@ -52,13 +52,13 @@ class SubmissionPlanSyncTests(unittest.TestCase):
 
         self.assertEqual(stats.marked_pending_policy, 1)
         self.assertEqual(rows[0][STATUS], PENDING)
-        self.assertIn("Approval required", rows[0][STOP_REASON])
+        self.assertIn("נדרש אישור לפני הגשה", rows[0][STOP_REASON])
 
     def test_synced_reason_is_idempotent(self) -> None:
-        reason = "Approval required by submission engine: reason Next: next"
+        reason = "נדרש אישור לפני הגשה: reason השלב הבא: next"
         rows = [row(reason=reason)]
 
-        stats = sync_rows(rows, [plan(SubmissionDecision.POLICY_REQUIRED, reason=reason, next_step="next")])
+        stats = sync_rows(rows, [plan(SubmissionDecision.POLICY_REQUIRED, reason="reason", next_step="next")])
 
         self.assertEqual(stats.changed, 0)
         self.assertEqual(rows[0][STOP_REASON], reason)
@@ -81,7 +81,7 @@ class SubmissionPlanSyncTests(unittest.TestCase):
         self.assertEqual(rows[0][STOP_REASON], "Needs manual upload")
 
     def test_manual_required_fallback_reason_is_not_overwritten(self) -> None:
-        reason = "Manual submission required: Official fallback checked; no direct company form was found."
+        reason = "נדרשת הגשה ידנית: נבדק fallback רשמי; לא נמצא טופס חברה ישיר."
         rows = [row(status=MANUAL_REQUIRED, reason=reason)]
 
         stats = sync_rows(rows, [plan(SubmissionDecision.HUMAN_GATE, reason="generic blocker")])

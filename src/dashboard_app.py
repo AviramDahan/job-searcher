@@ -44,6 +44,7 @@ try:
         write_rows,
     )
     from .location_policy import location_policy_payload
+    from .public_text import public_hebrew_text
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
     from .site_adapters import route_submission_failure
@@ -78,6 +79,7 @@ except ImportError:
         write_rows,
     )
     from location_policy import location_policy_payload
+    from public_text import public_hebrew_text
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
     from site_adapters import route_submission_failure
@@ -160,12 +162,12 @@ def failure_details(row: dict[str, str]) -> dict[str, str]:
     if not is_action_required_status(row.get(STATUS, "")):
         return {"kind": "", "next_step": ""}
     route = route_submission_failure(
-        reason=row.get(STOP_REASON, ""),
+        reason=public_hebrew_text(row.get(STOP_REASON, "")),
         link=row.get(LINK, ""),
-        title=row.get(TITLE, ""),
-        company=row.get(COMPANY, ""),
+        title=public_hebrew_text(row.get(TITLE, "")),
+        company=public_hebrew_text(row.get(COMPANY, "")),
     )
-    return {"kind": route.failure.kind.value, "next_step": route.failure.next_step}
+    return {"kind": route.failure.kind.value, "next_step": public_hebrew_text(route.failure.next_step)}
 
 
 def serialize_job(row: dict[str, str]) -> dict[str, Any]:
@@ -173,18 +175,18 @@ def serialize_job(row: dict[str, str]) -> dict[str, Any]:
     return {
         "key": job_key(row),
         "date": row.get(DATE, ""),
-        "company": row.get(COMPANY, ""),
-        "title": row.get(TITLE, ""),
-        "location": row.get(LOCATION, ""),
+        "company": public_hebrew_text(row.get(COMPANY, "")),
+        "title": public_hebrew_text(row.get(TITLE, "")),
+        "location": public_hebrew_text(row.get(LOCATION, "")),
         "link": row.get(LINK, ""),
         "score": score_int(row),
         "score_raw": row.get(SCORE, ""),
-        "requirements": row.get(REQUIREMENTS, ""),
-        "fit": row.get(FIT, ""),
+        "requirements": public_hebrew_text(row.get(REQUIREMENTS, "")),
+        "fit": public_hebrew_text(row.get(FIT, "")),
         "status": row.get(STATUS, ""),
-        "stop_reason": row.get(STOP_REASON, ""),
-        "cover": row.get(COVER, ""),
-        "cv": row.get(CV, ""),
+        "stop_reason": public_hebrew_text(row.get(STOP_REASON, "")),
+        "cover": public_hebrew_text(row.get(COVER, "")),
+        "cv": public_hebrew_text(row.get(CV, "")),
         "failure_kind": details["kind"],
         "next_step": details["next_step"],
     }
@@ -367,23 +369,23 @@ def build_alert_payload(row: dict[str, str], timestamp: str | None = None) -> di
         return {
             "kind": "submitted",
             "submitted_at": timestamp or now_string(),
-            "company": row.get(COMPANY, ""),
-            "title": row.get(TITLE, ""),
+            "company": public_hebrew_text(row.get(COMPANY, "")),
+            "title": public_hebrew_text(row.get(TITLE, "")),
             "score": row.get(SCORE, ""),
             "link": row.get(LINK, ""),
-            "matched_requirements": row.get(FIT, ""),
-            "company_info": f"מיקום: {row.get(LOCATION, '')}; דרישות מרכזיות: {row.get(REQUIREMENTS, '')}",
+            "matched_requirements": public_hebrew_text(row.get(FIT, "")),
+            "company_info": public_hebrew_text(f"מיקום: {row.get(LOCATION, '')}; דרישות מרכזיות: {row.get(REQUIREMENTS, '')}"),
         }
 
     return {
         "kind": "manual",
-        "company": row.get(COMPANY, ""),
-        "title": row.get(TITLE, ""),
+        "company": public_hebrew_text(row.get(COMPANY, "")),
+        "title": public_hebrew_text(row.get(TITLE, "")),
         "score": row.get(SCORE, ""),
         "link": row.get(LINK, ""),
-        "matched_requirements": row.get(FIT, ""),
-        "company_info": f"מיקום: {row.get(LOCATION, '')}",
-        "blocker": row.get(STOP_REASON, ""),
+        "matched_requirements": public_hebrew_text(row.get(FIT, "")),
+        "company_info": public_hebrew_text(f"מיקום: {row.get(LOCATION, '')}"),
+        "blocker": public_hebrew_text(row.get(STOP_REASON, "")),
         "recommendation": failure_details(row).get("next_step") or "להמשיך רק לאחר אימות החסם מול המועמדת או האתר.",
     }
 

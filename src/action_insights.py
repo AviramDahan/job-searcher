@@ -20,6 +20,7 @@ try:
         job_key,
         score_int,
     )
+    from .public_text import public_hebrew_text
 except ImportError:
     from job_records import (
         COMPANY,
@@ -36,6 +37,7 @@ except ImportError:
         job_key,
         score_int,
     )
+    from public_text import public_hebrew_text
 
 
 @dataclass(frozen=True)
@@ -170,7 +172,7 @@ def compact_job(row: dict[str, str], category: str = "") -> dict[str, Any]:
         "link": row.get(LINK, ""),
         "status": row.get(STATUS, ""),
         "category": category,
-        "reason": row.get(STOP_REASON, "")[:360],
+        "reason": public_hebrew_text(row.get(STOP_REASON, ""))[:360],
     }
 
 
