@@ -80,6 +80,16 @@ class SubmissionPlanSyncTests(unittest.TestCase):
         self.assertEqual(rows[0][STATUS], MANUAL_REQUIRED)
         self.assertEqual(rows[0][STOP_REASON], "Needs manual upload")
 
+    def test_manual_required_fallback_reason_is_not_overwritten(self) -> None:
+        reason = "Manual submission required: Official fallback checked; no direct company form was found."
+        rows = [row(status=MANUAL_REQUIRED, reason=reason)]
+
+        stats = sync_rows(rows, [plan(SubmissionDecision.HUMAN_GATE, reason="generic blocker")])
+
+        self.assertEqual(stats.skipped_protected, 1)
+        self.assertEqual(rows[0][STATUS], MANUAL_REQUIRED)
+        self.assertEqual(rows[0][STOP_REASON], reason)
+
 
 if __name__ == "__main__":
     unittest.main()

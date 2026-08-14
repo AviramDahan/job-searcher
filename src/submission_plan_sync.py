@@ -18,6 +18,8 @@ except ImportError:
 PROTECTED_REASON_MARKERS = (
     "dashboard",
     "Manual gate:",
+    "Manual submission required:",
+    "Official fallback checked",
     "Rejected:",
     "הוגש ידנית",
     "הוגש בהצלחה",
