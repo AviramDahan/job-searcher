@@ -71,6 +71,26 @@ class PublicTextTests(unittest.TestCase):
         self.assertIn("הגישה מועמדות בעבר", text)
         self.assertNotIn("candidate profile", text)
 
+    def test_translates_legacy_public_status_fragments(self) -> None:
+        text = public_hebrew_text(
+            "Drushim exposed a relevant Rami Levy role, but there is no validated direct-submit adapter. "
+            "The blocker does not match a known failure pattern. "
+            "Inspect the page and add a new classifier rule if this repeats. "
+            "Rejected: duplicate of the Timorim economist posting already tracked as manual-required at "
+            "https://www.drushim.co.il/job/37621941/2fc2aada/. Do not submit twice. "
+            "Rejected: duplicate of the Afcon Beer Sheva procurement job already submitted through JobMaster at "
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9829951. Do not submit again."
+        )
+
+        self.assertIn("Drushim הציג משרה רלוונטית", text)
+        self.assertIn("סיבת העצירה אינה תואמת", text)
+        self.assertIn("אין להגיש פעמיים", text)
+        self.assertIn("אפקון בבאר שבע", text)
+        self.assertIn("אין להגיש שוב", text)
+        self.assertNotIn("The blocker does not match", text)
+        self.assertNotIn("Do not submit twice", text)
+        self.assertNotIn("Do not submit again", text)
+
 
 if __name__ == "__main__":
     unittest.main()

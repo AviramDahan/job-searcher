@@ -116,6 +116,10 @@ FIXED_REPLACEMENTS = (
         "תעודת הזהות ותשובת קרובי המשפחה בחברה זמינות בפרופיל המקומי.",
     ),
     (
+        "National ID and relatives-at-company answer are available in the local profile",
+        "תעודת הזהות ותשובת קרובי המשפחה בחברה זמינות בפרופיל המקומי",
+    ),
+    (
         "Use the verified candidate profile answer.",
         "יש להשתמש בתשובה המאומתת מפרופיל המועמדת.",
     ),
@@ -130,6 +134,14 @@ FIXED_REPLACEMENTS = (
     (
         "The form asks for national ID, but the candidate profile does not include it.",
         "הטופס מבקש תעודת זהות, אך הפרט אינו קיים בפרופיל המועמדת.",
+    ),
+    (
+        "The blocker does not match a known failure pattern.",
+        "סיבת העצירה אינה תואמת עדיין תבנית כשל מוכרת.",
+    ),
+    (
+        "Inspect the page and add a new classifier rule if this repeats.",
+        "יש לבדוק את הדף ולהוסיף כלל סיווג חדש אם זה חוזר.",
     ),
     (
         "A numeric salary expectation was approved in the candidate profile.",
@@ -148,8 +160,24 @@ FIXED_REPLACEMENTS = (
         "נדרש שלב אבטחה אנושי.",
     ),
     (
+        "Official fallback checked at",
+        "נבדק מסלול רשמי ב-",
+    ),
+    (
         "Official fallback checked",
+        "נבדק מסלול רשמי",
+    ),
+    (
+        "נבדק fallback רשמי at",
+        "נבדק מסלול רשמי ב-",
+    ),
+    (
         "נבדק fallback רשמי",
+        "נבדק מסלול רשמי",
+    ),
+    (
+        "Drushim exposed a relevant Rami Levy role, but there is no validated direct-submit adapter.",
+        "Drushim הציג משרה רלוונטית של רמי לוי, אך אין עדיין adapter הגשה ישירה מאומת.",
     ),
     (
         "no direct posting/form for procurement clerk at Timorim was found",
@@ -162,6 +190,10 @@ FIXED_REPLACEMENTS = (
     (
         "Recommendation: apply manually via Drushim or contact Rami Levy recruiting with the approved CV.",
         "המלצה: להגיש ידנית דרך Drushim או ליצור קשר עם גיוס רמי לוי ולצרף את ה-CV המאושר.",
+    ),
+    (
+        "or contact Rami Levy recruiting with the approved CV.",
+        "או ליצור קשר עם גיוס רמי לוי ולצרף את ה-CV המאושר.",
     ),
     (
         "Verify the flagged requirement or policy item before retrying the application.",
@@ -331,6 +363,7 @@ FIXED_REPLACEMENTS = (
         "Do not apply unless the live posting shows an approved target location or a confirmed hybrid model of up to two weekly office visits.",
         "אין להגיש אלא אם המודעה החיה מציגה מיקום יעד מאושר או מודל היברידי מאומת של עד שתי הגעות שבועיות.",
     ),
+    ("Ashdod", "אשדוד"),
 )
 
 
@@ -358,6 +391,20 @@ REGEX_REPLACEMENTS = (
     (
         re.compile(r"([A-Za-z0-9+ #./_-]+) application requires CAPTCHA/reCAPTCHA", re.IGNORECASE),
         r"ההגשה דרך \1 דורשת CAPTCHA/reCAPTCHA",
+    ),
+    (
+        re.compile(
+            r"Rejected: duplicate of the Timorim economist posting already tracked as manual-required at (.+?)\. Do not submit twice\.?",
+            re.IGNORECASE,
+        ),
+        r"נפסל: כפילות של משרת הכלכלן/ית בתימורים שכבר מתועדת כנדרשת להגשה ידנית בקישור \1. אין להגיש פעמיים.",
+    ),
+    (
+        re.compile(
+            r"Rejected: duplicate of the Afcon Beer Sheva procurement job already submitted through JobMaster at (.+?)\. Do not submit again\.?",
+            re.IGNORECASE,
+        ),
+        r"נפסל: כפילות של משרת הרכש של אפקון בבאר שבע שכבר הוגשה דרך JobMaster בקישור \1. אין להגיש שוב.",
     ),
 )
 
