@@ -108,6 +108,14 @@ FIXED_REPLACEMENTS = (
         "הטופס מבקש פרט רגיש או פרט שלא אומת על המועמדת.",
     ),
     (
+        "The form mentions a legal declaration or terms acceptance.",
+        "הטופס מזכיר הצהרה משפטית או קבלת תנאים.",
+    ),
+    (
+        "Pause for explicit operator approval before accepting.",
+        "יש לעצור לקבלת אישור מפורש לפני אישור התנאים.",
+    ),
+    (
         "Store the verified fact in the candidate profile, then allow future submissions to reuse it.",
         "יש לשמור את הפרט המאומת בפרופיל המועמדת ואז לאפשר שימוש חוזר בהגשות עתידיות.",
     ),

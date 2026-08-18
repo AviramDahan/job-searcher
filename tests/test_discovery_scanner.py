@@ -274,6 +274,38 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(scored.status, REJECTED)
         self.assertIn("גיוס/HR", scored.stop_reason)
 
+    def test_payroll_compensation_analyst_is_rejected(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="אנליסט/ית שכר והטבות",
+                company="חברה",
+                location="ראשון לציון",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=12",
+                description="אנליזות נתונים ובקרות שכר.",
+                requirements="ניסיון במערכות שכר, Excel ואנגלית.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("שכר/הטבות", scored.stop_reason)
+
+    def test_purchasing_manager_is_rejected_as_senior_management(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="Purchasing Manager",
+                company="חברה",
+                location="תל אביב",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=13",
+                description="Develop purchasing strategies, negotiate contracts and manage suppliers.",
+                requirements="Procurement experience and English.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("ניהול בכיר", scored.stop_reason)
+
     def test_student_position_requires_approval_before_submission(self) -> None:
         scored = score_job(
             DiscoveredJob(

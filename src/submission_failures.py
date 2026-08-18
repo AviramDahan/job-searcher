@@ -214,6 +214,11 @@ SYSTEM_SKILL_TERMS = (
     "canva",
     "chatgpt",
     "chat gpt",
+    "כלי ai",
+    "כלי בינה מלאכותית",
+    "ai tools",
+    "חילן",
+    "hilan",
 )
 
 EXPERIENCE_TERMS = (

@@ -24,6 +24,8 @@ TEST_PROFILE = CandidateProfile(
         SystemSkillFact("Gantt", ("gantt", "גאנט", "גאנטים"), None),
         SystemSkillFact("Nibit", ("nibit",), None),
         SystemSkillFact("חשבשבת", ("חשבשבת",), True),
+        SystemSkillFact("AI tools", ("כלי ai", "כלי בינה מלאכותית", "ai tools"), None),
+        SystemSkillFact("Hilan", ("חילן", "hilan"), None),
     ),
 )
 
@@ -65,6 +67,24 @@ class CandidateProfileTests(unittest.TestCase):
 
         self.assertTrue(assessment.has_human_blocker)
         self.assertEqual(assessment.first_blocker.label, "Gantt")
+
+    def test_required_ai_tools_are_human_gate(self) -> None:
+        assessment = assess_candidate_facts("דרישות: שליטה בכלי AI ויכולת אנליטית גבוהה.", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_human_blocker)
+        self.assertEqual(assessment.first_blocker.label, "AI tools")
+
+    def test_required_hilan_is_human_gate(self) -> None:
+        assessment = assess_candidate_facts("ניסיון על מערכת חילן - חובה.", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_human_blocker)
+        self.assertEqual(assessment.first_blocker.label, "Hilan")
+
+    def test_privacy_policy_is_legal_gate(self) -> None:
+        assessment = assess_candidate_facts("בהגשת המועמדות המידע יטופל בהתאם למדיניות הפרטיות.", profile=TEST_PROFILE)
+
+        self.assertTrue(assessment.has_human_blocker)
+        self.assertEqual(assessment.first_blocker.code, "legal_declaration_unverified")
 
     def test_required_industrial_engineering_degree_is_disqualifying(self) -> None:
         assessment = assess_candidate_facts("תואר ראשון בהנדסת תעשייה וניהול - חובה.", profile=TEST_PROFILE)

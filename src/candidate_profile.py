@@ -128,6 +128,8 @@ def default_system_skills() -> tuple[SystemSkillFact, ...]:
         SystemSkillFact("חשבשבת", ("חשבשבת",), None),
         SystemSkillFact("Canva", ("canva",), None),
         SystemSkillFact("ChatGPT", ("chatgpt", "chat gpt"), None),
+        SystemSkillFact("AI tools", ("כלי ai", "כלי בינה מלאכותית", "ai tools"), None),
+        SystemSkillFact("Hilan", ("חילן", "hilan"), None),
     )
 
 
@@ -290,7 +292,10 @@ LEGAL_TERMS = (
     "הצהרה",
     "הצהרת",
     "תנאי שימוש",
+    "מדיניות פרטיות",
+    "מדיניות הפרטיות",
     "declaration",
+    "privacy policy",
 )
 
 MARKETING_CONSENT_TERMS = (

@@ -159,6 +159,16 @@ HR_RECRUITING_TITLE_TERMS = (
     "talent acquisition",
 )
 
+PAYROLL_COMPENSATION_TITLE_TERMS = (
+    "שכר והטבות",
+    "אנליסט/ית שכר",
+    "אנליסטית שכר",
+    "אנליסט שכר",
+    "payroll analyst",
+    "compensation analyst",
+    "compensation and benefits",
+)
+
 BODY_HARD_EXCLUDE_TERMS = (
     "שירות לקוחות",
     "טלמרקטינג",
@@ -240,6 +250,7 @@ SENIOR_EXCLUDE_TERMS = (
     "מנהלת רכש",
     "מנהלת מחלקת רכש",
     "procurement manager",
+    "purchasing manager",
     "סמנכ",
     "director",
     "ראש צוות",
@@ -729,6 +740,8 @@ def exclusion_reasons(text: str, title: str = "") -> tuple[list[str], list[str]]
         hard.append("נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן.")
     if has_any(titleish, HR_RECRUITING_TITLE_TERMS):
         hard.append("נפסל: ליבת התפקיד היא גיוס/HR ולא רכש, כלכלה, תקציבים או בקרה.")
+    if has_any(titleish, PAYROLL_COMPENSATION_TITLE_TERMS):
+        hard.append("נפסל: ליבת התפקיד היא שכר/הטבות או מערכות שכר, תחום שלא נכלל ביעדי ההגשה.")
     if has_any(titleish, WAREHOUSE_CORE_TERMS):
         hard.append("נפסל: ליבת התפקיד כוללת ניהול/תפעול מחסן ולא רכש/בקרה כתחום מרכזי.")
     if has_any(titleish, SENIOR_EXCLUDE_TERMS):
