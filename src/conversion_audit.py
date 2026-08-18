@@ -109,7 +109,7 @@ def recommendations(audit: dict) -> list[str]:
     if plan["runnable"] == 0:
         recs.append("אין כרגע משרות בטוחות להגשה אוטומטית; עדיף להסיר חסמי מדיניות/אתר לפני הרחבת סריקה נוספת.")
     if blocker_by_category.get("secondary_location", 0) >= 20:
-        recs.append("מדיניות המיקום עודכנה: יבנה, רחובות, לוד, רמלה, נס ציונה וראשון לציון אינן יעד להגשה; להשקיע רק במשרות דרום או עבודה מרחוק מלאה.")
+        recs.append("קיימות פסילות מיקום היסטוריות רבות; יש להסתמך על בחירות המיקום העדכניות מהדשבורד ולרענן ניקוד לפני החלטת הגשה.")
     if blocker_by_category.get("site_adapter_gap", 0) >= 5:
         recs.append("לתעדף fallback לאתרי חברה עבור Drushim ו-Jobnet במקום לסרוק שוב ושוב את אותם אגרגטורים.")
     if blocker_by_category.get("security_gate", 0) > 0:

@@ -148,6 +148,10 @@ FIXED_REPLACEMENTS = (
         "ציפיית שכר מספרית אושרה בפרופיל המועמדת.",
     ),
     (
+        "Priority is verified in the candidate profile.",
+        "ניסיון ב-Priority מאומת בפרופיל המועמדת.",
+    ),
+    (
         "Numeric salary expectations are not approved in the candidate profile.",
         "ציפיות שכר מספריות לא אושרו בפרופיל המועמדת.",
     ),

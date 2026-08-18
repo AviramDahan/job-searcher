@@ -258,6 +258,86 @@ class DiscoveryScannerTests(unittest.TestCase):
         self.assertEqual(scored.status, REJECTED)
         self.assertIn("מחסן", scored.stop_reason)
 
+    def test_hr_recruiting_role_is_rejected_even_when_degree_terms_match(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="רכז/ת גיוס טכנולוגי/ת",
+                company="חברת הדרכה",
+                location="תל אביב",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=7",
+                description="עבודה מול מועמדים, לינקדאין ודוחות גיוס.",
+                requirements="תואר רלוונטי וניסיון קודם יתרון.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("גיוס/HR", scored.stop_reason)
+
+    def test_student_position_requires_approval_before_submission(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="איש/ת בקרה תקציבית - משרת סטודנט",
+                company="חברה",
+                location="באר שבע",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=8",
+                description="בקרה תקציבית, דוחות והזמנות.",
+                requirements="סטודנט/ית לתואר פיננסי, Excel ברמה גבוהה.",
+            )
+        )
+
+        self.assertEqual(scored.status, PENDING)
+        self.assertIn("סטודנט/ית", scored.stop_reason)
+
+    def test_technical_program_manager_is_rejected(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="Program Manager - Tactical Laser",
+                company="חברה ביטחונית",
+                location="רחובות",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=9",
+                description="Leading complex projects, technical documents and business development and marketing activities.",
+                requirements="Bachelor degree in engineering or Exact Sciences. Willingness to travel abroad.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("טכני/הנדסי", scored.stop_reason)
+
+    def test_mandatory_engineer_or_practical_engineer_is_rejected(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="בקר/ית פרויקטים",
+                company="חברה קבלנית",
+                location="תל אביב",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=11",
+                description="בקרה תקציבית, עבודה מול ממשקים ו-Priority.",
+                requirements="מהנדס/ת או הנדסאי/ת – חובה. ניסיון בבנייה יתרון.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("מהנדס/ת או הנדסאי/ת", scored.stop_reason)
+
+    def test_head_of_budget_domain_is_rejected_as_senior_management(self) -> None:
+        scored = score_job(
+            DiscoveredJob(
+                source="JobMaster",
+                title="אחראי/ת תחום תקציבים והתקשרויות",
+                company="חברה",
+                location="ראשון לציון",
+                link="https://www.jobmaster.co.il/jobs/checknum.asp?key=10",
+                description="ניהול תקציבים גדולים, מכרזים, חוזים והתקשרויות.",
+                requirements="תואר ראשון רלוונטי ושליטה מלאה ב-Excel.",
+            )
+        )
+
+        self.assertEqual(scored.status, REJECTED)
+        self.assertIn("ניהול בכיר", scored.stop_reason)
+
     def test_procurement_job_is_not_rejected_for_warehouse_mention_only(self) -> None:
         scored = score_job(
             DiscoveredJob(

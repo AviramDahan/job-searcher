@@ -16,6 +16,7 @@ try:
     from .job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from .jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from .location_policy import LocationDecision, assess_location
+    from .public_text import public_hebrew_text
     from .rebuild_summary import render as render_summary
     from .send_job_status_alerts import build_message, send
     from .site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
@@ -26,6 +27,7 @@ except ImportError:
     from job_records import COMPANY, COVER, CV, DATE, FIT, LINK, LOCATION, MANUAL_REQUIRED, PENDING, REJECTED, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, job_key, load_rows, write_rows
     from jobmaster_apply import JobMasterOptions, JobMasterStage, default_cv_path, expected_cv_name, run_jobmaster_application
     from location_policy import LocationDecision, assess_location
+    from public_text import public_hebrew_text
     from rebuild_summary import render as render_summary
     from send_job_status_alerts import build_message, send
     from site_adapters import SiteAdapterProfile, adapter_for_url, route_submission_failure
@@ -185,7 +187,7 @@ def _clean_cover_hint(value: str) -> str:
 def _default_cover_letter(job: SubmissionJob, profile: CandidateProfile = KOREN_DAHAN_PROFILE) -> str:
     title = (job.title or "").lower()
     context = _context(job).lower()
-    procurement_terms = ("רכש", "קניינ", "buyer", "procurement", "sourcing", "ספק")
+    procurement_terms = ("רכש", "קניינ", "buyer", "procurement", "sourcing", "ספקים", "ספקי", "supplier", "suppliers")
     finance_terms = ("כלכל", "תקציב", "בקרה", "אנליסט", "financial", "economist", "budget")
 
     if any(term in title for term in procurement_terms):
@@ -740,14 +742,23 @@ def render_markdown(plans: list[SubmissionPlan]) -> str:
             lines.append(f"- {plan.job.score}/100 - {plan.job.company} - [{plan.job.title}]({plan.job.link}) - {plan.site}")
             lines.append(f"  Key: `{plan.job.key}`")
             lines.append(f"  Action: `{plan.action}`")
-            lines.append(f"  Reason: {plan.reason}")
-            lines.append(f"  Next: {plan.next_step}")
+            lines.append(f"  Reason: {public_hebrew_text(plan.reason)}")
+            lines.append(f"  Next: {public_hebrew_text(plan.next_step)}")
     return "\n".join(lines) + "\n"
+
+
+def public_plan_payload(plan: SubmissionPlan) -> dict:
+    payload = asdict(plan)
+    payload["reason"] = public_hebrew_text(plan.reason)
+    payload["next_step"] = public_hebrew_text(plan.next_step)
+    payload["verified_facts"] = [public_hebrew_text(item) for item in plan.verified_facts]
+    payload["blockers"] = [public_hebrew_text(item) for item in plan.blockers]
+    return payload
 
 
 def write_outputs(plans: list[SubmissionPlan], json_path: Path, md_path: Path) -> None:
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    json_path.write_text(json.dumps([asdict(plan) for plan in plans], ensure_ascii=False, indent=2), encoding="utf-8-sig")
+    json_path.write_text(json.dumps([public_plan_payload(plan) for plan in plans], ensure_ascii=False, indent=2), encoding="utf-8-sig")
     md_path.write_text(render_markdown(plans), encoding="utf-8")
 
 

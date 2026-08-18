@@ -98,6 +98,33 @@ class SubmissionFailureClassifierTests(unittest.TestCase):
         self.assertIn(FailureKind.SENSITIVE_FIELD, result.signals)
         self.assertIn(FailureKind.UNVERIFIED_SYSTEM_SKILL, result.signals)
 
+    def test_manufacturing_industry_experience_is_policy_gate(self) -> None:
+        result = classify_failure(
+            "דרישות: תואר בכלכלה, ניסיון בתעשיה יצרנית, יכולת אנליטית ו-Excel ברמה גבוהה.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9851274",
+        )
+
+        self.assertEqual(result.kind, FailureKind.EXPERIENCE_AMBIGUITY)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
+    def test_student_position_is_missing_candidate_fact(self) -> None:
+        result = classify_failure(
+            "נדרש אישור לפני הגשה: המשרה מיועדת לסטודנט/ית פעיל/ה, וסטטוס כזה לא אומת בפרופיל המועמדת.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9844836",
+        )
+
+        self.assertEqual(result.kind, FailureKind.MISSING_CANDIDATE_FACT)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
+    def test_procurement_in_construction_branch_is_policy_gate(self) -> None:
+        result = classify_failure(
+            "ניסיון של לפחות שנתיים בתפקיד קניין/ית רכש בארגון גדול – חובה. ניסיון ברכש בענף הבנייה - חובה.",
+            "https://www.jobmaster.co.il/jobs/checknum.asp?key=9847954",
+        )
+
+        self.assertEqual(result.kind, FailureKind.EXPERIENCE_AMBIGUITY)
+        self.assertEqual(result.action, AutomationAction.HUMAN_APPROVAL_REQUIRED)
+
     def test_hebrew_minimum_three_years_is_experience_ambiguity(self) -> None:
         result = classify_failure(
             "דרישות: ניסיון של 3 שנים לפחות ברכש כולל מו״מ בארץ ובחו״ל.",

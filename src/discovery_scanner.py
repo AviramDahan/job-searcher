@@ -82,7 +82,7 @@ USER_AGENT = (
 )
 
 ROLE_TERMS = {
-    "procurement": ("רכש", "קניין", "קניינ", "buyer", "procurement", "sourcing", "ספק"),
+    "procurement": ("רכש", "קניין", "קניינ", "buyer", "procurement", "sourcing", "ספקים", "ספקי", "suppliers", "supplier"),
     "finance": ("כלכל", "תקציב", "בקרה תקציבית", "financial analyst", "economist", "budget", "אנליסט"),
     "ops": ("שרשרת אספקה", "supply chain", "תכנון", "planner", "project controller", "pmo", "התקשרויות", "חוזים"),
 }
@@ -143,6 +143,22 @@ TITLE_HARD_EXCLUDE_TERMS = (
     "אופנה",
 )
 
+HR_RECRUITING_TITLE_TERMS = (
+    "רכז/ת גיוס",
+    "רכזת גיוס",
+    "רכז גיוס",
+    "גיוס טכנולוגי",
+    "מגייס/ת",
+    "מגייסת",
+    "מגייס",
+    "משאבי אנוש",
+    "hr",
+    "human resources",
+    "recruiter",
+    "recruitment",
+    "talent acquisition",
+)
+
 BODY_HARD_EXCLUDE_TERMS = (
     "שירות לקוחות",
     "טלמרקטינג",
@@ -162,6 +178,40 @@ BODY_HARD_EXCLUDE_TERMS = (
     "ליקוט",
 )
 
+STUDENT_POSITION_TERMS = (
+    "משרת סטודנט",
+    "משרת סטודנט/ית",
+    "סטודנט/ית לתואר",
+    "סטודנטית לתואר",
+    "סטודנט לתואר",
+    "student position",
+    "student role",
+)
+
+TECHNICAL_PROGRAM_MANAGER_TITLE_TERMS = (
+    "program manager",
+    "מנהל/ת תוכנית",
+    "מנהל תוכנית",
+    "מנהלת תוכנית",
+)
+
+TECHNICAL_PROGRAM_MANAGER_CONTEXT_TERMS = (
+    "tactical laser",
+    "electro-optical",
+    "electro optical",
+    "engineering or exact sciences",
+    "technical and managerial documents",
+    "business development and marketing",
+    "willingness to travel abroad",
+    "observation, designation, and target acquisition",
+)
+
+MANDATORY_ENGINEERING_CREDENTIAL_PATTERNS = (
+    r"(?:מהנדס/ת|מהנדס|מהנדסת)\s+או\s+(?:הנדסאי/ת|הנדסאי|הנדסאית)\s*[-–:]?\s*חובה",
+    r"(?:הנדסאי/ת|הנדסאי|הנדסאית)\s+או\s+(?:מהנדס/ת|מהנדס|מהנדסת)\s*[-–:]?\s*חובה",
+    r"(?:חובה|נדרש|נדרשת)\s*[-–:]?\s*(?:מהנדס/ת|מהנדס|מהנדסת)\s+או\s+(?:הנדסאי/ת|הנדסאי|הנדסאית)",
+)
+
 WAREHOUSE_CORE_TERMS = (
     "ניהול מחסן",
     "אחראי מחסן",
@@ -172,6 +222,9 @@ WAREHOUSE_CORE_TERMS = (
 SENIOR_EXCLUDE_TERMS = (
     "ראש תחום",
     "ראש/ת תחום",
+    "אחראי/ת תחום",
+    "אחראית תחום",
+    "אחראי תחום",
     "מנהל/ת אפסנאות",
     "מנהל.ת אפסנאות",
     "מנהל אפסנאות",
@@ -330,6 +383,10 @@ def lower_text(value: str) -> str:
 def has_any(text: str, terms: Iterable[str]) -> bool:
     lowered = lower_text(text)
     return any(term.lower() in lowered for term in terms)
+
+
+def has_regex(text: str, patterns: Iterable[str]) -> bool:
+    return any(re.search(pattern, text or "", flags=re.IGNORECASE) for pattern in patterns)
 
 
 def fetch_html(session: requests.Session, url: str, timeout: int = DEFAULT_TIMEOUT) -> str:
@@ -670,10 +727,18 @@ def exclusion_reasons(text: str, title: str = "") -> tuple[list[str], list[str]]
     titleish = title or text[:250]
     if has_any(titleish, TITLE_HARD_EXCLUDE_TERMS) or has_any(text, BODY_HARD_EXCLUDE_TERMS):
         hard.append("נפסל: מופיעים רכיבי תפקיד מחוץ ליעד כמו מכירות/שירות/הנהלת חשבונות/תכנות/מחסן.")
+    if has_any(titleish, HR_RECRUITING_TITLE_TERMS):
+        hard.append("נפסל: ליבת התפקיד היא גיוס/HR ולא רכש, כלכלה, תקציבים או בקרה.")
     if has_any(titleish, WAREHOUSE_CORE_TERMS):
         hard.append("נפסל: ליבת התפקיד כוללת ניהול/תפעול מחסן ולא רכש/בקרה כתחום מרכזי.")
     if has_any(titleish, SENIOR_EXCLUDE_TERMS):
         hard.append("נפסל: התפקיד נראה כתפקיד ניהול בכיר או מנהל/ת רכש.")
+    if has_any(titleish, TECHNICAL_PROGRAM_MANAGER_TITLE_TERMS) and has_any(text, TECHNICAL_PROGRAM_MANAGER_CONTEXT_TERMS):
+        hard.append("נפסל: התפקיד הוא Program Manager טכני/הנדסי ואינו PMO או בקרת פרויקטים כלכלית.")
+    if has_regex(text, MANDATORY_ENGINEERING_CREDENTIAL_PATTERNS):
+        hard.append("נפסל: המשרה דורשת מהנדס/ת או הנדסאי/ת כחובה, וזה לא קיים בפרופיל המאומת.")
+    if has_any(text, STUDENT_POSITION_TERMS):
+        caution.append("המשרה מיועדת לסטודנט/ית פעיל/ה, וסטטוס כזה לא אומת בפרופיל המועמדת.")
     if has_any(text, SHORT_TEMP_TERMS):
         caution.append("המשרה נראית זמנית או קצרה ודורשת בדיקה לפני הגשה.")
     if has_any(text, OVER_EXPERIENCE_TERMS):
