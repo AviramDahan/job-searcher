@@ -143,39 +143,39 @@ def build_audit(rows: list[dict[str, str]], scanned: int, plans: list[dict], ret
 def render_markdown(audit: dict) -> str:
     counts = audit["counts"]
     lines = [
-        "# Submission Conversion Audit",
+        "# בדיקת המרות מהסריקה להגשה",
         "",
-        "## Funnel",
+        "## משפך",
         "",
-        f"- Scanned: {counts['scanned']}",
-        f"- Documented: {counts['total']} ({counts['documented_rate_from_scanned']}% of scanned)",
-        f"- Suitable/actionable statuses: {counts['suitable']} ({counts['suitable_rate_from_documented']}% of documented)",
-        f"- Submitted: {counts['submitted']} ({counts['submitted_rate_from_suitable']}% of suitable; {counts['submitted_rate_from_documented']}% of documented)",
-        f"- Pending approval: {counts['pending']}",
-        f"- Manual required: {counts['manual_required']}",
-        f"- Rejected: {counts['rejected']}",
+        f"- נסרקו: {counts['scanned']}",
+        f"- תועדו: {counts['total']} ({counts['documented_rate_from_scanned']}% מהנסרקות)",
+        f"- מתאימות או דורשות פעולה: {counts['suitable']} ({counts['suitable_rate_from_documented']}% מהמתועדות)",
+        f"- הוגשו: {counts['submitted']} ({counts['submitted_rate_from_suitable']}% מהמתאימות; {counts['submitted_rate_from_documented']}% מהמתועדות)",
+        f"- ממתינות לאישור: {counts['pending']}",
+        f"- דורשות הגשה ידנית: {counts['manual_required']}",
+        f"- נפסלו: {counts['rejected']}",
         "",
-        "## Submission Engine",
+        "## מנוע ההגשה",
         "",
-        f"- Plans: {audit['submission_plan']['plans']}",
-        f"- Runnable now: {audit['submission_plan']['runnable']}",
+        f"- החלטות: {audit['submission_plan']['plans']}",
+        f"- ניתנות לטיפול כעת: {audit['submission_plan']['runnable']}",
     ]
     for decision, count in sorted(audit["submission_plan"]["decisions"].items()):
         lines.append(f"- `{decision}`: {count}")
 
-    lines.extend(["", "## Main Blockers", ""])
+    lines.extend(["", "## חסמים מרכזיים", ""])
     for blocker in audit["insights"].get("blocker_counts", [])[:10]:
         lines.append(f"- {blocker['category']}: {blocker['count']} - {blocker['recommendation']}")
 
-    lines.extend(["", "## Source Quality", ""])
+    lines.extend(["", "## איכות מקורות", ""])
     for item in audit["source_quality"]:
         lines.append(
-            f"- {item['source']}: total {item['total']}, submitted {item['submitted']}, "
-            f"pending {item['pending']}, manual {item['manual_required']}, rejected {item['rejected']}, "
-            f"submission rate {item['submission_rate']}%"
+            f"- {item['source']}: סה\"כ {item['total']}, הוגשו {item['submitted']}, "
+            f"ממתינות {item['pending']}, ידניות {item['manual_required']}, נפסלו {item['rejected']}, "
+            f"שיעור הגשה {item['submission_rate']}%"
         )
 
-    lines.extend(["", "## Recommendations", ""])
+    lines.extend(["", "## המלצות", ""])
     for recommendation in audit["recommendations"]:
         lines.append(f"- {recommendation}")
     return "\n".join(lines) + "\n"

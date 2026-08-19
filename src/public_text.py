@@ -12,6 +12,7 @@ FIXED_REPLACEMENTS = (
     ("Manual submission required by submission engine:", "נדרשת הגשה ידנית:"),
     ("Manual submission required:", "נדרשת הגשה ידנית:"),
     ("Rejected by submission engine:", "נפסל:"),
+    ("Rejected:", "נפסל:"),
     ("Adapter gap by submission engine:", "חסר adapter בטוח לאתר:"),
     ("Manual gate:", "חסם ידני:"),
     ("Next:", "השלב הבא:"),
@@ -54,6 +55,30 @@ FIXED_REPLACEMENTS = (
     (
         "Do not apply unless the live posting proves the disqualifying requirement is not mandatory.",
         "אין להגיש אלא אם המודעה העדכנית מוכיחה שדרישת הפסילה אינה חובה.",
+    ),
+    (
+        "Do not submit unless the live posting says ERP is only an advantage/preferred skill.",
+        "אין להגיש אלא אם המודעה העדכנית מציינת ש-ERP הוא יתרון בלבד ולא דרישת חובה.",
+    ),
+    (
+        "Do not submit unless the live posting says MRP is only an advantage/preferred skill.",
+        "אין להגיש אלא אם המודעה העדכנית מציינת ש-MRP הוא יתרון בלבד ולא דרישת חובה.",
+    ),
+    (
+        "AllJobs automation was blocked; do not retry manually unless an official direct posting is found.",
+        "האוטומציה ב-AllJobs נחסמה; אין לנסות שוב ידנית אלא אם נמצאה משרה ישירה רשמית.",
+    ),
+    (
+        "historical note was corrupted by encoding; recheck the live posting before any action.",
+        "הערה היסטורית נפגעה מקידוד; יש לבדוק מחדש את המודעה החיה לפני כל פעולה.",
+    ),
+    (
+        "posting appears to require SAP/procurement-system experience that is not verified for the candidate; Yavne is a secondary location.",
+        "נראה שהמודעה דורשת ניסיון ב-SAP או מערכת רכש שלא אומת עבור המועמדת; יבנה היא מיקום משני.",
+    ),
+    (
+        "The hybrid office-days requirement matches the approved search policy.",
+        "דרישת ימי המשרד ההיברידיים תואמת למדיניות החיפוש המאושרת.",
     ),
     (
         "No submission adapter exists for this site yet.",
@@ -228,6 +253,10 @@ FIXED_REPLACEMENTS = (
         "יש לחפש את אותה משרה באתר הקריירה הרשמי של החברה; אם אין טופס ישיר, להעביר להגשה ידנית.",
     ),
     (
+        "Search for the same role on the official company career page before sending a manual handoff.",
+        "יש לחפש את אותה משרה באתר הקריירה הרשמי של החברה לפני העברה להגשה ידנית.",
+    ),
+    (
         "Drushim is approved as a discovery source, but no safe submit adapter exists yet for its application form.",
         "Drushim מאושר כמקור איתור, אבל עדיין אין adapter הגשה בטוח לטופס ההגשה שלו.",
     ),
@@ -389,7 +418,11 @@ REGEX_REPLACEMENTS = (
         r"נדרש ניסיון ב-\1 כחובה, והמועמדת אישרה שאין לה ניסיון בו.",
     ),
     (
-        re.compile(r"([A-Za-z0-9][A-Za-z0-9+ #./_-]*) is verified in the candidate profile\.?"),
+        re.compile(r"([A-Za-z0-9][A-Za-z0-9+ #/_-]*) is verified in the candidate profile\.?"),
+        r"ניסיון ב-\1 מאומת בפרופיל המועמדת.",
+    ),
+    (
+        re.compile(r"([\u0590-\u05ffA-Za-z0-9][\u0590-\u05ffA-Za-z0-9+ #/_-]*) is verified in the candidate profile\.?"),
         r"ניסיון ב-\1 מאומת בפרופיל המועמדת.",
     ),
     (
@@ -406,14 +439,14 @@ REGEX_REPLACEMENTS = (
     ),
     (
         re.compile(
-            r"Rejected: duplicate of the Timorim economist posting already tracked as manual-required at (.+?)\. Do not submit twice\.?",
+            r"(?:Rejected:|נפסל:) duplicate of the Timorim economist posting already tracked as manual-required at (.+?)\. Do not submit twice\.?",
             re.IGNORECASE,
         ),
         r"נפסל: כפילות של משרת הכלכלן/ית בתימורים שכבר מתועדת כנדרשת להגשה ידנית בקישור \1. אין להגיש פעמיים.",
     ),
     (
         re.compile(
-            r"Rejected: duplicate of the Afcon Beer Sheva procurement job already submitted through JobMaster at (.+?)\. Do not submit again\.?",
+            r"(?:Rejected:|נפסל:) duplicate of the Afcon Beer Sheva procurement job already submitted through JobMaster at (.+?)\. Do not submit again\.?",
             re.IGNORECASE,
         ),
         r"נפסל: כפילות של משרת הרכש של אפקון בבאר שבע שכבר הוגשה דרך JobMaster בקישור \1. אין להגיש שוב.",

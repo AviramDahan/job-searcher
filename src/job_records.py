@@ -8,6 +8,11 @@ from collections import Counter
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+try:
+    from .public_text import public_hebrew_text
+except ImportError:
+    from public_text import public_hebrew_text
+
 
 DATE = "תאריך"
 COMPANY = "חברה"
@@ -36,6 +41,18 @@ HEADERS = [
     COVER,
     CV,
 ]
+
+PUBLIC_TEXT_FIELDS = {
+    COMPANY,
+    TITLE,
+    LOCATION,
+    REQUIREMENTS,
+    FIT,
+    STATUS,
+    STOP_REASON,
+    COVER,
+    CV,
+}
 
 SUBMITTED = "הוגש"
 PENDING = "נדרש אישור"
@@ -112,7 +129,10 @@ def sanitize_field_value(value: object) -> str:
 
 
 def sanitize_row(row: dict[str, str]) -> dict[str, str]:
-    return {header: sanitize_field_value(row.get(header, "")) for header in HEADERS}
+    sanitized = {header: sanitize_field_value(row.get(header, "")) for header in HEADERS}
+    for header in PUBLIC_TEXT_FIELDS:
+        sanitized[header] = public_hebrew_text(sanitized.get(header, ""))
+    return sanitized
 
 
 def write_rows(path: Path, rows: list[dict[str, str]]) -> None:
@@ -180,12 +200,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Validate and summarize job application CSV files.")
     parser.add_argument("csv_path", type=Path)
     parser.add_argument("--dedupe", action="store_true", help="Remove duplicate rows using stable job keys.")
+    parser.add_argument("--sanitize", action="store_true", help="Rewrite rows with public text and encoding sanitization.")
     args = parser.parse_args()
 
     rows = load_rows(args.csv_path)
     before = len(rows)
     if args.dedupe:
         rows = deduplicate_rows(rows)
+    if args.dedupe or args.sanitize:
         write_rows(args.csv_path, rows)
     payload = summarize_counts(rows)
     if args.dedupe:

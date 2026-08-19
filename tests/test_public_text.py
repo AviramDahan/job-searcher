@@ -76,6 +76,12 @@ class PublicTextTests(unittest.TestCase):
             "Drushim exposed a relevant Rami Levy role, but there is no validated direct-submit adapter. "
             "The blocker does not match a known failure pattern. "
             "Inspect the page and add a new classifier rule if this repeats. "
+            "Rejected: AllJobs automation was blocked; do not retry manually unless an official direct posting is found. "
+            "Rejected: historical note was corrupted by encoding; recheck the live posting before any action. "
+            "Rejected: SAP appears to be a required skill, and the candidate has confirmed she has no experience with it. "
+            "חשבשבת is verified in the candidate profile. "
+            "Do not submit unless the live posting says ERP is only an advantage/preferred skill. "
+            "Search for the same role on the official company career page before sending a manual handoff. "
             "Rejected: duplicate of the Timorim economist posting already tracked as manual-required at "
             "https://www.drushim.co.il/job/37621941/2fc2aada/. Do not submit twice. "
             "Rejected: duplicate of the Afcon Beer Sheva procurement job already submitted through JobMaster at "
@@ -84,10 +90,21 @@ class PublicTextTests(unittest.TestCase):
 
         self.assertIn("Drushim הציג משרה רלוונטית", text)
         self.assertIn("סיבת העצירה אינה תואמת", text)
+        self.assertIn("האוטומציה ב-AllJobs נחסמה", text)
+        self.assertIn("הערה היסטורית נפגעה מקידוד", text)
+        self.assertIn("נדרש ניסיון ב-SAP כחובה", text)
+        self.assertIn("ניסיון ב-חשבשבת מאומת", text)
+        self.assertIn("ERP הוא יתרון בלבד", text)
+        self.assertIn("לפני העברה להגשה ידנית", text)
         self.assertIn("אין להגיש פעמיים", text)
         self.assertIn("אפקון בבאר שבע", text)
         self.assertIn("אין להגיש שוב", text)
         self.assertNotIn("The blocker does not match", text)
+        self.assertNotIn("AllJobs automation was blocked", text)
+        self.assertNotIn("historical note", text)
+        self.assertNotIn("advantage/preferred", text)
+        self.assertNotIn("candidate profile", text)
+        self.assertNotIn("manual handoff", text)
         self.assertNotIn("Do not submit twice", text)
         self.assertNotIn("Do not submit again", text)
 
