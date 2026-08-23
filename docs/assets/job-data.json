@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23 21:46",
+  "generated_at": "2026-08-23 21:52",
   "candidate": {
     "full_name": "Koren Dahan"
   },
@@ -7,10 +7,10 @@
     "scanned": 15159,
     "documented": 1339,
     "submitted": 15,
-    "pending": 116,
+    "pending": 115,
     "manual_required": 12,
-    "rejected": 1196,
-    "suitable": 143
+    "rejected": 1197,
+    "suitable": 142
   },
   "location_policy": {
     "home": {
@@ -28071,28 +28071,28 @@
   "insights": {
     "snapshot": {
       "submitted": 15,
-      "pending": 116,
+      "pending": 115,
       "manual_required": 12,
-      "rejected": 1196,
-      "high_score_actionable": 128,
+      "rejected": 1197,
+      "high_score_actionable": 127,
       "safe_auto_submit_now": 0
     },
     "blocker_counts": [
       {
         "category": "low_score_or_hard_reject",
         "label": "התאמה נמוכה או חסם קשיח",
-        "count": 546,
+        "count": 547,
         "recommendation": "לא להשקיע בהגשה; עדיף להרחיב מקורות או קריטריונים מאושרים.",
         "sample_job": {
-          "key": "nestle:1415084733",
-          "score": 91,
-          "company": "אסם-נסטלה",
-          "title": "קניין.ת רכש אופרטיבי למפעל אסם נסטלה בשדרות",
-          "location": "שדרות",
-          "link": "https://jobdetails.nestle.com/job/Sderot-%D7%A7%D7%A0%D7%99%D7%99%D7%9F_%D7%AA-%D7%A8%D7%9B%D7%A9-%D7%90%D7%95%D7%A4%D7%A8%D7%98%D7%99%D7%91%D7%99-%D7%9C%D7%9E%D7%A4%D7%A2%D7%9C-%D7%90%D7%A1%D7%9D-%D7%A0%D7%A1%D7%98%D7%9C%D7%94-%D7%91%D7%A9%D7%93%D7%A8%D7%95%D7%AA-8015000/1415084733/",
+          "key": "jobmaster:9851042",
+          "score": 100,
+          "company": "מעבר למשרות נוספות טרגט גיוס והשמה",
+          "title": "בקר/ית תקציב לחברה יזמית קבלנית",
+          "location": "רעננה",
+          "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9851042",
           "status": "נפסל",
           "category": "low_score_or_hard_reject",
-          "reason": "נפסל: המשרה כבר מסומנת כנפסלה במעקב. השלב הבא: אין לנסות להגיש אלא אם הרשומה שוחזרה ידנית אחרי בדיקה חדשה."
+          "reason": "המשרה הוסרה או נסגרה באתר המקור; evidence: data\\evidence\\jobmaster\\20260823-215122-jobmaster-9851042-jobmaster-closed_job.json"
         }
       },
       {
@@ -28166,7 +28166,7 @@
       {
         "category": "site_adapter_gap",
         "label": "חסר adapter בטוח לאתר",
-        "count": 41,
+        "count": 40,
         "recommendation": "להעדיף טופס חברה רשמי; אם אין, להשאיר להגשה ידנית עד שנבנה adapter מאומת לאתר.",
         "sample_job": {
           "key": "drushim:37883248",
@@ -28533,27 +28533,27 @@
     "counts": {
       "total": 1339,
       "submitted": 15,
-      "pending": 116,
+      "pending": 115,
       "manual_required": 12,
-      "rejected": 1196,
-      "suitable": 143,
+      "rejected": 1197,
+      "suitable": 142,
       "duplicate_keys": 0,
       "scanned": 15159,
       "documented_rate_from_scanned": 8.83,
-      "suitable_rate_from_documented": 10.68,
-      "submitted_rate_from_suitable": 10.49,
+      "suitable_rate_from_documented": 10.6,
+      "submitted_rate_from_suitable": 10.56,
       "submitted_rate_from_documented": 1.12
     },
     "submission_plan": {
       "plans": 191,
-      "runnable": 40,
+      "runnable": 39,
       "decisions": {
         "ready_for_company_fallback": 32,
-        "ready_for_auto": 8,
+        "ready_for_auto": 7,
         "human_gate": 12,
         "policy_required": 65,
-        "not_supported": 11,
-        "do_not_apply": 63
+        "do_not_apply": 64,
+        "not_supported": 11
       },
       "sites": {
         "Drushim": 77,
@@ -28589,11 +28589,11 @@
         "source": "JobMaster",
         "total": 480,
         "submitted": 10,
-        "pending": 48,
+        "pending": 47,
         "manual_required": 0,
-        "rejected": 422,
+        "rejected": 423,
         "submission_rate": 2.08,
-        "actionable_rate": 10.0
+        "actionable_rate": 9.79
       },
       {
         "source": "Jobnet",
@@ -28679,28 +28679,28 @@
     "insights": {
       "snapshot": {
         "submitted": 15,
-        "pending": 116,
+        "pending": 115,
         "manual_required": 12,
-        "rejected": 1196,
-        "high_score_actionable": 128,
+        "rejected": 1197,
+        "high_score_actionable": 127,
         "safe_auto_submit_now": 0
       },
       "blocker_counts": [
         {
           "category": "low_score_or_hard_reject",
           "label": "התאמה נמוכה או חסם קשיח",
-          "count": 546,
+          "count": 547,
           "recommendation": "לא להשקיע בהגשה; עדיף להרחיב מקורות או קריטריונים מאושרים.",
           "sample_job": {
-            "key": "nestle:1415084733",
-            "score": 91,
-            "company": "אסם-נסטלה",
-            "title": "קניין.ת רכש אופרטיבי למפעל אסם נסטלה בשדרות",
-            "location": "שדרות",
-            "link": "https://jobdetails.nestle.com/job/Sderot-%D7%A7%D7%A0%D7%99%D7%99%D7%9F_%D7%AA-%D7%A8%D7%9B%D7%A9-%D7%90%D7%95%D7%A4%D7%A8%D7%98%D7%99%D7%91%D7%99-%D7%9C%D7%9E%D7%A4%D7%A2%D7%9C-%D7%90%D7%A1%D7%9D-%D7%A0%D7%A1%D7%98%D7%9C%D7%94-%D7%91%D7%A9%D7%93%D7%A8%D7%95%D7%AA-8015000/1415084733/",
+            "key": "jobmaster:9851042",
+            "score": 100,
+            "company": "מעבר למשרות נוספות טרגט גיוס והשמה",
+            "title": "בקר/ית תקציב לחברה יזמית קבלנית",
+            "location": "רעננה",
+            "link": "https://www.jobmaster.co.il/jobs/checknum.asp?key=9851042",
             "status": "נפסל",
             "category": "low_score_or_hard_reject",
-            "reason": "נפסל: המשרה כבר מסומנת כנפסלה במעקב. השלב הבא: אין לנסות להגיש אלא אם הרשומה שוחזרה ידנית אחרי בדיקה חדשה."
+            "reason": "המשרה הוסרה או נסגרה באתר המקור; evidence: data\\evidence\\jobmaster\\20260823-215122-jobmaster-9851042-jobmaster-closed_job.json"
           }
         },
         {
@@ -28774,7 +28774,7 @@
         {
           "category": "site_adapter_gap",
           "label": "חסר adapter בטוח לאתר",
-          "count": 41,
+          "count": 40,
           "recommendation": "להעדיף טופס חברה רשמי; אם אין, להשאיר להגשה ידנית עד שנבנה adapter מאומת לאתר.",
           "sample_job": {
             "key": "drushim:37883248",
@@ -29267,8 +29267,8 @@
       "score": 100,
       "requirements": "תואר ראשון בכלכלה / תעשיה וניהול ניסיון כבקר/ית תקציב בחברות מעולם הבניה / נדל\"ן/יזמות ניסיון בליווי תקציבי של פרוייקטי בניה מ א-ת מעקב אחרי חוזים והתחייבויות , הכנסות והוצאות עבודה שוטפת מול מנהלי הפרויקטים עבודה בפריוריטי והוצאת דוחות בקרה , ביצוע ותחזיות למתאים/ה - תנאים מצוינים + רכב דיסקרטיות מלאה מובטחת !!!!!",
       "fit": "התאמה לכלכלה/תקציבים/בקרה/אנליזה; התאמה לשרשרת אספקה/PMO/התקשרויות; מיקום אושר בדשבורד לחיפוש והגשה: רעננה.; דרישות תואמות: תואר, כלכלה, ניהול, תקציב, דוחות",
-      "status": "נדרש אישור",
-      "stop_reason": "נמצא בסריקה חדשה; נדרש מעבר מנוע ההגשה לפני שליחה.",
+      "status": "נפסל",
+      "stop_reason": "המשרה הוסרה או נסגרה באתר המקור; evidence: data\\evidence\\jobmaster\\20260823-215122-jobmaster-9851042-jobmaster-closed_job.json",
       "cv": ""
     },
     {

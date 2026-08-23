@@ -61,6 +61,7 @@ class SubmissionRunStatus(str, Enum):
     LOGIN_REQUIRED = "login_required"
     VERIFICATION_REQUIRED = "verification_required"
     CV_UNVERIFIED = "cv_unverified"
+    CLOSED_JOB = "closed_job"
     SKIPPED = "skipped"
     BLOCKED = "blocked"
     FAILED = "failed"
@@ -581,6 +582,7 @@ class JobMasterSubmissionAdapter(BrowserPlanningAdapter):
             JobMasterStage.LOGIN_REQUIRED.value: SubmissionRunStatus.LOGIN_REQUIRED,
             JobMasterStage.VERIFICATION_REQUIRED.value: SubmissionRunStatus.VERIFICATION_REQUIRED,
             JobMasterStage.CV_UNVERIFIED.value: SubmissionRunStatus.CV_UNVERIFIED,
+            JobMasterStage.CLOSED_JOB.value: SubmissionRunStatus.CLOSED_JOB,
         }
         status = status_map.get(result.stage, SubmissionRunStatus.FAILED if result.stage.endswith("failed") or result.stage == "error" else SubmissionRunStatus.BLOCKED)
         return _result(
@@ -798,6 +800,21 @@ def record_submission_success(csv_path: Path, plan: SubmissionPlan, result: Subm
     return changed
 
 
+def record_closed_job(csv_path: Path, plan: SubmissionPlan, result: SubmissionResult) -> bool:
+    rows = load_rows(csv_path)
+    changed = False
+    for row in rows:
+        if job_key(row) != plan.job.key:
+            continue
+        row[STATUS] = REJECTED
+        row[STOP_REASON] = f"המשרה הוסרה או נסגרה באתר המקור; evidence: {result.evidence or ''}"
+        changed = True
+        break
+    if changed:
+        write_rows(csv_path, rows)
+    return changed
+
+
 def build_submitted_alert_payload(plan: SubmissionPlan, result: SubmissionResult) -> dict:
     return {
         "kind": "submitted",
@@ -866,6 +883,9 @@ def main() -> int:
                 rebuild_summary_file(args.csv, args.summary, telegram_alerts=1 if args.notify else 0)
                 if args.notify:
                     telegram = notify_submission(runnable, result_obj)
+            elif result_obj.status == SubmissionRunStatus.CLOSED_JOB.value:
+                tracker_updated = record_closed_job(args.csv, runnable, result_obj)
+                rebuild_summary_file(args.csv, args.summary)
 
     print_json(
         {

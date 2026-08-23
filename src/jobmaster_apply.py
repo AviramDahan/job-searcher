@@ -21,7 +21,14 @@ LOGIN_TERMS = ("כניסת משתמש", "התחבר", "סיסמה", "email", "pa
 VERIFICATION_TERMS = ("קוד אימות", "אימות", "verify", "verification code")
 SUCCESS_TERMS = ("קורות החיים נשלחו בהצלחה", "CV Sent successfully")
 CAPTCHA_TERMS = ("captcha", "recaptcha", "radware", "cloudflare")
-CLOSED_TERMS = ("המשרה אינה פעילה", "המשרה כבר לא פעילה", "לא נמצאה משרה", "אינה מקבלת מועמדויות")
+CLOSED_TERMS = (
+    "המשרה אינה פעילה",
+    "המשרה כבר לא פעילה",
+    "לא נמצאה משרה",
+    "אינה מקבלת מועמדויות",
+    "המשרה הוסרה מהאתר",
+    "הוסרה מהאתר ע\"י החברה",
+)
 
 
 class JobMasterStage(str, Enum):

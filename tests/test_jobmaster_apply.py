@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from src.job_records import COMPANY, CV, DATE, FIT, LINK, LOCATION, REQUIREMENTS, SCORE, STATUS, STOP_REASON, SUBMITTED, TITLE, load_rows, write_rows
 from src.jobmaster_apply import JobMasterResult, JobMasterStage, classify_page_state, expected_cv_name, job_id_from_url
-from src.submission_engine import SubmissionRunMode, SubmissionRunStatus, plan_jobs, record_submission_success, run_plan
+from src.submission_engine import SubmissionRunMode, SubmissionRunStatus, plan_jobs, record_closed_job, record_submission_success, run_plan
 
 
 def row() -> dict[str, str]:
@@ -39,6 +39,15 @@ class JobMasterApplyTests(unittest.TestCase):
         self.assertEqual(
             classify_page_state("https://www.jobmaster.co.il/jobs/checknum.asp?key=1", "קורות החיים נשלחו בהצלחה"),
             JobMasterStage.SUBMITTED,
+        )
+
+    def test_classify_page_state_detects_removed_posting(self) -> None:
+        self.assertEqual(
+            classify_page_state(
+                "https://www.jobmaster.co.il/jobs/checknum.asp?key=9851042",
+                "המשרה הוסרה מהאתר! המשרה אליה ביקשת להגיע הוסרה מהאתר ע\"י החברה שפרסמה אותה",
+            ),
+            JobMasterStage.CLOSED_JOB,
         )
 
     def test_expected_cv_name_prefers_override(self) -> None:
@@ -86,6 +95,22 @@ class JobMasterApplyTests(unittest.TestCase):
         self.assertEqual(updated[DATE], "2026-08-01")
         self.assertEqual(updated[CV], "current.pdf")
         self.assertIn("JobMaster adapter", updated[STOP_REASON])
+
+    def test_record_closed_job_rejects_tracker_row(self) -> None:
+        plans = plan_jobs([row()])
+        result = asyncio.run(run_plan(plans[0], SubmissionRunMode.PLAN_ONLY, Path(".")))
+        object.__setattr__(result, "status", SubmissionRunStatus.CLOSED_JOB.value)
+        object.__setattr__(result, "evidence", "data/evidence/jobmaster/closed.json")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = Path(tmp) / "jobs.csv"
+            write_rows(csv_path, [row()])
+            changed = record_closed_job(csv_path, plans[0], result)
+            updated = load_rows(csv_path)[0]
+
+        self.assertTrue(changed)
+        self.assertEqual(updated[STATUS], "נפסל")
+        self.assertIn("המשרה הוסרה", updated[STOP_REASON])
 
 
 if __name__ == "__main__":
